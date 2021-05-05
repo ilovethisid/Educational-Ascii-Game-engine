@@ -1,8 +1,9 @@
-# OSS
+# EAG Engine
+Educational Ascii Game engine
 
 This is a repository for open source software project. 
 
-We have decided to implement C++ Console Game Engine. 
+We have decided to implement C++ Ascii Game Engine. 
 The links that might help are below:
 
 
