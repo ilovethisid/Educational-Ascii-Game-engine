@@ -57,6 +57,7 @@ void FramePerSecond::gotoxy(Point _point)
 void FramePerSecond::hideConsoleCursor()
 {
     CONSOLE_CURSOR_INFO info;
+    info.dwSize = 1;
     info.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
