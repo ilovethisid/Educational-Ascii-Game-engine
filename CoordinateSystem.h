@@ -1,5 +1,25 @@
 #pragma once
 
+class Phy_Vector
+{
+private:
+	int x;
+	int y;
+
+public:
+	Phy_Vector();
+	Phy_Vector(int _x, int _y);
+
+	int getX();
+	int getY();
+
+	Phy_Vector operator+(const Phy_Vector& other);
+	Phy_Vector operator-(const Phy_Vector& other);
+	Phy_Vector operator*(const Phy_Vector& other);
+	Phy_Vector operator/(const Phy_Vector& other);
+	Phy_Vector operator/(const int number);
+};
+
 class Point
 {
 private:
@@ -14,18 +34,11 @@ public:
 	int getY();
 
 	Point operator+(const Point& other);
+	Point operator+(Phy_Vector& other);
 	Point operator-(const Point& other);
 	Point operator*(const Point& other);
 	Point operator/(const Point& other);
 	Point operator/(const int number);
 };
 
-class Phy_Vector
-{
-	int x;
-	int y;
-
-public:
-	Phy_Vector();
-};
 

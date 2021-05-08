@@ -14,6 +14,13 @@ Rigidbody::BoxCollider::BoxCollider(int x1, int y1, int x2, int y2) {
 	center = (topLeft + botRight) / 2;
 }
 
+void Rigidbody::BoxCollider::move(int delta_x, int delta_y)
+{
+	topLeft = topLeft + Point(delta_x, delta_y);
+	botRight = botRight + Point(delta_x, delta_y);
+	center = center + Point(delta_x, delta_y);
+}
+
 Rigidbody::Rigidbody() {
 	velocity = Phy_Vector();
 }
@@ -42,6 +49,11 @@ void Rigidbody::makeCollider(int x1, int y1, int x2, int y2)
 	}
 
 	collider = BoxCollider(minX, minY, maxX, maxY);
+}
+
+void Rigidbody::setVelocity(int x, int y)
+{
+	velocity = Phy_Vector(x, y);
 }
 
 int Rigidbody::checkCollision(Object& obj)
