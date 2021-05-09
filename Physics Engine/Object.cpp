@@ -26,14 +26,14 @@ void Object::makeRigidbody()
 	rigidbody = Rigidbody();
 }
 
-void Object::move(vector<Object> objects)
+void Object::move(vector<Object*>& objects)
 {
 	rigidbody.collider.move(rigidbody.velocity.getX(), rigidbody.velocity.getY());
 
 	bool collision = false;
 
 	for (int i = 0; i < objects.size(); i++) {
-		if (rigidbody.checkCollision(objects[i]) == 2) {
+		if (objects[i] != this && rigidbody.checkCollision(*objects[i]) == 2) {
 			// by moving collider, complete collision occurs
 			collision = true;
 		}

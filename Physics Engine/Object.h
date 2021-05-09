@@ -23,7 +23,8 @@ public:
 	int getY();
 
 	void makeRigidbody();
-	void move(vector<Object> objects);
+	void move(vector<Object*>& objects);
 	// move according to velocity
+	// get vector of all objects to check collision
 };
 
