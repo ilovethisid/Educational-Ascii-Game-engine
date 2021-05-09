@@ -1,0 +1,20 @@
+﻿  Main.cpp
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(25,19): error C2664: 'void Object::move(std::vector<Object,std::allocator<Object>>)': 인수 1을(를) 'Object [2]'에서 'std::vector<Object,std::allocator<Object>>'(으)로 변환할 수 없습니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(25,19): message : 소스 형식을 가져올 수 있는 생성자가 없거나 생성자 오버로드 확인이 모호합니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.h(26,7): message : 'Object::move' 선언을 참조하십시오.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(27,19): error C2664: 'void Object::move(std::vector<Object,std::allocator<Object>>)': 인수 1을(를) 'Object [2]'에서 'std::vector<Object,std::allocator<Object>>'(으)로 변환할 수 없습니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(27,19): message : 소스 형식을 가져올 수 있는 생성자가 없거나 생성자 오버로드 확인이 모호합니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.h(26,7): message : 'Object::move' 선언을 참조하십시오.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(29,19): error C2664: 'void Object::move(std::vector<Object,std::allocator<Object>>)': 인수 1을(를) 'Object [2]'에서 'std::vector<Object,std::allocator<Object>>'(으)로 변환할 수 없습니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(29,19): message : 소스 형식을 가져올 수 있는 생성자가 없거나 생성자 오버로드 확인이 모호합니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.h(26,7): message : 'Object::move' 선언을 참조하십시오.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(31,19): error C2664: 'void Object::move(std::vector<Object,std::allocator<Object>>)': 인수 1을(를) 'Object [2]'에서 'std::vector<Object,std::allocator<Object>>'(으)로 변환할 수 없습니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(31,19): message : 소스 형식을 가져올 수 있는 생성자가 없거나 생성자 오버로드 확인이 모호합니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.h(26,7): message : 'Object::move' 선언을 참조하십시오.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(33,19): error C2664: 'void Object::move(std::vector<Object,std::allocator<Object>>)': 인수 1을(를) 'Object [2]'에서 'std::vector<Object,std::allocator<Object>>'(으)로 변환할 수 없습니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Main.cpp(33,19): message : 소스 형식을 가져올 수 있는 생성자가 없거나 생성자 오버로드 확인이 모호합니다.
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.h(26,7): message : 'Object::move' 선언을 참조하십시오.
+  Object.cpp
+C:\Users\ilove\source\repos\Physics Engine\Physics Engine\Object.cpp(35,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  Rigidbody.cpp
+  코드를 생성하고 있습니다...
