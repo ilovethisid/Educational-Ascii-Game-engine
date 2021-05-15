@@ -39,6 +39,8 @@ public:
 	Point operator*(const Point& other);
 	Point operator/(const Point& other);
 	Point operator/(const int number);
+	bool operator>=(const Point& other);
+	bool operator<=(const Point& other);
 };
 
 

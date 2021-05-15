@@ -52,6 +52,30 @@ Point Point::operator/(const int number)
 	return Point(x / number, y / number);
 }
 
+bool Point::operator>=(const Point& other)
+{
+	Point subtraction = *this - other;
+
+	if (subtraction.x >= 0 && subtraction.y >= 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Point::operator<=(const Point& other)
+{
+	Point subtraction = *this - other;
+
+	if (subtraction.x <= 0 && subtraction.y <= 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 Phy_Vector::Phy_Vector()
 {
 	x = 0;

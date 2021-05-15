@@ -2,7 +2,8 @@
 
 Object::Object()
 {
-
+	x = 0;
+	y = 0;
 }
 
 Object::Object(int _x, int _y)
@@ -23,12 +24,12 @@ int Object::getY()
 
 void Object::makeRigidbody()
 {
-	rigidbody = Rigidbody();
+	rigidbody = Rigidbody(x, y);
 }
 
 void Object::move(vector<Object*>& objects)
 {
-	rigidbody.collider.move(rigidbody.velocity.getX(), rigidbody.velocity.getY());
+	rigidbody.collider->move(rigidbody.velocity.getX(), rigidbody.velocity.getY());
 
 	bool collision = false;
 
@@ -42,9 +43,10 @@ void Object::move(vector<Object*>& objects)
 	if (!collision) {
 		x = x + rigidbody.velocity.getX();
 		y = y + rigidbody.velocity.getY();
+		rigidbody.move();
 	}
 	else {
-		rigidbody.collider.move(-rigidbody.velocity.getX(), -rigidbody.velocity.getY());
+		rigidbody.collider->move(-rigidbody.velocity.getX(), -rigidbody.velocity.getY());
 		// since object didn't move, restore collider
 	}
 }
