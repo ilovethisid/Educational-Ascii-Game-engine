@@ -20,9 +20,9 @@ const int KEY_RIGHT = 77;
 class GameLoop {
 
 private:
-    double mv_fps;
-    Console mv_console;
-    KeyListener mv_key_listener;
+    double fps_;
+    Console console_;
+    KeyListener key_listener_;
     void vGotoXY(Point _point);
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
