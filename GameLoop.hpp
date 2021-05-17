@@ -3,11 +3,13 @@
 */
 #pragma once
 
-#include <conio.h>
 #include <iostream>
+#include <ctime>
+#include <conio.h>
 #include <Windows.h>
 #include "CoordinateSystem.h"
 #include "GraphicEngine.h"
+#include "KeyListense.hpp"
 
 const int KEY_UP = 72;
 const int KEY_DOWN = 80;
@@ -15,17 +17,18 @@ const int KEY_LEFT = 75;
 const int KEY_RIGHT = 77;
 
 
-class FramePerSecond {
+class GameLoop {
 
 private:
-    double mvFPS;
-    Console mvConsole;
+    double mv_fps;
+    Console mv_console;
+    KeyListener mv_key_listener;
     void vGotoXY(Point _point);
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
 
 public:
-    FramePerSecond();
+    GameLoop();
     Console getConsole();
     void setFPS(double frames);
     void BuildScreen(int width, int height, int fontw, int fonth);

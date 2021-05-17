@@ -1,8 +1,11 @@
 #pragma once
 
-#include <stdio.h>
+#include <iostream>
+#include <vector>
 
 #include "Rigidbody.h"
+
+using namespace std;
 
 class Object
 {
@@ -20,7 +23,8 @@ public:
 	int getY();
 
 	void makeRigidbody();
-	void move(Object objects[]);
+	void move(vector<Object*>& objects);
 	// move according to velocity
+	// get vector of all objects to check collision
 };
 
