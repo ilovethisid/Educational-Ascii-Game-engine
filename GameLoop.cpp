@@ -142,48 +142,6 @@ void GameLoop::UpdateScreen()
     }
 }
 
-
-/* Moves target object */
-void GameLoop::MoveTargetObject(Point target_obj)
-{
-    int input_key;
-
-    Point unit_x = Point(1, 0);
-    Point unit_y = Point(0, 1);             // <------- Prototype of target object. Will be removed later.
-
-    while(true){
-        vGotoXY(target_obj);
-
-        printf("��");                       // <------- Prototype of target object. Will be removed later.
-
-        if (_kbhit()){
-            input_key = _getch();
-
-            if (input_key == 224){
-                input_key = _getch();
-
-                switch(input_key){
-                    case KEY_UP:
-                        target_obj = target_obj.operator-(unit_y); break;
-                    case KEY_DOWN:
-                        target_obj = target_obj.operator+(unit_y); break;
-                    case KEY_LEFT:
-                        target_obj = target_obj.operator-(unit_x); break;
-                    case KEY_RIGHT:
-                        target_obj = target_obj.operator+(unit_x); break;
-                }
-            }
-            system("cls");
-        }
-
-        // check if target object goes outside of console window.
-        if (target_obj.getX() < 0)
-            target_obj = target_obj.operator+(unit_x);
-        else if (target_obj.getY() < 0)
-            target_obj = target_obj.operator+(unit_y);
-    }
-}
-
 /* Moves console cursor position */
 void GameLoop::vGotoXY(Point _point)
 {
