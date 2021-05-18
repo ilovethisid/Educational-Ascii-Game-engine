@@ -4,7 +4,7 @@
 #include <iostream>
 #include  <windows.h>
 
-enum COLOR
+enum COLOUR
 {
 	FG_BLACK = 0x0000,
 	FG_DARK_BLUE = 0x0001,
