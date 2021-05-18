@@ -87,48 +87,6 @@ void Console::draw_square(int x, int y, int width, int height, short c, short co
 			draw(x + i, y + j, c, col);
 }
 
-void Console::draw_line(int x1, int y1, int x2, int y2, short c, short col) {
-
-	int addx = ((x2 - x1) > 0 ? 1 : -1);
-	int addy = ((y2 - y1) > 0 ? 1 : -1);
-
-	if (x1 == x2) {
-		for (int i = y1; i != y2+addy; i += addy)
-			draw(x1, i, c, col);
-		return;
-	}
-
-	int j = y1;
-	float slope = float(y2 - y1) / (x2 - x1);
-
-	if (y1 <= y2) {
-		for (int i = x1; i != x2; i = i + addx) {
-			draw(i, j, c, col);
-			for (j; j <= (slope * (0.5 * addx + i - x1) + y1); j += addy)
-				draw(i, j, c, col);
-		}
-		for (j; j <=  y2 ; j += addy)
-			draw(x2, j);
-	}
-
-	if (y1 > y2) {
-		for (int i = x1; i != x2; i = i + addx) {
-			draw(i, j, c, col);
-			for (j; j >= (slope * (0.5 * addx + i - x1) + y1); j += addy)
-				draw(i, j, c, col);
-		}
-		for (j; j >= y2 ; j += addy)
-			draw(x2, j);
-	}
-
-}
-
-void Console::draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
-	draw_line(x1, y1, x2, y2, c, col);
-	draw_line(x2, y2, x3, y3, c, col);
-	draw_line(x3, y3, x1, y1, c, col);
-}
-
 void Console::draw_matrix(int x, int y, MATRIX matrix, short col) {
 	for (int i = 0; i < matrix.maxRow; i++)
 		for (int j = 0; j <matrix.maxColumn; j++)
