@@ -86,7 +86,40 @@ void Console::draw_square(int x, int y, int width, int height, short c, short co
 		for (int j = 0; j < height; j++)
 			draw(x + i, y + j, c, col);
 }
+void Console::matrix_line(short*** pnt,int x1, int y1, int x2, int y2, short c) {
+	short** element = *pnt;
+	int addx = ((x2 - x1) > 0 ? 1 : -1);
+	int addy = ((y2 - y1) > 0 ? 1 : -1);
 
+	if (x1 == x2) {
+		for (int i = y1; i != y2 + addy; i += addy)
+			element[i][x1] = c;
+		return;
+	}
+
+	int j = y1;
+	float slope = float(y2 - y1) / (x2 - x1);
+
+	if (y1 <= y2) {
+		for (int i = x1; i != x2; i = i + addx) {
+			element[j][i] = c;
+			for (j; j <= (slope * (0.5 * addx + i - x1) + y1); j += addy)
+				element[j][i] = c;
+		}
+		for (j; j <= y2; j += addy)
+			element[j][x2] = c;
+	}
+
+	if (y1 > y2) {
+		for (int i = x1; i != x2; i = i + addx) {
+			element[j][i] = c;
+			for (j; j >= (slope * (0.5 * addx + i - x1) + y1); j += addy)
+				element[j][i] = c;
+		}
+		for (j; j >= y2; j += addy)
+			element[j][x2] = c;
+	}
+}
 void Console::draw_line(int x1, int y1, int x2, int y2, short c, short col) {
 
 	int addx = ((x2 - x1) > 0 ? 1 : -1);
@@ -166,6 +199,14 @@ Matrix Console::make_circle(int r, short c) {
 	return image;
 }
 
+Matrix Console::make_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
+
+	Matrix image = Matrix(max(max(x1, x2), x3)+1, max(max(y1, y2), y3)+1);
+	matrix_line(&image.element, x1, y1, x2, y2, c);
+	matrix_line(&image.element, x2, y2, x3, y3, c);
+	matrix_line(&image.element, x3, y3, x1, y1, c);
+	return image;
+}
 
 Matrix Console::make_square(int width, int height, short c){
 	Matrix image = Matrix(width, height);

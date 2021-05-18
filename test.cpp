@@ -13,19 +13,25 @@ int main(void) {
 	int y = 0;
 	int x1 = 100;
 	int y1 = 100;
-	Object obj1 = Object(1, 1);
-	Object obj2 = Object(50, 50);
-	
+	Object obj1 = Object(20, 20);
+	Object obj2 = Object(70, 70);
+	Object obj3 = Object(1, 1);
 
 	Matrix matrix1 = demo.make_circle(10);
-	Matrix matrix2 = demo.make_circle(20);
+	Matrix matrix2 = demo.make_triangle(0,20,5,2,10,24);
+	Matrix matrix3= demo.make_square(4,10);
+
 	obj1.makeRigidbody();
 	obj2.makeRigidbody();
+	obj3.makeRigidbody();
 	obj1.makeImage(matrix1);
 	obj2.makeImage(matrix2);
+	obj3.makeImage(matrix3);
 	obj1.rigidbody.setVelocity(1, 1);
+	obj3.rigidbody.setVelocity(1, 1);
 	obj1.rigidbody.makeMatrixCollider(matrix1);
 	obj2.rigidbody.makeMatrixCollider(matrix2);
+	obj3.rigidbody.makeMatrixCollider(matrix3);
 	vector<Object*> objects;
 
 	objects.push_back(&obj1);
@@ -34,7 +40,9 @@ int main(void) {
 		demo.set_tmpbufScreen();
 		demo.tmp_draw_Object(obj1);
 		demo.tmp_draw_Object(obj2);
+		demo.tmp_draw_Object(obj3);
 		obj1.move(objects);
+		obj3.move(objects);
 		demo.update();
 		Sleep(100);
 

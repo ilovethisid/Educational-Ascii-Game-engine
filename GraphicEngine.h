@@ -77,6 +77,9 @@ public:
 
 	Matrix make_circle(int r, short c=0x2588);
 	Matrix make_square(int width, int height, short c = 0x2588);
+	Matrix make_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);//삼각형 생성
+	void matrix_line(short*** pnt, int x1, int y1, int x2, int y2, short c = 0x2588);
+
 	void update(); //tmp_bufScreen 출력
 	void set_tmpbufScreen();
 };
