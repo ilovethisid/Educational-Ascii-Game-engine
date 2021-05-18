@@ -129,54 +129,49 @@ void Console::draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, shor
 	draw_line(x3, y3, x1, y1, c, col);
 }
 
-void Console::draw_matrix(int x, int y, MATRIX matrix, short col) {
-	for (int i = 0; i < matrix.maxRow; i++)
-		for (int j = 0; j <matrix.maxColumn; j++)
-			draw(x + i, y + j, matrix.cmatrix[i*matrix.maxColumn+j], col);
+void Console::draw_Object(Object obj, short col) {
+	Matrix tmp = obj.getImage();
+	for (int i = 0; i < tmp.height; i++)
+		for (int j = 0; j < tmp.width; j++)
+			if (tmp.element[i][j]) draw(obj.getX() + i, obj.getY() + j, tmp.element[i][j], col);
 }// 배열 그리기
 
-void Console::tmp_draw_matrix(int x, int y, MATRIX matrix, short col) {
-	for (int i = 0; i < matrix.maxRow; i++)
-		for (int j = 0; j < matrix.maxColumn; j++)
-			tmp_draw(x + i, y + j, matrix.cmatrix[i * matrix.maxColumn + j], col);
+void Console::tmp_draw_Object(Object obj, short col) {
+	Matrix tmp = obj.getImage();
+	for (int i = 0; i < tmp.height; i++)
+		for (int j = 0; j < tmp.width; j++)
+			if (tmp.element[i][j]) tmp_draw(obj.getX() + i, obj.getY() + j, tmp.element[i][j], col);
 }// 배열 그리기
 
 void Console::clear_buf() {
 	memset(bufScreen, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
 }//bufScreen 초기화
 
-MATRIX* Console::make_circle(int r, short c) {
-	MATRIX* pnt = new MATRIX;
-	pnt->maxRow = 2 * r + 1;
-	pnt->maxColumn = 2 * r + 1;
-	pnt->cmatrix = new short[(pnt->maxRow)*(pnt->maxColumn)];
-	memset(pnt->cmatrix, 0, sizeof(short) * (pnt->maxRow) * (pnt->maxColumn));
+Matrix Console::make_circle(int r, short c) {
+	Matrix image =Matrix(2*r+1,2*r+1);
 	int x = 0;
 	int y = r;
 	while (y >= x) {
-		pnt->cmatrix[(r - x) + (2 * r + 1) * (r - y)] = c;
-		pnt->cmatrix[(r - y) + (2 * r + 1) * (r - x)] = c;
-		pnt->cmatrix[(r + y) + (2 * r + 1) * (r - x)] = c;
-		pnt->cmatrix[(r + x) + (2 * r + 1) * (r - y)] = c;
-		pnt->cmatrix[(r - x) + (2 * r + 1) * (r + y)] = c;
-		pnt->cmatrix[(r - y) + (2 * r + 1) * (r + x)] = c;
-		pnt->cmatrix[(r + y) + (2 * r + 1) * (r + x)] = c;
-		pnt->cmatrix[(r + x) + (2 * r + 1) * (r + y)] = c;
+		image.element[r - y][r - x] = c;
+		image.element[r - x][r - y] = c;
+		image.element[r - x][r + y] = c;
+		image.element[r - y][r + x] = c;
+		image.element[r + y][r - x] = c;
+		image.element[r +x][r - y] = c;
+		image.element[r +y][r +x] = c;
+		image.element[r +x][r +y] = c;
 		x++;
 		y = (int)(std::pow(r * r - x * x, 1 / 2.) + 0.5);
 	}
-	return pnt;
+	return image;
 }
 
 
-MATRIX* Console::make_square(int width, int height, short c){
-	MATRIX* pnt = new MATRIX;
-	pnt->maxRow = width;
-	pnt->maxColumn = height;
-	pnt->cmatrix = new short[(pnt->maxRow) * (pnt->maxColumn)];
-	memset(pnt->cmatrix, 0, sizeof(short) * (pnt->maxRow) * (pnt->maxColumn));
-	std::fill_n(pnt->cmatrix, height * width, c);
-	return pnt;
+Matrix Console::make_square(int width, int height, short c){
+	Matrix image = Matrix(width, height);
+	for(int i=0; i<height;i++)
+		std::fill_n(image.element[i], width, c);
+	return image;
 }
 
 void Console::set_tmpbufScreen() {//tmpbufScreen
