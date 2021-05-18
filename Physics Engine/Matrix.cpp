@@ -42,3 +42,14 @@ void Matrix::fillElement(int** ary)
 		}
 	}
 }
+
+Matrix& Matrix::operator=(const Matrix& matrix)
+{
+	for (int i = 0; i < matrix.height; i++) {
+		for (int j = 0; j < matrix.width; j++) {
+			element[i][j] = matrix.element[i][j];
+		}
+	}
+
+	return *this;
+}
