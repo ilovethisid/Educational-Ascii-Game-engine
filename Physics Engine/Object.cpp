@@ -19,7 +19,7 @@ void Object::makeRigidbody()
 
 void Object::makeImage(Matrix _image)
 {
-	image = _image;
+	image = Matrix(_image);
 }
 
 void Object::move(vector<Object*>& objects)

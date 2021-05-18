@@ -59,8 +59,6 @@ Rigidbody::MatrixCollider::MatrixCollider()
 Rigidbody::MatrixCollider::MatrixCollider(Matrix _matrix, int _x, int _y)
 {
 	type = "MatrixCollider";
-	/*Matrix* ptr_matrix = new Matrix(_matrix);
-	matrix = *ptr_matrix;*/
 	matrix = Matrix(_matrix);
 	x = _x;
 	y = _y;

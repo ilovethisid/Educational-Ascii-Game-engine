@@ -16,7 +16,5 @@ public:
 	Matrix(int _width, int _height);
 
 	void fillElement(int** ary);
-
-	Matrix& operator=(const Matrix& matrix);
 };
 

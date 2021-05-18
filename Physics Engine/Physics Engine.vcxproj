@@ -140,8 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CoordinateSystem.cpp" />
-    <ClCompile Include="game_loop.cpp" />
-    <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Test Main.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -149,8 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CoordinateSystem.h" />
-    <ClInclude Include="game_loop.h" />
-    <ClInclude Include="GraphicEngine.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Rigidbody.h" />
