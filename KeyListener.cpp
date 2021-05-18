@@ -1,6 +1,6 @@
 #include "KeyListener.hpp"
-#define KDT 2000
-#define DCT 300
+#define KDT 2000//키다운 시간
+#define DCT 300//더블 클릭 여유 시간
 KeyListener klc;
 
 bool KeyListener::keycheck(int key)
@@ -141,4 +141,10 @@ void KeyListenerThread()
 
 	}
 
+}
+int main()
+{
+	std::thread t(KeyListenerThread);//메인 가장 앞부분에
+	klc.exit();//끝내기 직전에
+	t.join();//메인 가장 뒷부분에
 }
