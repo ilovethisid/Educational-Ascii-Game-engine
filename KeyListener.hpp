@@ -6,6 +6,7 @@
 #include < Winuser.h>
 #include <time.h>
 #define size 45//확인할 전체 키의 갯수
+
 class KeyListener
 {
 private:

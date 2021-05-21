@@ -1,4 +1,5 @@
 #include "KeyListener.hpp"
+#include "KeyMacro.hpp"
 #define KDT 2000//키다운 시간
 #define DCT 300//더블 클릭 여유 시간
 KeyListener klc;
@@ -64,7 +65,7 @@ void KeyListenerThread()
 	int i;
 	while (klc.ReturnF())
 	{
-		if (GetAsyncKeyState(0xA2)|| GetAsyncKeyState(0xA3))
+		if (GetAsyncKeyState(0xA2) || GetAsyncKeyState(0xA3))
 		{
 		}
 		for (i = 0x41; i < 0x5B; i++)//A~Z
@@ -105,7 +106,7 @@ void KeyListenerThread()
 				klc.keyinput(i - 0x25 + 36);
 				if (klc.keydown_t[i] != NULL)//키다운
 				{
-					if (temp - klc.keydown_t[i]>=KDT)
+					if (temp - klc.keydown_t[i] >= KDT)
 					{
 						klc.keydowninput(i);
 					}
@@ -142,11 +143,33 @@ void KeyListenerThread()
 	}
 
 }
-void test()//이부분을 생성자에 
+class gameloop_t
 {
-	std::thread *temp = new std::thread(KeyListenerThread);//이 주소를 gameloop클래스에 저장해주세요
-}
-void test2()//이부분을 gameloop에서 주소를 가지고 있다가 콘솔을 종료할때 넣어주세요
+private:
+	std::thread* temp;
+public:
+	void start()
+	{
+		temp = new std::thread(KeyListenerThread);
+	}
+	void end()
+	{
+		temp->join();
+	}
+};
+int main()
 {
-	temp->join();
+	gameloop_t gl;
+	gl.start();
+	while (1)
+	{
+		Sleep(100);
+		printf("위화살표 입력해 보기\n");
+		if (klc.keycheck(37))
+		{
+			break;
+		}
+	}
+	printf("정상작동");
 }
+
