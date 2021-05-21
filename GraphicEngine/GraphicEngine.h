@@ -3,7 +3,7 @@
 #endif
 #include <iostream>
 #include  <windows.h>
-#include "Object.h"
+#include "../PhysicsEngine/Object.h"
 
 enum COLOUR
 {

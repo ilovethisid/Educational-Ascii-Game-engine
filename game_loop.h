@@ -7,11 +7,11 @@
 #include <ctime>
 #include <conio.h>
 #include <Windows.h>
-#include "CoordinateSystem.h"
-#include "GraphicEngine.h"
-#include "Object.h"
-#include "KeyListener.hpp"
-#include "KeyMacro.hpp"
+#include "./PhysicsEngine/CoordinateSystem.h"
+#include "./PhysicsEngine/Object.h"
+#include "./GraphicEngine/GraphicEngine.h"
+#include "./KeyListener/KeyListener.hpp"
+#include "./KeyListener/KeyMacro.hpp"
 
 const int KEY_UP = 72;
 const int KEY_DOWN = 80;
