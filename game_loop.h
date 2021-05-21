@@ -9,7 +9,9 @@
 #include <Windows.h>
 #include "CoordinateSystem.h"
 #include "GraphicEngine.h"
-#include "KeyListense.hpp"
+#include "Object.h"
+#include "KeyListener.hpp"
+#include "KeyMacro.hpp"
 
 const int KEY_UP = 72;
 const int KEY_DOWN = 80;
@@ -23,6 +25,7 @@ private:
     double fps_;
     Console console_;
     KeyListener key_listener_;
+    std::thread* temp_;
     void vGotoXY(Point _point);
     void vHideConsoleCursor();
     DWORD vGetUnitTime();

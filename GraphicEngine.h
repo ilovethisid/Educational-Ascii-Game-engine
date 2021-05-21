@@ -3,6 +3,7 @@
 #endif
 #include <iostream>
 #include  <windows.h>
+#include "Object.h"
 
 enum COLOUR
 {
@@ -48,12 +49,6 @@ enum PIXEL_TYPE
 	PIXEL_QUARTER = 0x2591,
 };
 
-typedef struct MATRIX {
-	int maxRow;
-	int maxColumn;
-	short* cmatrix;
-}MATRIX;
-
 
 class Console{
 
@@ -71,14 +66,20 @@ public:
 	void draw(int x, int y, short c = 0x2588, short col = 0x000F); //c= 채우는 문자 col= 색상
 	void draw_circle(int x, int y, int r, short c = 0x2588, short col = 0x000F);
 	void draw_line(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);// 선그리기
+	void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);// 삼각형 그리기
+
 	void draw_square(int x, int y, int width, int height, short c = 0x2588, short col = 0x000F);//사각형 그리기
-	void draw_matrix(int x, int y, MATRIX matrix, short col = 0x000F); // 배열 그리기
+	void draw_Object(Object obj, short col = 0x000F); // 배열 그리기
 
 	void tmp_draw(int x, int y, short c = 0x2588, short col = 0x000F);//임시로 그리기
-	void tmp_draw_matrix(int x, int y, MATRIX matrix, short col = 0x000F); //임시로 그리기
+	void tmp_draw_Object(Object obj, short col = 0x000F); //임시로 그리기
 	void clear_buf(); //bufScreen 초기화
-	MATRIX* make_circle(int r, short c=0x2588);
-	MATRIX* make_square(int width, int height, short c = 0x2588);
+
+	Matrix make_circle(int r, short c=0x2588);
+	Matrix make_square(int width, int height, short c = 0x2588);
+	Matrix make_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);//삼각형 생성
+	void matrix_line(short*** pnt, int x1, int y1, int x2, int y2, short c = 0x2588);
+
 	void update(); //tmp_bufScreen 출력
 	void set_tmpbufScreen();
 };

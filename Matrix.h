@@ -9,12 +9,12 @@ class Matrix
 public:
 	int width;
 	int height;
-	int** element;
+	short** element;
 
 	Matrix();
 	Matrix(const Matrix& _matrix);
 	Matrix(int _width, int _height);
 
-	void fillElement(int** ary);
+	void fillElement(short** ary);
 };
 

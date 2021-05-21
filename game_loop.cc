@@ -1,16 +1,19 @@
 #include "game_loop.h"
 
+extern void KeyListenerThread();
+extern KeyListener klc;
+
 GameLoop::GameLoop()
 {
-    fps_ = 24;
+    fps_ = 30;
     console_ = Console();
     key_listener_ = KeyListener();
+    temp_ = new std::thread(KeyListenerThread);//이 주소를 gameloop클래스에 저장해주세요
 }
 
 /* Build console window. */
 void GameLoop::BuildScreen(int _width, int _height, int _fontw, int _fonth)
 {
-
     console_.make_console(_width, _height, _fontw, _fonth);
     vHideConsoleCursor();
 }
@@ -21,7 +24,7 @@ Console GameLoop::getConsole()
     return console_;
 }
 
-/* Set frame per second. Default FPS is 24. */
+/* Set frame per second. Default FPS is 30. */
 void GameLoop::setFPS(double _frames)
 {
     fps_ = _frames;
@@ -46,11 +49,29 @@ void GameLoop::UpdateScreen()
     const Point kUnitY = Point(0, 1);             // <------- Prototype of target object. Will be removed later.
 
 
-    MATRIX* pnt_circle = console_.make_circle(10);
-    MATRIX* pnt_square = console_.make_square(6, 10);
+    Matrix mat_circle = console_.make_circle(10);
+    Matrix mat_square = console_.make_square(6, 10);
 
-    int x1 = 100;
-    int y1 = 100;
+    Object circle1 = Object(target_point.getX(), target_point.getY());
+    circle1.makeImage(mat_circle);
+    circle1.makeRigidbody();
+    circle1.rigidbody.setVelocity(1, 1);
+    circle1.rigidbody.makeMatrixCollider(mat_circle);
+
+    Object square1 = Object(100, 100);
+    square1.makeImage(mat_square);
+    square1.makeRigidbody();
+    square1.rigidbody.setVelocity(-1, -1);
+    square1.rigidbody.makeMatrixCollider(mat_square);
+
+
+    vector<Object*> objects;
+
+    objects.push_back(&circle1);
+    objects.push_back(&square1);
+
+
+    Point shot_point;
 
     while (true) {
         
@@ -59,26 +80,28 @@ void GameLoop::UpdateScreen()
         vGotoXY(target_point);
 
         console_.set_tmpbufScreen();
-        console_.tmp_draw_matrix(target_point.getX(), target_point.getY(), *pnt_circle);
-        console_.tmp_draw_matrix(x1--, y1--, *pnt_square);
+        console_.tmp_draw_Object(circle1);
+        console_.tmp_draw_Object(square1);
+
+        circle1.move(objects);
+        square1.move(objects);
         console_.update();               // <------- Prototype of target object. Will be removed later.
 
 
  // Implementation of KeyListener
- /*
-        if (key_listener_.keycheck(VK_UP)) {
+        if (klc.keycheck(eag_Top)) {
             // do something
             target_point = target_point - kUnitY;
         }
-        else if (key_listener_.keycheck(VK_DOWN)) {
+        else if (klc.keycheck(eag_Bottom)) {
             // do something
             target_point = target_point + kUnitY;
         }
-        else if (key_listener_.keycheck(VK_LEFT)) {
+        else if (klc.keycheck(eag_Left)) {
             // do something
             target_point = target_point - kUnitX;
         }
-        else if (key_listener_.keycheck(VK_RIGHT)) {
+        else if (klc.keycheck(eag_Right)) {
             // do something
             target_point = target_point + kUnitX;
         }
@@ -89,39 +112,20 @@ void GameLoop::UpdateScreen()
         else if (target_point.getY() < 0)
             target_point = target_point + kUnitY;
 
-        // clear old circle
-        console_.draw_circle(oldPoint.getX(), oldPoint.getY(), 4, ' ');  // <------- Prototype of target object. Will be removed later.
-*/
 
-        // Old implementation of key listener
-        if (_kbhit()) {
-            inputKey = _getch();
-
-            Point oldPoint = target_point;
-
-            if (inputKey == 224) {
-                inputKey = _getch();
-
-                switch (inputKey) {
-                case KEY_UP:
-                    target_point = target_point - kUnitY; break;
-                case KEY_DOWN:
-                    target_point = target_point + kUnitY; break;
-                case KEY_LEFT:
-                    target_point = target_point - kUnitX; break;
-                case KEY_RIGHT:
-                    target_point = target_point + kUnitX; break;
-                }
-            }
+        std::cout << target_point.getX() << ", " << target_point.getY() << std::endl;
 
 
-            // check if target object goes outside of console window.
-            if (target_point.getX() < 0)
-                target_point = target_point + kUnitX;
-            else if (target_point.getY() < 0)
-                target_point = target_point + kUnitY;
+        if (klc.keycheck(eag_space)) {
+            // do something
+            shot_point = target_point;
+            std::cout << "space!!!" << std::endl;
         }
 
+        shot_point = shot_point - kUnitY;
+        vGotoXY(shot_point);
+        std::cout << ", " << std::endl;
+        vGotoXY(target_point);
 
         end = clock();                // end timer
 

@@ -12,9 +12,9 @@ Matrix::Matrix(const Matrix& _matrix)
 	width = _matrix.width;
 	height = _matrix.height;
 	
-	element = new int* [height];
+	element = new short* [height];
 	for (int i = 0; i < height; i++) {
-		element[i] = new int[width];
+		element[i] = new short[width];
 	}
 
 	for (int i = 0; i < height; i++) {
@@ -28,13 +28,14 @@ Matrix::Matrix(int _width, int _height)
 {
 	width = _width;
 	height = _height;
-	element = new int* [height];
+	element = new short* [height];
 	for (int i = 0; i < height; i++) {
-		element[i] = new int[width];
+		element[i] = new short[width];
+		memset(element[i], 0, sizeof(short) * width);
 	}
 }
 
-void Matrix::fillElement(int** ary)
+void Matrix::fillElement(short** ary)
 {
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
@@ -42,3 +43,4 @@ void Matrix::fillElement(int** ary)
 		}
 	}
 }
+

@@ -12,19 +12,14 @@ Object::Object(int _x, int _y)
 	y = _y;
 }
 
-int Object::getX()
-{
-	return x;
-}
-
-int Object::getY()
-{
-	return y;
-}
-
 void Object::makeRigidbody()
 {
 	rigidbody = Rigidbody(x, y);
+}
+
+void Object::makeImage(Matrix _image)
+{
+	image = Matrix(_image);
 }
 
 void Object::move(vector<Object*>& objects)
@@ -49,4 +44,19 @@ void Object::move(vector<Object*>& objects)
 		rigidbody.collider->move(-rigidbody.velocity.getX(), -rigidbody.velocity.getY());
 		// since object didn't move, restore collider
 	}
+}
+
+int Object::getX()
+{
+	return x;
+}
+
+int Object::getY()
+{
+	return y;
+}
+
+Matrix Object::getImage()
+{
+	return image;
 }
