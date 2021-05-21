@@ -135,7 +135,7 @@ void KeyListenerThread()
 				klc.doubleclick_c[i] = false;
 			}
 		}
-		if (GetAsyncKeyState(0x6C))//스페이스바
+		if (GetAsyncKeyState(VK_SPACE))//스페이스바
 		{
 			klc.keyinput(44);
 		}
@@ -157,19 +157,3 @@ public:
 		temp->join();
 	}
 };
-int main()
-{
-	gameloop_t gl;
-	gl.start();
-	while (1)
-	{
-		Sleep(100);
-		printf("위화살표 입력해 보기\n");
-		if (klc.keycheck(37))
-		{
-			break;
-		}
-	}
-	printf("정상작동");
-}
-
