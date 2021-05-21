@@ -142,9 +142,11 @@ void KeyListenerThread()
 	}
 
 }
-int main()
+void test()//이부분을 생성자에 
 {
-	std::thread t(KeyListenerThread);//메인 가장 앞부분에
-	klc.exit();//끝내기 직전에
-	t.join();//메인 가장 뒷부분에
+	std::thread *temp = new std::thread(KeyListenerThread);//이 주소를 gameloop클래스에 저장해주세요
+}
+void test2()//이부분을 gameloop에서 주소를 가지고 있다가 콘솔을 종료할때 넣어주세요
+{
+	temp->join();
 }
