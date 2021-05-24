@@ -7,13 +7,13 @@ using namespace std;
 class Matrix
 {
 public:
-	int width;
-	int height;
-	int** element;
+	short width;
+	short height;
+	short** element;
 
 	Matrix();
 	Matrix(const Matrix& _matrix);
-	Matrix(int _width, int _height);
+	Matrix(short _width, short _height);
 
 	void fillElement(int** ary);
 };
