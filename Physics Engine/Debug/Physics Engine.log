@@ -1,0 +1,8 @@
+﻿  Matrix.cpp
+  Object.cpp
+C:\Users\ilove\source\repos\Educational-Ascii-Game-engine\Physics Engine\Object.cpp(31,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  Rigidbody.cpp
+  Test Main.cpp
+  코드를 생성하고 있습니다...
+C:\Users\ilove\source\repos\Educational-Ascii-Game-engine\Physics Engine\Rigidbody.cpp(239): warning C4715: 'Rigidbody::checkMatrixCollision': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  Physics Engine.vcxproj -> C:\Users\ilove\source\repos\Educational-Ascii-Game-engine\Debug\Physics Engine.exe
