@@ -7,7 +7,7 @@ using namespace std;
 int main(void) {
 
 	Console demo;
-	demo.make_console(160, 100, 8, 8);
+	demo.makeConsole(160, 100, 8, 8);
 
 	int x = 0;
 	int y = 0;
@@ -17,9 +17,9 @@ int main(void) {
 	Object obj2 = Object(70, 70);
 	Object obj3 = Object(1, 1);
 
-	Matrix matrix1 = demo.make_circle(10);
-	Matrix matrix2 = demo.make_triangle(0,20,5,2,10,24);
-	Matrix matrix3= demo.make_square(4,10);
+	Matrix matrix1 = demo.makeCircle(10);
+	Matrix matrix2 = demo.makeTriangle(0,20,5,2,10,24);
+	Matrix matrix3= demo.makeSquare(4,10);
 
 	obj1.makeRigidbody();
 	obj2.makeRigidbody();
@@ -37,10 +37,10 @@ int main(void) {
 	objects.push_back(&obj1);
 	objects.push_back(&obj2);
 	while (1) {
-		demo.set_tmpbufScreen();
-		demo.tmp_draw_Object(obj1);
-		demo.tmp_draw_Object(obj2);
-		demo.tmp_draw_Object(obj3);
+		demo.setTmpBufScreen();
+		demo.drawTmpObject(obj1);
+		demo.drawTmpObject(obj2);
+		demo.drawTmpObject(obj3);
 		obj1.move(objects);
 		obj3.move(objects);
 		demo.update();

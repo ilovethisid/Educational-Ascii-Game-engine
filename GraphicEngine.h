@@ -5,7 +5,7 @@
 #include  <windows.h>
 #include "Object.h"
 
-enum COLOUR
+enum COLOR
 {
 	FG_BLACK = 0x0000,
 	FG_DARK_BLUE = 0x0001,
@@ -55,31 +55,31 @@ class Console{
 protected:
 	int screen_width;//콘솔 너비
 	int screen_height;//콘솔 높이
-	HANDLE m_hConsole;
-	SMALL_RECT m_rectWindow;
-	CHAR_INFO* bufScreen; //화면 저장
-	CHAR_INFO* tmp_bufScreen;// 임시저장
+	HANDLE console_handle;
+	SMALL_RECT window_rect;
+	CHAR_INFO* screen_buffer; //화면 저장
+	CHAR_INFO* tmp_screen_buffer;// 임시저장
 
 public:
 	Console(); //생성자 함수
-	int make_console(int width, int height, int fontw, int fonth);
+	int makeConsole(int width, int height, int fontw, int fonth);
 	void draw(int x, int y, short c = 0x2588, short col = 0x000F); //c= 채우는 문자 col= 색상
-	void draw_circle(int x, int y, int r, short c = 0x2588, short col = 0x000F);
-	void draw_line(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);// 선그리기
-	void draw_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);// 삼각형 그리기
+	void drawCircle(int x, int y, int r, short c = 0x2588, short col = 0x000F);
+	void drawLine(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);// 선그리기
+	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);// 삼각형 그리기
 
-	void draw_square(int x, int y, int width, int height, short c = 0x2588, short col = 0x000F);//사각형 그리기
-	void draw_Object(Object obj, short col = 0x000F); // 배열 그리기
+	void drawSquare(int x, int y, int width, int height, short c = 0x2588, short col = 0x000F);//사각형 그리기
+	void drawObject(Object obj, short col = 0x000F); // 배열 그리기
 
-	void tmp_draw(int x, int y, short c = 0x2588, short col = 0x000F);//임시로 그리기
-	void tmp_draw_Object(Object obj, short col = 0x000F); //임시로 그리기
-	void clear_buf(); //bufScreen 초기화
+	void drawTmp(int x, int y, short c = 0x2588, short col = 0x000F);//임시로 그리기
+	void drawTmpObject(Object obj, short col = 0x000F); //임시로 그리기
+	void clearTmpBufScreen(); //bufScreen 초기화
 
-	Matrix make_circle(int r, short c=0x2588);
-	Matrix make_square(int width, int height, short c = 0x2588);
-	Matrix make_triangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);//삼각형 생성
-	void matrix_line(short*** pnt, int x1, int y1, int x2, int y2, short c = 0x2588);
+	Matrix makeCircle(int r, short c=0x2588);
+	Matrix makeSquare(int width, int height, short c = 0x2588);
+	Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);//삼각형 생성
+	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = 0x2588);
 
 	void update(); //tmp_bufScreen 출력
-	void set_tmpbufScreen();
+	void setTmpBufScreen();
 };
