@@ -12,6 +12,7 @@
 #include "./GraphicEngine/GraphicEngine.h"
 #include "./KeyListener/KeyListener.hpp"
 #include "./KeyListener/KeyMacro.hpp"
+#include "./Sound/sound.h"
 
 const int KEY_UP = 72;
 const int KEY_DOWN = 80;

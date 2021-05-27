@@ -162,13 +162,15 @@ void GameLoop::vHideConsoleCursor()
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
-
+/*
 int main(void)
 {
     GameLoop *game_loop = new GameLoop();
     game_loop->setFPS(12);
     game_loop->BuildScreen(160, 100, 8, 8);
+    Sound my_sound = Sound();
+    my_sound.playSound("hello.wav");
     game_loop->UpdateScreen();
-
     return 0;
 }
+*/
