@@ -14,7 +14,7 @@ GameLoop::GameLoop()
 /* Build console window. */
 void GameLoop::BuildScreen(int _width, int _height, int _fontw, int _fonth)
 {
-    console_.make_console(_width, _height, _fontw, _fonth);
+    console_.makeConsole(_width, _height, _fontw, _fonth);
     vHideConsoleCursor();
 }
 
@@ -49,8 +49,8 @@ void GameLoop::UpdateScreen()
     const Point kUnitY = Point(0, 1);             // <------- Prototype of target object. Will be removed later.
 
 
-    Matrix mat_circle = console_.make_circle(10);
-    Matrix mat_square = console_.make_square(6, 10);
+    Matrix mat_circle = console_.makeCircle(10);
+    Matrix mat_square = console_.makeSquare(6, 10);
 
     Object circle1 = Object(target_point.getX(), target_point.getY());
     circle1.makeImage(mat_circle);
@@ -79,9 +79,9 @@ void GameLoop::UpdateScreen()
 
         vGotoXY(target_point);
 
-        console_.set_tmpbufScreen();
-        console_.tmp_draw_Object(circle1);
-        console_.tmp_draw_Object(square1);
+        console_.setTmpBufScreen();
+        console_.drawTmpObject(circle1);
+        console_.drawTmpObject(square1);
 
         circle1.move(objects);
         square1.move(objects);
@@ -162,7 +162,6 @@ void GameLoop::vHideConsoleCursor()
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
 
-/*
 int main(void)
 {
     GameLoop *game_loop = new GameLoop();
@@ -173,4 +172,3 @@ int main(void)
     game_loop->UpdateScreen();
     return 0;
 }
-*/
