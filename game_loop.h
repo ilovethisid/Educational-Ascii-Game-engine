@@ -7,9 +7,9 @@
 #include <ctime>
 #include <conio.h>
 #include <Windows.h>
-#include "./PhysicsEngine/CoordinateSystem.h"
-#include "./PhysicsEngine/Object.h"
-#include "./GraphicEngine/GraphicEngine.h"
+#include "./Physics/CoordinateSystem.h"
+#include "./Physics/Object.h"
+#include "./Graphic/GraphicEngine.h"
 #include "./KeyListener/KeyListener.hpp"
 #include "./KeyListener/KeyMacro.hpp"
 #include "./Sound/sound.h"

@@ -1,5 +1,5 @@
-#include "Object.cpp"
-#include "Matrix.cpp"
+#include "../Physics/Object.h"
+#include "../Physics/Matrix.h"
 #include <iostream>
 #include <string>
 #include <fstream>
