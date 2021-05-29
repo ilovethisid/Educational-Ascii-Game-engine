@@ -27,15 +27,20 @@ private:
     Console console_;
     KeyListener key_listener_;
     std::thread* temp_;
-    void vGotoXY(Point _point);
+    clock_t start_, end_, remaining_time_;
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
+    void vPrintInfo();
 
 public:
+    vector<Object*> objects;
     GameLoop();
     Console getConsole();
     void setFPS(double frames);
     void BuildScreen(int width, int height, int fontw, int fonth);
-    void UpdateScreen();
+    KeyListener getKeyListener();
+    void StartFrameUpdate();
+    void FinishFrameUpdate(boolean is_print_info = false);
+    void GotoXY(Point _point);
     void MoveTargetObject(Point target_obj);
 };

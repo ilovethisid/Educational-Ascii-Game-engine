@@ -37,117 +37,48 @@ DWORD GameLoop::vGetUnitTime()
     return unit_time * 1000;
 }
 
-/* Moves target object */
-void GameLoop::UpdateScreen()
+KeyListener GameLoop::getKeyListener()
 {
-    Point target_point = Point(4, 6);
-    int inputKey;
+    return klc;
+}
 
-    clock_t start, end, interval, remaining_time;
+void GameLoop::StartFrameUpdate()
+{
+    start_ = clock();               // start timer
+}
 
-    const Point kUnitX = Point(1, 0);
-    const Point kUnitY = Point(0, 1);             // <------- Prototype of target object. Will be removed later.
+/* Update console screen */
+void GameLoop::FinishFrameUpdate(boolean is_print_info)
+{
+    clock_t interval;
 
+    console_.update();
+    end_ = clock();                 // end timer
+    interval = end_ - start_;       // total elapsed time during a iteration
+    remaining_time_ = vGetUnitTime() - interval;             // remaining time to sleep
 
-    Matrix mat_circle = console_.makeCircle(10);
-    Matrix mat_square = console_.makeSquare(6, 10);
+    if (is_print_info) vPrintInfo();
 
-    Object circle1 = Object(target_point.getX(), target_point.getY());
-    circle1.makeImage(mat_circle);
-    circle1.makeRigidbody();
-    circle1.rigidbody.setVelocity(1, 1);
-    circle1.rigidbody.makeMatrixCollider(mat_circle);
+    Sleep(remaining_time_);
+}
 
-    Object square1 = Object(100, 100);
-    square1.makeImage(mat_square);
-    square1.makeRigidbody();
-    square1.rigidbody.setVelocity(-1, -1);
-    square1.rigidbody.makeMatrixCollider(mat_square);
+void GameLoop::vPrintInfo()
+{
+    clock_t interval;
 
+    GotoXY(Point(0, 90));      // move cursor to bottom of window
 
-    vector<Object*> objects;
+    std::cout << "current FPS is " << fps_ << std::endl;
+    std::cout << "vGetUnitTime() is " << vGetUnitTime() << "ms" << std::endl;
 
-    objects.push_back(&circle1);
-    objects.push_back(&square1);
+    interval = end_ - start_;       // total elapsed time during a iteration
+    std::cout << "interval is " << interval << "ms" << std::endl;
 
-
-    Point shot_point;
-
-    while (true) {
-        
-        start = clock();                 // start timer
-
-        vGotoXY(target_point);
-
-        console_.setTmpBufScreen();
-        console_.drawTmpObject(circle1);
-        console_.drawTmpObject(square1);
-
-        circle1.move(objects);
-        square1.move(objects);
-        console_.update();               // <------- Prototype of target object. Will be removed later.
-
-
- // Implementation of KeyListener
-        if (klc.keycheck(eag_Top)) {
-            // do something
-            target_point = target_point - kUnitY;
-        }
-        else if (klc.keycheck(eag_Bottom)) {
-            // do something
-            target_point = target_point + kUnitY;
-        }
-        else if (klc.keycheck(eag_Left)) {
-            // do something
-            target_point = target_point - kUnitX;
-        }
-        else if (klc.keycheck(eag_Right)) {
-            // do something
-            target_point = target_point + kUnitX;
-        }
-
-        // check if target object goes outside of console window.
-        if (target_point.getX() < 0)
-            target_point = target_point + kUnitX;
-        else if (target_point.getY() < 0)
-            target_point = target_point + kUnitY;
-
-
-        std::cout << target_point.getX() << ", " << target_point.getY() << std::endl;
-
-
-        if (klc.keycheck(eag_space)) {
-            // do something
-            shot_point = target_point;
-            std::cout << "space!!!" << std::endl;
-        }
-
-        shot_point = shot_point - kUnitY;
-        vGotoXY(shot_point);
-        std::cout << ", " << std::endl;
-        vGotoXY(target_point);
-
-        end = clock();                // end timer
-
-        interval = end - start;    // total elapsed time during a iteration
-
-
-        vGotoXY(Point(0, 90));      // move cursor to bottom of window
-
-        std::cout << "current FPS is " << fps_ << std::endl;
-        std::cout << "vGetUnitTime() is " << vGetUnitTime() << "ms" << std::endl;
-
-        std::cout << "interval is " << interval << "ms" << std::endl;
-
-        remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
-        std::cout << "remaining_time is " << remaining_time << "ms" << std::endl;
-
-        Sleep(remaining_time);
-    }
+    std::cout << "remaining_time is " << remaining_time_ << "ms" << std::endl;
 }
 
 /* Moves console cursor position */
-void GameLoop::vGotoXY(Point _point)
+void GameLoop::GotoXY(Point _point)
 {
     COORD pos = {(short) _point.getX(), (short) _point.getY()};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
@@ -160,15 +91,4 @@ void GameLoop::vHideConsoleCursor()
     info.dwSize = 1;
     info.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-}
-
-int main(void)
-{
-    GameLoop *game_loop = new GameLoop();
-    game_loop->setFPS(12);
-    game_loop->BuildScreen(160, 100, 8, 8);
-    Sound my_sound = Sound();
-    my_sound.playSound("hello.wav");
-    game_loop->UpdateScreen();
-    return 0;
 }
