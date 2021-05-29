@@ -174,7 +174,14 @@ void Console::drawTmpObject(Object obj, short col) {
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
 			if (tmp.element[i][j]) drawTmp(obj.getX() + i, obj.getY() + j, tmp.element[i][j], col);
-}// 배열 그리기
+}
+void Console::drawTmpObjects(vector<Object*> objects, short col)
+{
+	for (int i = 0; i < objects.size(); i++) {
+		drawTmpObject(*objects[i]);
+	}
+}
+// 배열 그리기
 
 void Console::clearTmpBufScreen() {
 	memset(screen_buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);

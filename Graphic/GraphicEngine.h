@@ -73,6 +73,7 @@ public:
 
 	void drawTmp(int x, int y, short c = 0x2588, short col = 0x000F);//임시로 그리기
 	void drawTmpObject(Object obj, short col = 0x000F); //임시로 그리기
+	void drawTmpObjects(vector<Object*> objects, short col = 0x000F); //임시로 그리기
 	void clearTmpBufScreen(); //bufScreen 초기화
 
 	Matrix makeCircle(int r, short c=0x2588);

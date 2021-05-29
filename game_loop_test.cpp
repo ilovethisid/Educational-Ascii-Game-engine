@@ -11,47 +11,47 @@ void makeFigures(GameLoop* game_loop);
 void checkMove(GameLoop* game_loop);
 void checkShot(GameLoop* game_loop);
 
-int main(void)
-{
-    GameLoop* game_loop = new GameLoop();
-    game_loop->setFPS(12);
-    game_loop->BuildScreen(160, 100, 8, 8);
-
-    // 최초 그림 그려지는 점 초기화
-    target_point = Point(4, 6);
-
-    makeFigures(game_loop);
-
-    Sound my_sound = Sound();
-    my_sound.playSound("hello.wav");
-
-
-    while (true) {
-
-        game_loop->StartFrameUpdate();
-
-
-
-        game_loop->getConsole().setTmpBufScreen();
-        game_loop->getConsole().drawTmpObject(circle1);
-        game_loop->getConsole().drawTmpObject(square1);
-
-        circle1.move(game_loop->objects);
-        square1.move(game_loop->objects);
-
-
-        checkMove(game_loop);
-        checkShot(game_loop);
-
-        game_loop->FinishFrameUpdate(true);
-        
-        game_loop->GotoXY(target_point);
-        std::cout << target_point.getX() << ", " << target_point.getY() << std::endl;
-    }
-
-
-    return 0;
-}
+//int main(void)
+//{
+//    GameLoop* game_loop = new GameLoop();
+//    game_loop->setFPS(12);
+//    game_loop->BuildScreen(160, 100, 8, 8);
+//
+//    // 최초 그림 그려지는 점 초기화
+//    target_point = Point(4, 6);
+//
+//    makeFigures(game_loop);
+//
+//    Sound my_sound = Sound();
+//    my_sound.playSound("hello.wav");
+//
+//
+//    while (true) {
+//
+//        game_loop->StartFrameUpdate();
+//
+//
+//
+//        game_loop->getConsole().setTmpBufScreen();
+//        game_loop->getConsole().drawTmpObject(circle1);
+//        game_loop->getConsole().drawTmpObject(square1);
+//
+//        circle1.move(game_loop->objects);
+//        square1.move(game_loop->objects);
+//
+//
+//        checkMove(game_loop);
+//        checkShot(game_loop);
+//
+//        game_loop->FinishFrameUpdate(true);
+//        
+//        game_loop->GotoXY(target_point);
+//        std::cout << target_point.getX() << ", " << target_point.getY() << std::endl;
+//    }
+//
+//
+//    return 0;
+//}
 
 
 void makeFigures(GameLoop* game_loop)

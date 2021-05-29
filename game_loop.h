@@ -35,12 +35,19 @@ private:
 public:
     vector<Object*> objects;
     GameLoop();
+    
     Console getConsole();
+
+    void initialize(Console demo, vector<Object*>& objects);
     void setFPS(double frames);
+    void start(Console demo, vector<Object*>& objects);
+    void update(Console demo, vector<Object*>& objects);
+    void checkMove(Object& obj);
+
     void BuildScreen(int width, int height, int fontw, int fonth);
+
     KeyListener getKeyListener();
-    void StartFrameUpdate();
-    void FinishFrameUpdate(boolean is_print_info = false);
+
     void GotoXY(Point _point);
     void MoveTargetObject(Point target_obj);
 };
