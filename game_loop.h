@@ -38,10 +38,10 @@ public:
     
     Console getConsole();
 
-    void initialize(Console demo, vector<Object*>& objects);
+    void initialize(vector<Object*>& objects);
     void setFPS(double frames);
-    void start(Console demo, vector<Object*>& objects);
-    void update(Console demo, vector<Object*>& objects);
+    void start( vector<Object*>& objects);
+    void update(vector<Object*>& objects);
     void checkMove(Object& obj);
 
     void BuildScreen(int width, int height, int fontw, int fonth);

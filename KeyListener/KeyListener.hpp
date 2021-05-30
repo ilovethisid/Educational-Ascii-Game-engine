@@ -31,3 +31,12 @@ public:
 	bool ReturnF();
 	void exit();
 };
+
+class gameloop_t
+{
+private:
+	std::thread* temp;
+public:
+	void start();
+	void end();
+};

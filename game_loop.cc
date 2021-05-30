@@ -3,12 +3,56 @@
 extern void KeyListenerThread();
 extern KeyListener klc;
 
+
+///////////////////////// 비행기 게임 부위
+class Player_Plane
+{
+private:
+    Object plane;
+    int life;
+    int power;
+public:
+    void moveByKey() {
+        if (klc.keycheck(eag_Top)) {
+            plane.rigidbody.setVelocity(0, -2);
+            if (klc.keycheck(eag_Left))
+                plane.rigidbody.setVelocity(-2, -2);
+            else if (klc.keycheck(eag_Right))
+                plane.rigidbody.setVelocity(2, -2);
+        }
+        else if (klc.keycheck(eag_Bottom)) {
+            plane.rigidbody.setVelocity(0, 2);
+            if (klc.keycheck(eag_Left))
+                plane.rigidbody.setVelocity(-2, 2);
+            else if (klc.keycheck(eag_Right))
+                plane.rigidbody.setVelocity(2, 2);
+        }
+        else if (klc.keycheck(eag_Left)) {
+            plane.rigidbody.setVelocity(-2, 0);
+        }
+        else if (klc.keycheck(eag_Right)) {
+            plane.rigidbody.setVelocity(2, 0);
+        }
+        else {
+            plane.rigidbody.setVelocity(0, 0);
+        }
+    }
+};
+
+
+
+
+
+/////////////////////////
+
+
+
 GameLoop::GameLoop()
 {
     fps_ = 30;
     console_ = Console();
-    key_listener_ = KeyListener();
-    temp_ = new std::thread(KeyListenerThread);//이 주소를 gameloop클래스에 저장해주세요
+    gameloop_t keythread;
+    keythread.start();
 }
 
 /* Build console window. */
@@ -29,7 +73,7 @@ Console GameLoop::getConsole()
     return console_;
 }
 
-void GameLoop::initialize(Console demo, vector<Object*>& objects)
+void GameLoop::initialize( vector<Object*>& objects)
 {
     int x = 0;
     int y = 0;
@@ -37,23 +81,21 @@ void GameLoop::initialize(Console demo, vector<Object*>& objects)
     int y1 = 100;
     Object* obj1 = new Object(20, 20);
     Object* obj2 = new Object(70, 70);
-    Object* obj3 = new Object(1, 1);
 
-    Matrix matrix1 = demo.makeCircle(10);
-    Matrix matrix2 = demo.makeTriangle(0, 20, 5, 2, 10, 24);
-    Matrix matrix3 = demo.makeSquare(4, 10);
+
+    Matrix matrix1 = console_.makeCircle(10);
+    Matrix matrix2 = console_.makeTriangle(0, 20, 5, 2, 10, 24);
+
 
     obj1->makeRigidbody();
     obj2->makeRigidbody();
-    obj3->makeRigidbody();
+
     obj1->makeImage(matrix1);
     obj2->makeImage(matrix2);
-    obj3->makeImage(matrix3);
-    obj1->rigidbody.setVelocity(1, 1);
-    obj3->rigidbody.setVelocity(1, 1);
+
     obj1->rigidbody.makeMatrixCollider(matrix1);
     obj2->rigidbody.makeMatrixCollider(matrix2);
-    obj3->rigidbody.makeMatrixCollider(matrix3);
+
 
 
     objects.push_back(obj1);
@@ -66,12 +108,12 @@ void GameLoop::setFPS(double _frames)
     fps_ = _frames;
 }
 
-void GameLoop::start(Console demo, vector<Object*>& objects)
+void GameLoop::start( vector<Object*>& objects)
 {
     clock_t start, end, interval, remaining_time;
     bool gameover = 0;
 
-    initialize(demo, objects);
+    initialize( objects);
 
     while (!gameover) {
 
@@ -81,7 +123,7 @@ void GameLoop::start(Console demo, vector<Object*>& objects)
 
         interval = end - start;    // total elapsed time during a iteration
 
-        update(demo, objects);
+        update(objects);
 
         remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
 
@@ -89,33 +131,41 @@ void GameLoop::start(Console demo, vector<Object*>& objects)
     }
 }
 
-void GameLoop::update(Console demo, vector<Object*>& objects)
+void GameLoop::update( vector<Object*>& objects)
 {
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->move(objects);
     }
+    console_.setTmpBufScreen();
 
     checkMove(*objects[0]);
 
-    demo.setTmpBufScreen();
-    demo.drawTmpObjects(objects);
-    demo.update();
+    console_.drawTmpObjects(objects);
+    console_.update();
 }
 
 // Implementation of KeyListener
 void GameLoop::checkMove(Object& obj)
 {
-    if (getKeyListener().keycheck(eag_Top)) {
-        obj.rigidbody.setVelocity(0, -1);
+    if (klc.keycheck(eag_Top)) {
+        obj.rigidbody.setVelocity(0, -2);
+        if (klc.keycheck(eag_Left))
+            obj.rigidbody.setVelocity(-2, -2);
+        else if (klc.keycheck(eag_Right))
+            obj.rigidbody.setVelocity(2, -2);
     }
-    else if (getKeyListener().keycheck(eag_Bottom)) {
-        obj.rigidbody.setVelocity(0, 1);
+    else if (klc.keycheck(eag_Bottom)) {
+        obj.rigidbody.setVelocity(0, 2);
+        if (klc.keycheck(eag_Left))
+            obj.rigidbody.setVelocity(-2, 2);
+        else if (klc.keycheck(eag_Right))
+            obj.rigidbody.setVelocity(2, 2);
     }
-    else if (getKeyListener().keycheck(eag_Left)) {
-        obj.rigidbody.setVelocity(-1, 0);
+    else if (klc.keycheck(eag_Left)) {
+        obj.rigidbody.setVelocity(-2, 0);
     }
-    else if (getKeyListener().keycheck(eag_Right)) {
-        obj.rigidbody.setVelocity(1, 0);
+    else if (klc.keycheck(eag_Right)) {
+        obj.rigidbody.setVelocity(2, 0);
     }
     else {
         obj.rigidbody.setVelocity(0, 0);

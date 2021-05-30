@@ -31,6 +31,7 @@ Matrix::Matrix(short _width, short _height)
 	element = new short* [height];
 	for (int i = 0; i < height; i++) {
 		element[i] = new short[width];
+		memset(element[i], 0, sizeof(short) * width);
 	}
 }
 

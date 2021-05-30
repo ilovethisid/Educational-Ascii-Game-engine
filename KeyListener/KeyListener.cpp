@@ -143,17 +143,11 @@ void KeyListenerThread()
 	}
 
 }
-class gameloop_t
+void gameloop_t::start()
 {
-private:
-	std::thread* temp;
-public:
-	void start()
-	{
-		temp = new std::thread(KeyListenerThread);
-	}
-	void end()
-	{
-		temp->join();
-	}
-};
+	temp = new std::thread(KeyListenerThread);
+}
+void gameloop_t::end()
+{
+	temp->join();
+}
