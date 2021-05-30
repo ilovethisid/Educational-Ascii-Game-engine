@@ -63,23 +63,23 @@ protected:
 public:
 	Console(); //생성자 함수
 	int makeConsole(int width, int height, int fontw, int fonth);
-	void draw(int x, int y, short c = 0x2588, short col = 0x000F); //c= 채우는 문자 col= 색상
-	void drawCircle(int x, int y, int r, short c = 0x2588, short col = 0x000F);
-	void drawLine(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);// 선그리기
-	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);// 삼각형 그리기
+	void draw(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE); //c= 채우는 문자 col= 색상
+	void drawCircle(int x, int y, int r, short c = PIXEL_SOLID, short col = FG_WHITE);
+	void drawLine(int x1, int y1, int x2, int y2, short c = PIXEL_SOLID, short col = FG_WHITE);// 선그리기
+	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);// 삼각형 그리기
 
-	void drawSquare(int x, int y, int width, int height, short c = 0x2588, short col = 0x000F);//사각형 그리기
-	void drawObject(Object obj, short col = 0x000F); // 배열 그리기
+	void drawSquare(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
+	void drawObject(Object obj); // 배열 그리기
 
-	void drawTmp(int x, int y, short c = 0x2588, short col = 0x000F);//임시로 그리기
-	void drawTmpObject(Object obj, short col = 0x000F); //임시로 그리기
-	void drawTmpObjects(vector<Object*> objects, short col = 0x000F); //임시로 그리기
+	void drawTmp(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE);//임시로 그리기
+	void drawTmpObject(Object obj); //임시로 그리기
+	void drawTmpObjects(vector<Object*> objects ); //임시로 그리기
 	void clearTmpBufScreen(); //bufScreen 초기화
 
-	Matrix makeCircle(int r, short c=0x2588);
-	Matrix makeSquare(int width, int height, short c = 0x2588);
-	Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);//삼각형 생성
-	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = 0x2588);
+	Matrix makeCircle(int r, short c= PIXEL_SOLID, short col = FG_WHITE);
+	Matrix makeSquare(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
+	Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);//삼각형 생성
+	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = PIXEL_SOLID);
 
 	void update(); //tmp_bufScreen 출력
 	void setTmpBufScreen();

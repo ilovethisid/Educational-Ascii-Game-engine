@@ -70,7 +70,7 @@ KeyListener GameLoop::getKeyListener()
 /* Returns user built console object */
 Console GameLoop::getConsole()
 {
-    return console_;
+    return console_; 
 }
 
 void GameLoop::initialize( vector<Object*>& objects)
@@ -83,9 +83,24 @@ void GameLoop::initialize( vector<Object*>& objects)
     Object* obj2 = new Object(70, 70);
 
 
-    Matrix matrix1 = console_.makeCircle(10);
-    Matrix matrix2 = console_.makeTriangle(0, 20, 5, 2, 10, 24);
+    Matrix matrix1 = console_.makeCircle(10, 0x263A, BG_DARK_BLUE);
+    Matrix matrix2 = console_.makeTriangle(0, 20, 5, 2, 10, 24, PIXEL_SOLID, FG_BLUE);
 
+    console_.draw(1, 1, 0x263A, 0b00001010);
+    console_.draw(1, 2, 9608, 0b00000010);
+    console_.draw(1, 3, 9608, 0b00001010);
+    console_.draw(1, 4, 9608, 4);
+    console_.draw(1, 5, 9608, 5);
+    console_.draw(1, 6, 9608, 6);
+    console_.draw(1, 7, 9608, 7);
+    console_.draw(1, 8, 9608, 8);
+    console_.draw(1, 9, 9608, 9);
+    console_.draw(1, 10, 9608, 10);
+    console_.draw(1, 11, 9608, 11);
+    console_.draw(1, 12, 9608, 12);
+    console_.draw(1, 13, 9608, 13);
+    console_.draw(1, 14, 9608, 14);
+    console_.draw(1, 15, 9608, 15);
 
     obj1->makeRigidbody();
     obj2->makeRigidbody();

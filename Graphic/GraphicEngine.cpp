@@ -12,6 +12,10 @@ int Console::makeConsole(int width, int height, int fontw, int fonth) {
 	screen_width = width;
 	screen_height = height;
 	//screen buffer의 size 정함
+
+	window_rect = { 0, 0, 1, 1 };
+	SetConsoleWindowInfo(console_handle , TRUE, &window_rect);
+
 	COORD coord = { (short)screen_width,(short)screen_height };
 	if (!SetConsoleScreenBufferSize(console_handle, coord)) printf("ERROR1");
 	if (!SetConsoleActiveScreenBuffer(console_handle)) printf("ERROR2");
@@ -162,20 +166,21 @@ void Console::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short
 	drawLine(x3, y3, x1, y1, c, col);
 }
 
-void Console::drawObject(Object obj, short col) {
+void Console::drawObject(Object obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
-			if (tmp.element[i][j]) draw(obj.getX() + i, obj.getY() + j, tmp.element[i][j], col);
+			if (tmp.element[i][j]) draw(obj.getX() + i, obj.getY() + j, tmp.element[i][j], tmp.color[i*tmp.width+j]);
 }// 배열 그리기
 
-void Console::drawTmpObject(Object obj, short col) {
+void Console::drawTmpObject(Object obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
-			if (tmp.element[i][j]) drawTmp(obj.getX() + i, obj.getY() + j, tmp.element[i][j], col);
+			if (tmp.element[i][j]) drawTmp(obj.getX() + i, obj.getY() + j, tmp.element[i][j], tmp.color[i * tmp.width + j]);
 }
-void Console::drawTmpObjects(vector<Object*> objects, short col)
+
+void Console::drawTmpObjects(vector<Object*> objects)
 {
 	for (int i = 0; i < objects.size(); i++) {
 		drawTmpObject(*objects[i]);
@@ -187,8 +192,9 @@ void Console::clearTmpBufScreen() {
 	memset(screen_buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
 }//bufScreen 초기화
 
-Matrix Console::makeCircle(int r, short c) {
+Matrix Console::makeCircle(int r, short c, short col) {
 	Matrix image =Matrix(2*r+1,2*r+1);
+	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
 	int x = 0;
 	int y = r;
 	while (y >= x) {
@@ -209,14 +215,16 @@ Matrix Console::makeCircle(int r, short c) {
 Matrix Console::makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
 
 	Matrix image = Matrix(max(max(x1, x2), x3)+1, max(max(y1, y2), y3)+1);
+	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
 	drawLineInMatrix(&image.element, x1, y1, x2, y2, c);
 	drawLineInMatrix(&image.element, x2, y2, x3, y3, c);
 	drawLineInMatrix(&image.element, x3, y3, x1, y1, c);
 	return image;
 }
 
-Matrix Console::makeSquare(int width, int height, short c){
+Matrix Console::makeSquare(int width, int height, short c, short col){
 	Matrix image = Matrix(width, height);
+	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
 	for(int i=0; i<height;i++)
 		std::fill_n(image.element[i], width, c);
 	return image;
