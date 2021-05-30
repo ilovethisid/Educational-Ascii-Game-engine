@@ -5,40 +5,40 @@ extern KeyListener klc;
 
 
 ///////////////////////// ∫Ò«‡±‚ ∞‘¿” ∫Œ¿ß
-class Player_Plane
-{
-private:
-    Object plane;
-    int life;
-    int power;
-public:
-    void moveByKey() {
-        if (klc.keycheck(eag_Top)) {
-            plane.rigidbody.setVelocity(0, -2);
-            if (klc.keycheck(eag_Left))
-                plane.rigidbody.setVelocity(-2, -2);
-            else if (klc.keycheck(eag_Right))
-                plane.rigidbody.setVelocity(2, -2);
-        }
-        else if (klc.keycheck(eag_Bottom)) {
-            plane.rigidbody.setVelocity(0, 2);
-            if (klc.keycheck(eag_Left))
-                plane.rigidbody.setVelocity(-2, 2);
-            else if (klc.keycheck(eag_Right))
-                plane.rigidbody.setVelocity(2, 2);
-        }
-        else if (klc.keycheck(eag_Left)) {
-            plane.rigidbody.setVelocity(-2, 0);
-        }
-        else if (klc.keycheck(eag_Right)) {
-            plane.rigidbody.setVelocity(2, 0);
-        }
-        else {
-            plane.rigidbody.setVelocity(0, 0);
-        }
-    }
-};
-
+//class Player_Plane
+//{
+//private:
+//    Object plane;
+//    int life;
+//    int power;
+//public:
+//    void moveByKey() {
+//        if (klc.keycheck(eag_Top)) {
+//            plane.rigidbody.setVelocity(0, -2);
+//            if (klc.keycheck(eag_Left))
+//                plane.rigidbody.setVelocity(-2, -2);
+//            else if (klc.keycheck(eag_Right))
+//                plane.rigidbody.setVelocity(2, -2);
+//        }
+//        else if (klc.keycheck(eag_Bottom)) {
+//            plane.rigidbody.setVelocity(0, 2);
+//            if (klc.keycheck(eag_Left))
+//                plane.rigidbody.setVelocity(-2, 2);
+//            else if (klc.keycheck(eag_Right))
+//                plane.rigidbody.setVelocity(2, 2);
+//        }
+//        else if (klc.keycheck(eag_Left)) {
+//            plane.rigidbody.setVelocity(-2, 0);
+//        }
+//        else if (klc.keycheck(eag_Right)) {
+//            plane.rigidbody.setVelocity(2, 0);
+//        }
+//        else {
+//            plane.rigidbody.setVelocity(0, 0);
+//        }
+//    }
+//};
+//
 
 
 
@@ -79,28 +79,15 @@ void GameLoop::initialize( vector<Object*>& objects)
     int y = 0;
     int x1 = 100;
     int y1 = 100;
-    Object* obj1 = new Object(20, 20);
-    Object* obj2 = new Object(70, 70);
+    Object* obj1 = new Object(20, 60);
+    Object* obj2 = new Object(30, 40);
 
+    Matrix background = console_.makeFile2Matrix("C:\\Users\\¡§»∆ºÆ\\Desktop\\±Í«È º“∞¯\\Educational-Ascii-Game-engine\\background");//∆ƒ¿œ ∞Ê∑Œ
+    console_.drawMatrix(0, 0, background);
 
-    Matrix matrix1 = console_.makeCircle(10, 0x263A, BG_DARK_BLUE);
-    Matrix matrix2 = console_.makeTriangle(0, 20, 5, 2, 10, 24, PIXEL_SOLID, FG_BLUE);
+    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\¡§»∆ºÆ\\Desktop\\±Í«È º“∞¯\\Educational-Ascii-Game-engine\\plane");
+    Matrix matrix2 = console_.makeCircle(5);
 
-    console_.draw(1, 1, 0x263A, 0b00001010);
-    console_.draw(1, 2, 9608, 0b00000010);
-    console_.draw(1, 3, 9608, 0b00001010);
-    console_.draw(1, 4, 9608, 4);
-    console_.draw(1, 5, 9608, 5);
-    console_.draw(1, 6, 9608, 6);
-    console_.draw(1, 7, 9608, 7);
-    console_.draw(1, 8, 9608, 8);
-    console_.draw(1, 9, 9608, 9);
-    console_.draw(1, 10, 9608, 10);
-    console_.draw(1, 11, 9608, 11);
-    console_.draw(1, 12, 9608, 12);
-    console_.draw(1, 13, 9608, 13);
-    console_.draw(1, 14, 9608, 14);
-    console_.draw(1, 15, 9608, 15);
 
     obj1->makeRigidbody();
     obj2->makeRigidbody();

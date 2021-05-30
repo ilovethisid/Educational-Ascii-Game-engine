@@ -1,6 +1,6 @@
 #include  "GraphicEngine.h"
 #include <algorithm>
-
+using namespace std;
 
 Console::Console() {
 	screen_width = 160;
@@ -170,14 +170,23 @@ void Console::drawObject(Object obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
-			if (tmp.element[i][j]) draw(obj.getX() + i, obj.getY() + j, tmp.element[i][j], tmp.color[i*tmp.width+j]);
+			if (tmp.element[i][j]) draw(obj.getX() + j, obj.getY() + i, tmp.element[i][j], tmp.color[i*tmp.width+j]);
 }// 배열 그리기
+
+void Console::drawMatrix(int x, int y, Matrix image) {
+
+	for (int i = 0; i < image.height; i++)
+		for (int j = 0; j < image.width; j++)
+			if (image.element[i][j]) draw(x + j, y + i, image.element[i][j], image.color[i * image.width + j]);
+}
+
+
 
 void Console::drawTmpObject(Object obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
-			if (tmp.element[i][j]) drawTmp(obj.getX() + i, obj.getY() + j, tmp.element[i][j], tmp.color[i * tmp.width + j]);
+			if (tmp.element[i][j]) drawTmp(obj.getX() + j, obj.getY() + i, tmp.element[i][j], tmp.color[i * tmp.width + j]);
 }
 
 void Console::drawTmpObjects(vector<Object*> objects)
@@ -229,6 +238,71 @@ Matrix Console::makeSquare(int width, int height, short c, short col){
 		std::fill_n(image.element[i], width, c);
 	return image;
 }
+
+wstringstream readFile(const char* filename) {
+	wifstream wif(filename);
+	wif.imbue(locale(std::locale::empty(), new codecvt_utf8<wchar_t>));
+	wstringstream wss;
+	wss << wif.rdbuf();
+	wif.close();
+	return wss;
+}
+
+Matrix Console::makeFile2Matrix(const char* filename){
+	wstringstream wss = readFile(filename);
+
+	wstring temp;
+
+	int width;
+	getline(wss, temp, L',');
+	width = stoi(temp);
+
+	int height;
+	getline(wss, temp, L',');
+	height = stoi(temp);
+
+	Matrix image = Matrix(width, height);
+
+	for (int j = 0; j < width; j++) {
+		for (int i = 0; i < height; i++) {
+
+			int fr, fg, fb, br, bg, bb;
+
+			getline(wss, temp, L',');
+			fr = stoi(temp);
+			getline(wss, temp, L',');
+			fg = stoi(temp);
+			getline(wss, temp, L',');
+			fb = stoi(temp);
+			getline(wss, temp, L',');
+			getline(wss, temp, L',');
+			br = stoi(temp);
+			getline(wss, temp, L',');
+			bg = stoi(temp);
+			getline(wss, temp, L',');
+			bb = stoi(temp);
+			getline(wss, temp, L',');
+			getline(wss, temp, L',');
+
+			unsigned char color = 0;
+			if (fb>30) color += 1;
+			if (fg>30) color += 2;
+			if (fr>30) color += 4;
+			if (bb>30) color += 16;
+			if (bg>30) color += 32;
+			if (br>30) color += 64;
+			if ((fr+fg+fb)&&fr < 200 && fg < 200 && fb < 200) color += 8;
+			if ((br + bg + bb) && br < 200 && bg < 200 && bb < 200) color += 128;
+			unsigned short c = temp[0];
+			if(c!= 78)image.element[i][j] = c;
+			
+			image.color[i * width + j] = color;
+		}
+	}
+	wss.str(L"");
+	return image;
+}
+
 
 void Console::setTmpBufScreen() {//tmpbufScreen
 	memcpy(tmp_screen_buffer, screen_buffer, screen_width * screen_height*sizeof(CHAR_INFO));
