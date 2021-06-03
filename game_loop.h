@@ -24,6 +24,8 @@ class GameLoop {
 
 private:
     double fps_;
+    boolean is_pause_;
+    boolean is_gameover_;
     Console console_;
     KeyListener key_listener_;
     std::thread* temp_;
@@ -38,11 +40,15 @@ public:
     
     Console getConsole();
 
-    void initialize(vector<Object*>& objects);
+    void initialize();
     void setFPS(double frames);
-    void start( vector<Object*>& objects);
-    void update(vector<Object*>& objects);
+    void start();
+    void update();
+    void pause();
+    void resume();
+    void exitLoop();
     void checkMove(Object& obj);
+    void checkResume();
 
     void BuildScreen(int width, int height, int fontw, int fonth);
 
