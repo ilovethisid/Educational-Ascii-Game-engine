@@ -1,3 +1,4 @@
+/*
 #include "objectDB.cpp"
 
 int main()
@@ -14,3 +15,4 @@ int main()
 	Object test_r[2];//저징될 리스트
 	objectread(test_r, 2);
 }
+*/

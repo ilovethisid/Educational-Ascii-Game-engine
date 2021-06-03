@@ -1,3 +1,4 @@
+
 #include "game_loop.h"
 
 Object circle1, square1;
@@ -8,7 +9,10 @@ const Point kUnitY = Point(0, 1);
 Point target_point;
 
 void makeFigures(GameLoop* game_loop);
+/*
 void checkMove(GameLoop* game_loop);
+*/
+
 void checkShot(GameLoop* game_loop);
 
 int main(void)
@@ -18,14 +22,15 @@ int main(void)
     game_loop->BuildScreen(160, 100, 8, 8);
 
     // 최초 그림 그려지는 점 초기화
-    target_point = Point(4, 6);
+    target_point = Point(20, 20);
 
     makeFigures(game_loop);
 
     Sound my_sound = Sound();
     my_sound.playSound("hello.wav");
 
-    game_loop->start();
+    vector<Object*> objects;
+    game_loop->start(objects);
 
     /*while (true) {
 
@@ -63,7 +68,7 @@ void makeFigures(GameLoop* game_loop)
     circle1 = Object(target_point.getX(), target_point.getY());
     circle1.makeImage(mat_circle);
     circle1.makeRigidbody();
-    circle1.rigidbody.setVelocity(1, 1);
+    circle1.rigidbody.setVelocity(0, 0);
     circle1.rigidbody.makeMatrixCollider(mat_circle);
 
     Object* boundary = new Object(0, 0);
@@ -77,7 +82,7 @@ void makeFigures(GameLoop* game_loop)
     game_loop->objects.push_back(&circle1);
 }
 
-
+/*
 // Implementation of KeyListener
 void checkMove(GameLoop* game_loop)
 {
@@ -94,7 +99,7 @@ void checkMove(GameLoop* game_loop)
         circle1.rigidbody.setVelocity(1, 0);
     }
 }
-
+*/
 
 void checkShot(GameLoop* game_loop)
 {

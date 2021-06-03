@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 
 #include "Object.h"
@@ -102,3 +103,4 @@ int main(void) {
 	obj3.move(objects);
 	printf("obj3 coord : %d %d\n", obj3.getX(), obj3.getY());
 }
+*/

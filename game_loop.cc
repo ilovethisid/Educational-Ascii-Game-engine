@@ -1,3 +1,4 @@
+#include <iostream>
 #include "game_loop.h"
 
 extern void KeyListenerThread();
@@ -85,20 +86,20 @@ void GameLoop::initialize()
     Object* obj1 = new Object(20, 60);
     Object* obj2 = new Object(30, 40);
 
-    //Matrix background = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
+    Matrix background = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
     //Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
     
     // µ¿Áø
-    Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
+    //Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
 
 
     console_.drawMatrix(0, 0, background);
 
-    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\plane");
+    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\plane");
     //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
 
     // µ¿Áø 
-    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
+    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
     
 
     Matrix matrix2 = console_.makeCircle(5);
@@ -124,11 +125,11 @@ void GameLoop::setFPS(double _frames)
     fps_ = _frames;
 }
 
-void GameLoop::start()
+void GameLoop::start(vector<Object*>& objects)
 {
     clock_t start, end, interval, remaining_time;
     bool gameover = 0;
-
+    objects = objects;
     initialize();
 
     while (!is_gameover_) {
@@ -147,7 +148,7 @@ void GameLoop::start()
 }
 
 
-void GameLoop::update(vector<Object*>& objects)
+void GameLoop::update()
 {
     //Object* player = objects[0]->findByName(objects, "player");
 

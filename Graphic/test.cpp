@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 
 #include "GraphicEngine.h"
@@ -20,3 +21,4 @@ int main(void) {
 	game_loop->start( objects);
 
 }
+*/

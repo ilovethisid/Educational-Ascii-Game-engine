@@ -43,7 +43,7 @@ public:
     void initialize();
     void setFPS(double frames);
 
-    void start();
+    void start(vector<Object*>& objects);
     void update();
     void pause();
     void resume();
@@ -51,10 +51,8 @@ public:
     void checkMove(Object& obj);
     void checkResume();
 
-    void update(vector<Object*>& objects);
 
     void checkKey(vector<Object*>& objects);
-    void checkMove(Object& obj);
     void checkShoot(vector<Object*>& objects, Object& player);
 
     void BuildScreen(int width, int height, int fontw, int fonth);
