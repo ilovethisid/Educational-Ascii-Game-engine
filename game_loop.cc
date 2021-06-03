@@ -86,28 +86,36 @@ void GameLoop::initialize()
     Object* obj2 = new Object(30, 40);
 
     //Matrix background = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
-    Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
+    //Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
+    
+    // µ¿Áø
+    Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
+
 
     console_.drawMatrix(0, 0, background);
 
     //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\plane");
-    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
-    Matrix matrix2 = console_.makeCircle(5);
+    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
 
+    // µ¿Áø 
+    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
+    
+
+    Matrix matrix2 = console_.makeCircle(5);
+    
+    console_.drawMatrix(0, 0, background);
+
+    
 
     obj1->makeRigidbody();
-    obj2->makeRigidbody();
 
     obj1->makeImage(matrix1);
-    obj2->makeImage(matrix2);
+
+    obj1->setName("player");
 
     obj1->rigidbody.makeMatrixCollider(matrix1);
-    obj2->rigidbody.makeMatrixCollider(matrix2);
-
-
 
     objects.push_back(obj1);
-    objects.push_back(obj2);
 }
 
 /* Set frame per second. Default FPS is 30. */
@@ -138,14 +146,19 @@ void GameLoop::start()
     }
 }
 
-void GameLoop::update()
+
+void GameLoop::update(vector<Object*>& objects)
 {
+    //Object* player = objects[0]->findByName(objects, "player");
+
+    checkKey(objects);
+
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->move(objects);
     }
-    console_.setTmpBufScreen();
+    // move according to velocity
 
-    checkMove(*objects[0]);
+    console_.setTmpBufScreen();
 
     console_.drawTmpObjects(objects);
     console_.update();
@@ -165,6 +178,14 @@ void GameLoop::resume()
 void GameLoop::exitLoop()
 {
     is_gameover_ = true;
+}
+
+void GameLoop::checkKey(vector<Object*>& objects)
+{
+    Object* player = objects[0]->findByName(objects, "player");
+
+    checkMove(*player);
+    checkShoot(objects, *player);
 }
 
 // Implementation of KeyListener
@@ -190,9 +211,12 @@ void GameLoop::checkMove(Object& obj)
     else if (klc.keycheck(eag_Right)) {
         obj.rigidbody.setVelocity(2, 0);
     }
-    else if (klc.keycheck(eag_space)) {
+
+    /*else if (klc.keycheck(eag_space)) {
         pause();
-    }
+    }*/
+    // space ÃÑ¾Ë ½î´Â°É·Î ÇØ¼­...
+
     else {
         obj.rigidbody.setVelocity(0, 0);
     }
@@ -205,7 +229,22 @@ void GameLoop::checkResume()
             resume();
         }
     }
+}
 
+void GameLoop::checkShoot(vector<Object*>& objects, Object& player)
+{
+    if (klc.keycheck(eag_space)) {
+        Object* bullet;
+        bullet = new Object(player.getX() + player.getImage().width / 2, player.getY() - 2);
+        Matrix image = Matrix(1, 1);
+        image.element[0][0] = '|';
+        bullet->makeImage(image);
+        bullet->makeRigidbody();
+        bullet->rigidbody.makeMatrixCollider(image);
+        bullet->setName("bullet");
+        bullet->rigidbody.setVelocity(0, -3);
+        objects.push_back(bullet);
+    }
 }
 
 /* Returns millisec unit time interval per frame. */

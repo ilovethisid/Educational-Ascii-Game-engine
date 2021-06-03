@@ -85,11 +85,12 @@ void Console::drawCircle(int rx, int ry, int r, short c, short col) {
 	}
 }
 
-void Console::drawSquare(int x, int y, int width, int height, short c, short col) {
+void Console::drawRect(int x, int y, int width, int height, short c, short col) {
 	for (int i = 0; i < width; i++)
 		for (int j = 0; j < height; j++)
 			draw(x + i, y + j, c, col);
 }
+
 void Console::drawLineInMatrix(short*** pnt,int x1, int y1, int x2, int y2, short c) {
 	short** element = *pnt;
 	int addx = ((x2 - x1) > 0 ? 1 : -1);
@@ -231,11 +232,27 @@ Matrix Console::makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, sho
 	return image;
 }
 
-Matrix Console::makeSquare(int width, int height, short c, short col){
+Matrix Console::makeRect(int width, int height, short c, short col){
 	Matrix image = Matrix(width, height);
 	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
 	for(int i=0; i<height;i++)
 		std::fill_n(image.element[i], width, c);
+	return image;
+}
+
+Matrix Console::makeBox(int width, int height, short c, short col) {
+	Matrix image = Matrix(width, height);
+	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
+	
+	for (int i = 0; i < height; i++) {
+		image.element[i][0] = c;
+		image.element[i][width - 1] = c;
+	}
+	for (int i = 0; i < width; i++) {
+		image.element[0][i] = c;
+		image.element[height - 1][i] = c;
+	}
+
 	return image;
 }
 
@@ -295,6 +312,7 @@ Matrix Console::makeFile2Matrix(const char* filename){
 			if ((br + bg + bb) && br < 200 && bg < 200 && bb < 200) color += 128;
 			unsigned short c = temp[0];
 			if(c!= 78)image.element[i][j] = c;
+			if (c == 78)image.element[i][j] = 0;
 			
 			image.color[i * width + j] = color;
 		}
@@ -306,6 +324,16 @@ Matrix Console::makeFile2Matrix(const char* filename){
 
 void Console::setTmpBufScreen() {//tmpbufScreen
 	memcpy(tmp_screen_buffer, screen_buffer, screen_width * screen_height*sizeof(CHAR_INFO));
+}
+
+int Console::getScreenWidth()
+{
+	return screen_width;
+}
+
+int Console::getScreenHeight()
+{
+	return screen_height;
 }
 
 void Console::update() { //출력하는 함수

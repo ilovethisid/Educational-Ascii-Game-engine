@@ -13,6 +13,10 @@ void Rigidbody::Collider::move(int delta_x, int delta_y)
 
 }
 
+void Rigidbody::Collider::print()
+{
+}
+
 
 // BoxCollider
 
@@ -64,6 +68,17 @@ Rigidbody::MatrixCollider::MatrixCollider(Matrix _matrix, int _x, int _y)
 	y = _y;
 	width = _matrix.width;
 	height = _matrix.height;
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			if (matrix.element[i][j] != 0) {
+				matrix.element[i][j] = 1;
+			}
+			else {
+				matrix.element[i][j] = 0;
+			}
+		}
+	}
 }
 
 void Rigidbody::MatrixCollider::move(int delta_x, int delta_y)
@@ -137,6 +152,12 @@ void Rigidbody::move()
 	y = y + velocity.getY();
 }
 
+void Rigidbody::move(int delta_x, int delta_y)
+{
+	x = x + delta_x;
+	y = y + delta_y;
+}
+
 int Rigidbody::checkCollision(Object& obj)
 {
 	if (this->collider->type == "BoxCollider" && obj.rigidbody.collider->type == "BoxCollider") {
@@ -197,7 +218,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 	Point topLeft2 = Point(collider2->x, collider2->y);
 	Point botRight2 = Point(collider2->x + collider2->width - 1, collider2->y + collider2->height - 1);
 
-	if (((topLeft1 <= topLeft2) && (topLeft2 <= botRight1)) || ((topLeft1 <= botRight2) && (botRight2 <= botRight1))) {
+	if (!(botRight2.getX() < topLeft1.getX() || topLeft2.getX() > botRight1.getX() || botRight2.getY() < topLeft1.getY() || topLeft2.getY() > botRight1.getY())) {
 		// colliders overlap
 
 		int overlap_topLeft_x = max(topLeft1.getX(), topLeft2.getX());
@@ -207,6 +228,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 
 		int width = overlap_botRight_x - overlap_topLeft_x + 1;
 		int height = overlap_botRight_y - overlap_topLeft_y + 1;
+
 
 		overlapping_matrix = Matrix(width, height);
 
@@ -226,7 +248,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				if (element[i][j]) {
+				if (element[i][j] != 0) {
 					return 2;
 				}
 			}

@@ -74,7 +74,7 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, short c = PIXEL_SOLID, short col = FG_WHITE);// 선그리기
 	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);// 삼각형 그리기
 
-	void drawSquare(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
+	void drawRect(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
 	void drawObject(Object obj); // 배열 그리기
 	void drawMatrix(int x,int y,Matrix image);
 
@@ -84,7 +84,8 @@ public:
 	void clearTmpBufScreen(); //bufScreen 초기화
 
 	Matrix makeCircle(int r, short c= PIXEL_SOLID, short col = FG_WHITE);
-	Matrix makeSquare(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
+	Matrix makeRect(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
+	Matrix makeBox(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
 	Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);//삼각형 생성
 	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = PIXEL_SOLID);
 	Matrix makeFile2Matrix(const char* filename);
@@ -92,6 +93,8 @@ public:
 
 	void update(); //tmp_bufScreen 출력
 	void setTmpBufScreen();
+	int getScreenWidth();
+	int getScreenHeight();
 };
 
 wstringstream readFile(const char* filename);

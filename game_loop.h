@@ -42,6 +42,7 @@ public:
 
     void initialize();
     void setFPS(double frames);
+
     void start();
     void update();
     void pause();
@@ -49,6 +50,12 @@ public:
     void exitLoop();
     void checkMove(Object& obj);
     void checkResume();
+
+    void update(vector<Object*>& objects);
+
+    void checkKey(vector<Object*>& objects);
+    void checkMove(Object& obj);
+    void checkShoot(vector<Object*>& objects, Object& player);
 
     void BuildScreen(int width, int height, int fontw, int fonth);
 

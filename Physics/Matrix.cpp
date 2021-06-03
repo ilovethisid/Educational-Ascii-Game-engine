@@ -40,6 +40,7 @@ Matrix::Matrix(short _width, short _height)
 		memset(element[i], 0, sizeof(short) * width);
 	}
 	color = new unsigned char[width * height];
+	memset(color, 0x000F, sizeof(char) * width * height);
 }
 
 void Matrix::fillElement(int** ary,char* c_arr)

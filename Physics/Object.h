@@ -13,6 +13,7 @@ private:
 	int x;
 	int y;
 	Matrix image;
+	char* name;
 
 public:
 	Rigidbody rigidbody;
@@ -25,9 +26,13 @@ public:
 	void move(vector<Object*>& objects);
 	// move according to velocity
 	// get vector of all objects to check collision
+	void setName(const char* name);
 
 	int getX();
 	int getY();
+	char* getName();
 	Matrix getImage();
+
+	static Object* findByName(vector<Object*>& objects, const char* name);
 };
 

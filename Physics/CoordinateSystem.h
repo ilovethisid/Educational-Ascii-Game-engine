@@ -10,6 +10,7 @@ public:
 	Phy_Vector();
 	Phy_Vector(int _x, int _y);
 
+	void changeValue(int _x, int _y);
 	int getX();
 	int getY();
 

@@ -88,6 +88,12 @@ Phy_Vector::Phy_Vector(int _x, int _y)
 	y = _y;
 }
 
+void Phy_Vector::changeValue(int _x, int _y)
+{
+	x = _x;
+	y = _y;
+}
+
 int Phy_Vector::getX()
 {
 	return x;

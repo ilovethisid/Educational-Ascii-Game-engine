@@ -27,6 +27,27 @@ int main(void)
 
     game_loop->start();
 
+    /*while (true) {
+
+        game_loop->start();
+
+
+
+        game_loop->getConsole().setTmpBufScreen();
+        game_loop->getConsole().drawTmpObject(circle1);
+        game_loop->getConsole().drawTmpObject(square1);
+
+        circle1.move(game_loop->objects);
+        square1.move(game_loop->objects);
+
+
+        checkMove(game_loop);
+        checkShot(game_loop);
+
+        game_loop->FinishFrameUpdate(true);
+        
+        game_loop->GotoXY(target_point);
+    }*/
 
     return 0;
 }
@@ -36,7 +57,7 @@ void makeFigures(GameLoop* game_loop)
 {
     // 그릴 도형의 행렬 초기화
     Matrix mat_circle = game_loop->getConsole().makeCircle(10);
-    Matrix mat_square = game_loop->getConsole().makeSquare(6, 10);
+    Matrix mat_box = game_loop->getConsole().makeBox(game_loop->getConsole().getScreenWidth(), game_loop->getConsole().getScreenHeight());
 
     //도형 초기화
     circle1 = Object(target_point.getX(), target_point.getY());
@@ -45,15 +66,15 @@ void makeFigures(GameLoop* game_loop)
     circle1.rigidbody.setVelocity(1, 1);
     circle1.rigidbody.makeMatrixCollider(mat_circle);
 
-    square1 = Object(100, 100);
-    square1.makeImage(mat_square);
-    square1.makeRigidbody();
-    square1.rigidbody.setVelocity(-1, -1);
-    square1.rigidbody.makeMatrixCollider(mat_square);
+    Object* boundary = new Object(0, 0);
+    boundary->makeImage(mat_box);
+    boundary->makeRigidbody();
+    boundary->rigidbody.makeMatrixCollider(mat_box);
+    boundary->setName("boundary");
 
     // 도형들을 vector에 append
+    game_loop->objects.push_back(boundary);
     game_loop->objects.push_back(&circle1);
-    game_loop->objects.push_back(&square1);
 }
 
 
@@ -85,7 +106,5 @@ void checkShot(GameLoop* game_loop)
 
     shot_point = shot_point - kUnitY;
     game_loop->GotoXY(shot_point);
-    std::cout << ", " << std::endl;
-
     game_loop->GotoXY(target_point);
 }

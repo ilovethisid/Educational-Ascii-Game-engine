@@ -28,6 +28,7 @@ private:
 
 		virtual void move(int delta_x, int delta_y);
 		// move according to velocity
+		virtual void print();
 	};
 
 	class BoxCollider :private Collider
@@ -80,6 +81,7 @@ public:
 	void makeMatrixCollider(Matrix matrix);
 	void setVelocity(int x, int y);
 	void move();
+	void move(int delta_x, int delta_y);
 
 	int checkCollision(Object& obj);
 	int checkAABBCollision(Object& obj);
