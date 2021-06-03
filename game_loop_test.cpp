@@ -81,7 +81,6 @@ void checkShot(GameLoop* game_loop)
 
     if (game_loop->getKeyListener().keycheck(eag_space)) {
         shot_point = target_point;
-        std::cout << "space!!!" << std::endl;
     }
 
     shot_point = shot_point - kUnitY;
