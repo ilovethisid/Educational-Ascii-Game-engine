@@ -1,17 +1,14 @@
-#include <iostream>
 #include "game_loop.h"
 
-extern void KeyListenerThread();
 extern KeyListener klc;
-
-
-
 
 GameLoop::GameLoop()
 {
     fps_ = 30;
     is_pause_ = false;
     is_gameover_ = false;
+    key_pause_ = EOF;
+    key_resume_ = EOF;
     console_ = Console();
     keythread.start();
 }
@@ -52,17 +49,15 @@ void GameLoop::start()
     initialize();
 
     while (!is_gameover_) {
-        if (!is_pause_) {
-            start = clock();                 // start timer
-            update();
-            end = clock();                // end timer
+        vCheckPause();
+        start = clock();                 // start timer
+        update();
+        end = clock();                // end timer
 
-            interval = end - start;    // total elapsed time during a iteration
-            remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
+        interval = end - start;    // total elapsed time during a iteration
+        remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
 
-            Sleep(remaining_time);
-        }
-        checkResume();
+        Sleep(remaining_time);
     }
 }
 
@@ -100,14 +95,32 @@ void GameLoop::update()
 
 }
 
-void GameLoop::pause()
+/* If key_pause_ is pressed, pause game loop. */
+void GameLoop::vCheckPause()
 {
-    if (!is_pause_) is_pause_ = true;
+    if (GetAsyncKeyState(klc.eagKeyToVK(key_pause_)))
+        vCheckResume();
 }
 
-void GameLoop::resume()
+void GameLoop::vCheckResume()
 {
-    if (is_pause_) is_pause_ = false;
+    Sleep(100);
+    while (true) {
+        if (GetAsyncKeyState(klc.eagKeyToVK(key_resume_)) & 0x8000) {
+            klc.reset();
+            return;
+        }
+    }
+}
+
+void GameLoop::setPauseKey(int key)
+{
+    key_pause_ = key;
+}
+
+void GameLoop::setResumeKey(int key)
+{
+    key_resume_ = key;
 }
 
 void GameLoop::exitLoop()
@@ -145,24 +158,13 @@ void GameLoop::checkMove(Object& obj)
     else if (klc.keycheck(eag_Right)) {
         obj.rigidbody.setVelocity(2, 0);
     }
-    
-    else if (klc.keycheck(eag_enter)) { //enter≈∞ ∏ÿ√ﬂ±‚
+    else if (klc.keycheck(eag_ctrl)) { //ctrl≈∞ ∏ÿ√ﬂ±‚
         exitLoop();
     }
-    
     else {
         obj.rigidbody.setVelocity(0, 0);
     }
 
-}
-
-void GameLoop::checkResume()
-{
-    if (is_pause_) {
-        if (klc.keycheck(eag_space)) {
-            resume();
-        }
-    }
 }
 
 void GameLoop::checkShoot(vector<Object*>& objects, Object& player)

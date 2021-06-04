@@ -1,5 +1,5 @@
 /*
-    FPS for Windows Based system.
+    Eduactional Game Engine for Windows Based system.
 */
 #pragma once
 
@@ -14,28 +14,26 @@
 #include "./KeyListener/KeyMacro.hpp"
 #include "./Sound/sound.h"
 
-const int KEY_UP = 72;
-const int KEY_DOWN = 80;
-const int KEY_LEFT = 75;
-const int KEY_RIGHT = 77;
-
-
 class GameLoop {
 
 private:
     double fps_;
-    boolean is_pause_;
-    boolean is_gameover_;
+    Console console_;
+    bool is_pause_;
+    bool is_gameover_;
+    int key_pause_;
+    int key_resume_;
    
     KeyListener key_listener_;
   //  std::thread* temp_;
     clock_t start_, end_, remaining_time_;
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
+    void vCheckPause();
+    void vCheckResume();
     void vPrintInfo();
 
 public:
-    Console console_;
     vector<Object*> objects;
     gameloop_t keythread;
     GameLoop();
@@ -46,11 +44,11 @@ public:
 
     void start();
     void update();
-    void pause();
-    void resume();
     void exitLoop();
+
+    void setPauseKey(int key);
+    void setResumeKey(int key);
     void checkMove(Object& obj);
-    void checkResume();
 
 
     void checkKey(vector<Object*>& objects);

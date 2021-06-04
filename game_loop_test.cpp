@@ -51,6 +51,9 @@ int main(void)
     GameLoop* game_loop = new GameLoop();
     game_loop->setFPS(12);
     game_loop->BuildScreen(160, 100, 8, 8);
+    // set pause and resume key to RETURN key
+    game_loop->setPauseKey(eag_enter);
+    game_loop->setResumeKey(eag_enter);
 
     //// 최초 그림 그려지는 점 초기화
     target_point = Point(20, 20);
@@ -92,7 +95,7 @@ int main(void)
 
 void makeFigures(GameLoop* game_loop)
 {
-    game_loop->console_.setTmpBufScreen();
+    game_loop->getConsole().setTmpBufScreen();
 
 
     // 그릴 도형의 행렬 초기화
@@ -123,18 +126,18 @@ void makeFigures(GameLoop* game_loop)
 
 
     //배경 그리기
-    Matrix background = game_loop->console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\background");//파일 경로
-    //Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
+    //Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\background");//파일 경로
+    Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
     // 동진
-    //Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//파일 경로
-    game_loop->console_.drawMatrix(0, 0, background);
+    //Matrix background = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//파일 경로
+    game_loop->getConsole().drawMatrix(0, 0, background);
 
     //player object
     Object* player = new Object(30, 60);
-    Matrix plane1 = game_loop->console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\plane");
-    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
+    //Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\plane");
+    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
     // 동진 
-    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
+    //Matrix matrix1 = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
     player->makeRigidbody();
     player->makeImage(plane1);
     player->rigidbody.makeMatrixCollider(plane1);
