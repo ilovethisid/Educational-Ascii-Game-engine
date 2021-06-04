@@ -133,6 +133,8 @@ bool checkObjectsCollision(Object* current_obj, vector<Object*>& objects) {
 	for (int i = 0; i < objects.size(); i++) {
 		if ((objects[i] != current_obj) && (current_obj->rigidbody.checkCollision(*objects[i]) == 2)) {
 			// by moving collider, complete collision occurs
+			current_obj->collision_flg = 1;
+			objects[i]->collision_flg = 1;
 			return true;
 		}
 	}

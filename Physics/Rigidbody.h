@@ -25,6 +25,7 @@ private:
 
 	public:
 		Collider();
+		virtual ~Collider(){};
 		virtual void move(int delta_x, int delta_y);
 		// move according to velocity
 		virtual void print();
@@ -41,6 +42,7 @@ private:
 		
 	public:
 		BoxCollider();
+		~BoxCollider() {};
 		BoxCollider(int x1, int y1, int x2, int y2);
 		BoxCollider(int width, int height);
 
@@ -61,6 +63,7 @@ private:
 
 	public:
 		MatrixCollider();
+		~MatrixCollider(){};
 		MatrixCollider(Matrix& _matrix, int _x, int _y);
 		virtual void move(int delta_x, int delta_y);
 		// move according to velocity

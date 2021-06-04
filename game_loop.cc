@@ -5,47 +5,6 @@ extern void KeyListenerThread();
 extern KeyListener klc;
 
 
-///////////////////////// 비행기 게임 부위
-//class Player_Plane
-//{
-//private:
-//    Object plane;
-//    int life;
-//    int power;
-//public:
-//    void moveByKey() {
-//        if (klc.keycheck(eag_Top)) {
-//            plane.rigidbody.setVelocity(0, -2);
-//            if (klc.keycheck(eag_Left))
-//                plane.rigidbody.setVelocity(-2, -2);
-//            else if (klc.keycheck(eag_Right))
-//                plane.rigidbody.setVelocity(2, -2);
-//        }
-//        else if (klc.keycheck(eag_Bottom)) {
-//            plane.rigidbody.setVelocity(0, 2);
-//            if (klc.keycheck(eag_Left))
-//                plane.rigidbody.setVelocity(-2, 2);
-//            else if (klc.keycheck(eag_Right))
-//                plane.rigidbody.setVelocity(2, 2);
-//        }
-//        else if (klc.keycheck(eag_Left)) {
-//            plane.rigidbody.setVelocity(-2, 0);
-//        }
-//        else if (klc.keycheck(eag_Right)) {
-//            plane.rigidbody.setVelocity(2, 0);
-//        }
-//        else {
-//            plane.rigidbody.setVelocity(0, 0);
-//        }
-//    }
-//};
-//
-
-
-
-
-/////////////////////////
-
 
 
 GameLoop::GameLoop()
@@ -119,9 +78,23 @@ void GameLoop::update()
         objects[i]->move(objects);
     }
     // move according to velocity
-
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->collision_flg) { //충돌한 적이 있으면 collision_flg
+            if (objects[i]->getName()) {
+                if (strcmp(objects[i]->getName(), "boundary")&& strcmp(objects[i]->getName(), "player")) {//boundary 경계가 아니면 삭제한다.
+                    delete objects[i];
+                    objects.erase(objects.begin() + i);
+                    i--;
+                }
+            }
+            else { //null이면
+                delete objects[i];
+                objects.erase(objects.begin() + i);
+                i--;
+            }
+        }
+    }
     console_.setTmpBufScreen();
-
     console_.drawTmpObjects(objects);
     console_.update();
 
@@ -172,15 +145,15 @@ void GameLoop::checkMove(Object& obj)
     else if (klc.keycheck(eag_Right)) {
         obj.rigidbody.setVelocity(2, 0);
     }
-
-    /*else if (klc.keycheck(eag_space)) {
-        pause();
-    }*/
-    // space 총알 쏘는걸로 해서...
-
+    /*
+    else if (klc.keycheck(eag_enter)) { //enter키 멈추기
+        pause
+    }
+    */
     else {
         obj.rigidbody.setVelocity(0, 0);
     }
+
 }
 
 void GameLoop::checkResume()

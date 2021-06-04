@@ -13,11 +13,10 @@ private:
 	int x;
 	int y;
 	char* name;
-	Matrix image; //public으로 이동
-
+	Matrix image; 
 public:
 	Rigidbody rigidbody;
-
+	char collision_flg=0;
 	Object();
 	~Object();
 	Object(int _x, int _y);

@@ -20,8 +20,8 @@ public:
 	Matrix& operator=(const Matrix& fellow) {
 		this->width = fellow.width;
 		this->height = fellow.height;
-		free(color);
-		free(element);
+		delete color;
+		delete element;
 		this->color = new unsigned char[width * height];
 		this->element = new short* [height];
 		for (int i = 0; i < height; i++) {

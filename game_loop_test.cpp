@@ -1,4 +1,5 @@
 
+
 #include "game_loop.h"
 
 Object circle1, square1;
@@ -9,15 +10,16 @@ const Point kUnitY = Point(0, 1);
 Point target_point;
 
 void makeFigures(GameLoop* game_loop);
-/*
-void checkMove(GameLoop* game_loop);
-*/
 
 void checkShot(GameLoop* game_loop);
-void testFigures(GameLoop* game_loop);
+
+
+
 
 int main(void)
 {
+
+
     GameLoop* game_loop = new GameLoop();
     game_loop->setFPS(12);
     game_loop->BuildScreen(160, 100, 8, 8);
@@ -29,30 +31,6 @@ int main(void)
     my_sound.playSound("hello.wav");
     makeFigures(game_loop);
     game_loop->start();
-
-    /*while (true) {
-
-        game_loop->start();
-
-
-
-        game_loop->getConsole().setTmpBufScreen();
-        game_loop->getConsole().drawTmpObject(circle1);
-        game_loop->getConsole().drawTmpObject(square1);
-
-        circle1.move(game_loop->objects);
-        square1.move(game_loop->objects);
-
-
-        checkMove(game_loop);
-        checkShot(game_loop);
-
-        game_loop->FinishFrameUpdate(true);
-        
-        game_loop->GotoXY(target_point);
-    }*/
-
-    return 0;
 }
 
 

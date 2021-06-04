@@ -212,7 +212,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 	MatrixCollider* collider1 = (MatrixCollider*)collider;
 	MatrixCollider* collider2 = (MatrixCollider*)obj.rigidbody.collider;
 
-	Matrix overlapping_matrix; //현재 미사용
+	//Matrix overlapping_matrix; //현재 미사용
 
 	Point topLeft1 = Point(collider1->x, collider1->y);
 	Point botRight1 = Point(collider1->x + collider1->width - 1, collider1->y + collider1->height - 1);
