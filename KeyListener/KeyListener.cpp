@@ -19,7 +19,7 @@ void KeyListener::keyinput(int key)
 }
 void KeyListener::reset()//사용자 텍스트를 받는다던가 게임 시작 시점이라던가 이전 입력을 무시해야하는 상황에서 사용
 {
-	for (int i = 0; i < 43; i++)
+	for (int i = 0; i < SIZE; i++)
 	{
 		flag[i] = false;
 		keydownflag[i] = false;
@@ -60,14 +60,31 @@ bool KeyListener::doubleclickcheck(int key)
 	}
 	return false;
 }
+int KeyListener::eagKeyToVK(int key)
+{
+	if (key >= eag_A && key <= eag_Z)
+		key += 0x41;
+	else if (key >= eag_0 && key <= eag_9)
+		key += (0x30 - eag_0);
+	else if (key == eag_shift)
+		key = VK_LSHIFT;
+	else if (key == eag_ctrl)
+		key = VK_LCONTROL;
+	else if (key == eag_alt)
+		key = VK_LMENU;
+	else if (key == eag_enter)
+		key = VK_RETURN;
+	else if (key >= eag_Left && key <= eag_Bottom)
+		key += (VK_LEFT - eag_Left);
+	else if (key == eag_space)
+		key = VK_SPACE;
+	return key;
+}
 void KeyListenerThread()
 {
 	int i;
 	while (klc.ReturnF())
 	{
-		if (GetAsyncKeyState(0xA2) || GetAsyncKeyState(0xA3))
-		{
-		}
 		for (i = 0x41; i < 0x5B; i++)//A~Z
 		{
 			if (GetAsyncKeyState(i))
@@ -79,31 +96,31 @@ void KeyListenerThread()
 		{
 			if (GetAsyncKeyState(i))
 			{
-				klc.keyinput(i - 0x30 + 26);
+				klc.keyinput(i - 0x30 + eag_0);
 			}
 		}
-		if (GetAsyncKeyState(0xA0) || GetAsyncKeyState(0xA1))//shift
+		if (GetAsyncKeyState(VK_LSHIFT) || GetAsyncKeyState(VK_RSHIFT))//shift
 		{
-			klc.keyinput(40);
+			klc.keyinput(eag_shift);
 		}
-		if (GetAsyncKeyState(0xA2) || GetAsyncKeyState(0xA3))//ctrl
+		if (GetAsyncKeyState(VK_LCONTROL) || GetAsyncKeyState(VK_RCONTROL))//ctrl
 		{
-			klc.keyinput(41);
+			klc.keyinput(eag_ctrl);
 		}
-		if (GetAsyncKeyState(0xA4) || GetAsyncKeyState(0xA5))//Alt
+		if (GetAsyncKeyState(VK_LMENU) || GetAsyncKeyState(VK_RMENU))//Alt
 		{
-			klc.keyinput(42);
+			klc.keyinput(eag_alt);
 		}
-		if (GetAsyncKeyState(0x0D))//enter
+		if (GetAsyncKeyState(VK_RETURN))//enter
 		{
-			klc.keyinput(43);
+			klc.keyinput(eag_enter);
 		}
-		for (i = 0x25; i < 0x29; i++)//좌상우하//키다운이나 더블클릭을 사용할만한 화살표에 대해서만 만들어봤습니다. 원한다면 숫자를 바꿔서 사용 가능하고 어기저기 사용할꺼라면 차라리 함수를 만들어서 모듈화하겠습니다
+		for (i = VK_LEFT; i < VK_SELECT; i++)//좌상우하//키다운이나 더블클릭을 사용할만한 화살표에 대해서만 만들어봤습니다. 원한다면 숫자를 바꿔서 사용 가능하고 어기저기 사용할꺼라면 차라리 함수를 만들어서 모듈화하겠습니다
 		{
 			if (GetAsyncKeyState(i))
 			{
 				clock_t temp = clock();
-				klc.keyinput(i - 0x25 + 36);
+				klc.keyinput(i - VK_LEFT + eag_Left);
 				if (klc.keydown_t[i] != NULL)//키다운
 				{
 					if (temp - klc.keydown_t[i] >= KDT)
@@ -137,7 +154,7 @@ void KeyListenerThread()
 		}
 		if (GetAsyncKeyState(VK_SPACE))//스페이스바
 		{
-			klc.keyinput(44);
+			klc.keyinput(eag_space);
 		}
 
 	}

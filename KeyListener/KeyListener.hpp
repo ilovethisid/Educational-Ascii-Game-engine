@@ -29,6 +29,7 @@ public:
 	//그외의함수
 	void reset();
 	bool ReturnF();
+	int eagKeyToVK(int key);
 	void exit();
 };
 
