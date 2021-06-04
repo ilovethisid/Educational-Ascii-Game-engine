@@ -11,6 +11,7 @@
 #include  <windows.h>
 #include "../Physics/Object.h"
 
+
 enum COLOR
 {
 	FG_BLACK = 0x0000,

@@ -1,7 +1,10 @@
 #include "Matrix.h"
 
+int create_flg = 0;//메모리 누수 테스트용
+
 Matrix::Matrix()
 {
+	create_flg++;
 	width = 0;
 	height = 0;
 	element = NULL;
@@ -10,6 +13,7 @@ Matrix::Matrix()
 
 Matrix::Matrix(const Matrix& _matrix)
 {
+	create_flg++;
 	width = _matrix.width;
 	height = _matrix.height;
 	
@@ -33,6 +37,7 @@ Matrix::Matrix(const Matrix& _matrix)
 
 Matrix::Matrix(short _width, short _height)
 {
+	create_flg++;
 	width = _width;
 	height = _height;
 	element = new short* [height];
@@ -59,6 +64,7 @@ void Matrix::fillElement(int** ary,char* c_arr)
 }
 
 Matrix::~Matrix() {
+	create_flg--;
 	for (int i = 0; i < height; i++) {
 		delete element[i];
 	}

@@ -5,7 +5,7 @@ extern void KeyListenerThread();
 extern KeyListener klc;
 
 
-
+extern int create_flg; //
 
 GameLoop::GameLoop()
 {
@@ -74,6 +74,7 @@ void GameLoop::update()
     checkKey(objects);
     string a= to_string(objects.size())+"\n";
     console_.print(a,2,2);
+    console_.print(to_string(create_flg) + "\n", 4, 2);
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->move(objects);
     }
