@@ -44,6 +44,9 @@ Matrix::Matrix(short _width, short _height)
 	memset(color, 0x000F, sizeof(char) * width * height);
 }
 
+
+
+
 void Matrix::fillElement(int** ary,char* c_arr)
 {
 	
@@ -59,6 +62,7 @@ Matrix::~Matrix() {
 	for (int i = 0; i < height; i++) {
 		delete element[i];
 	}
+	delete element;
 	delete color;
 }
 

@@ -28,7 +28,7 @@ private:
     boolean is_gameover_;
    
     KeyListener key_listener_;
-    std::thread* temp_;
+  //  std::thread* temp_;
     clock_t start_, end_, remaining_time_;
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
@@ -37,8 +37,8 @@ private:
 public:
     Console console_;
     vector<Object*> objects;
+    gameloop_t keythread;
     GameLoop();
-    
     Console getConsole();
 
     void initialize();

@@ -69,6 +69,10 @@ protected:
 
 public:
 	Console(); //생성자 함수
+	//~Console() {
+	//	delete screen_buffer;
+	//	delete tmp_screen_buffer;
+	//}
 	int makeConsole(int width, int height, int fontw, int fonth);
 	void draw(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE); //c= 채우는 문자 col= 색상
 	void drawCircle(int x, int y, int r, short c = PIXEL_SOLID, short col = FG_WHITE);

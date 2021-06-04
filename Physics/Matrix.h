@@ -33,7 +33,6 @@ public:
 				this->color[i * width + j] = fellow.color[i * width + j];
 			}
 		}
-
 		return *this;
 	}
 

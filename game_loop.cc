@@ -13,7 +13,6 @@ GameLoop::GameLoop()
     is_pause_ = false;
     is_gameover_ = false;
     console_ = Console();
-    gameloop_t keythread;
     keythread.start();
 }
 
@@ -73,7 +72,8 @@ void GameLoop::update()
     //Object* player = objects[0]->findByName(objects, "player");
 
     checkKey(objects);
-
+    string a= to_string(objects.size())+"\n";
+    console_.print(a,2,2);
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->move(objects);
     }
@@ -145,11 +145,11 @@ void GameLoop::checkMove(Object& obj)
     else if (klc.keycheck(eag_Right)) {
         obj.rigidbody.setVelocity(2, 0);
     }
-    /*
+    
     else if (klc.keycheck(eag_enter)) { //enter≈∞ ∏ÿ√ﬂ±‚
-        pause
+        exitLoop();
     }
-    */
+    
     else {
         obj.rigidbody.setVelocity(0, 0);
     }

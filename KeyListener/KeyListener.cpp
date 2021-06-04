@@ -150,4 +150,5 @@ void gameloop_t::start()
 void gameloop_t::end()
 {
 	temp->join();
+	delete temp;
 }

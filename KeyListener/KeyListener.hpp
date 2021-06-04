@@ -37,6 +37,9 @@ class gameloop_t
 private:
 	std::thread* temp;
 public:
+	~gameloop_t(){
+		delete temp;
+	}
 	void start();
 	void end();
 };

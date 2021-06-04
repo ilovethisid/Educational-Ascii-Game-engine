@@ -1,5 +1,17 @@
 
 
+#include <cstdlib>  // system()을 위한 헤더 파일
+
+
+
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>//메모리 누수
+
+#ifdef _DEBUG
+#define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#endif
+
 #include "game_loop.h"
 
 Object circle1, square1;
@@ -13,13 +25,29 @@ void makeFigures(GameLoop* game_loop);
 
 void checkShot(GameLoop* game_loop);
 
+//int main(void) {//메모리릭 테스트용
+//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//    const wchar_t* a = L"디버그창";
+//    OutputDebugString(a);
+//    Sleep(5000);
+//    GameLoop* game_loop = new GameLoop();
+//    game_loop->setFPS(12);
+//    game_loop->BuildScreen(160, 100, 8, 8);
+//    Matrix mat_circle = game_loop->getConsole().makeCircle(10);
+//    Object* circle1 = new Object(10, 20); //Object로 선언하면 지역변수라 제거됨.
+//    circle1->makeImage(mat_circle);
+//    circle1->makeRigidbody();
+//    circle1->rigidbody.makeMatrixCollider(mat_circle);
+//    circle1->rigidbody.setVelocity(1, 1);
+//    delete circle1;
+//    return 0;
+//}
 
 
 
 int main(void)
 {
-
-
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     GameLoop* game_loop = new GameLoop();
     game_loop->setFPS(12);
     game_loop->BuildScreen(160, 100, 8, 8);
@@ -31,6 +59,31 @@ int main(void)
     my_sound.playSound("hello.wav");
     makeFigures(game_loop);
     game_loop->start();
+    while (!game_loop->objects.empty()) {
+        game_loop->objects.pop_back();
+    }
+    /*while (true) {
+
+        game_loop->start();
+
+
+
+        game_loop->getConsole().setTmpBufScreen();
+        game_loop->getConsole().drawTmpObject(circle1);
+        game_loop->getConsole().drawTmpObject(square1);
+
+        circle1.move(game_loop->objects);
+        square1.move(game_loop->objects);
+
+
+        checkMove(game_loop);
+        checkShot(game_loop);
+
+        game_loop->FinishFrameUpdate(true);
+        
+        game_loop->GotoXY(target_point);
+    }*/
+    return 0;
 }
 
 
