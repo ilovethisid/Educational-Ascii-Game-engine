@@ -20,6 +20,9 @@ const int KEY_LEFT = 75;
 const int KEY_RIGHT = 77;
 
 
+
+
+
 class GameLoop {
 
 private:
@@ -40,7 +43,6 @@ public:
     gameloop_t keythread;
     GameLoop();
     Console getConsole();
-
     void initialize();
     void setFPS(double frames);
 
@@ -51,6 +53,10 @@ public:
     void exitLoop();
     void checkMove(Object& obj);
     void checkResume();
+
+
+    vector<Matrix> MV;
+    void makeEnemy(); //
 
 
     void checkKey(vector<Object*>& objects);

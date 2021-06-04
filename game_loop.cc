@@ -7,6 +7,24 @@ extern KeyListener klc;
 
 extern int create_flg; //
 
+extern int cleak_flg; //
+extern int rleak_flg; //
+
+
+void GameLoop::makeEnemy() {
+    int rand_num = rand();
+    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
+    enemy->makeImage(MV[rand_num % 3]); //¸ð¾ç 3°³
+    enemy->makeRigidbody();
+    enemy->rigidbody.makeMatrixCollider(MV[rand_num % 3]);
+    enemy->setName("enemy");
+    enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
+    objects.push_back(enemy);
+}
+
+
+
+
 GameLoop::GameLoop()
 {
     fps_ = 30;
@@ -37,6 +55,12 @@ Console GameLoop::getConsole()
 // ÀÓ½Ã ÇÔ¼ö, ³ªÁß¿¡ Á¦°Å ¿¹Á¤
 void GameLoop::initialize()
 {
+    Matrix M1 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\Graphic\\enemy1");
+    Matrix M2 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\Graphic\\enemy2");
+    Matrix M3 = console_.makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\Graphic\\enemy3");
+    MV.push_back(M1);
+    MV.push_back(M2);
+    MV.push_back(M3);
 }
 
 /* Set frame per second. Default FPS is 30. */
@@ -50,13 +74,17 @@ void GameLoop::start()
     clock_t start, end, interval, remaining_time;
     bool gameover = 0;
     initialize();
-
+    int last_time = clock();
     while (!is_gameover_) {
         if (!is_pause_) {
             start = clock();                 // start timer
+            if ((start - last_time) > 1000) {
+                makeEnemy();
+                last_time = start;
+            }
             update();
             end = clock();                // end timer
-
+            
             interval = end - start;    // total elapsed time during a iteration
             remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
 
@@ -75,6 +103,8 @@ void GameLoop::update()
     string a= to_string(objects.size())+"\n";
     console_.print(a,2,2);
     console_.print(to_string(create_flg) + "\n", 4, 2);
+    console_.print(to_string(rleak_flg) + "\n", 8, 2);
+    console_.print(to_string(cleak_flg) + "\n", 12, 2);
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->move(objects);
     }
@@ -177,10 +207,13 @@ void GameLoop::checkShoot(vector<Object*>& objects, Object& player)
         bullet->makeRigidbody();
         bullet->rigidbody.makeMatrixCollider(image);
         bullet->setName("bullet");
-        bullet->rigidbody.setVelocity(0, -3);
+        bullet->rigidbody.setVelocity(0, -4);
         objects.push_back(bullet);
     }
 }
+
+
+
 
 /* Returns millisec unit time interval per frame. */
 DWORD GameLoop::vGetUnitTime()

@@ -1,12 +1,20 @@
 #include "Rigidbody.h"
 #include "Object.h"
-
+int rleak_flg = 0;
+int cleak_flg = 0;
 // Collider
 
 Rigidbody::Collider::Collider()
 {
+	cleak_flg++;
 	type = "\0";
 }
+Rigidbody::Collider::~Collider()
+{
+	cleak_flg--;
+	type = "\0";
+}
+
 
 void Rigidbody::Collider::move(int delta_x, int delta_y)
 {
@@ -91,6 +99,7 @@ void Rigidbody::MatrixCollider::move(int delta_x, int delta_y)
 // Rigidbody
 
 Rigidbody::Rigidbody() {
+	rleak_flg++;
 	collider = NULL;
 	velocity = Phy_Vector();
 	x = 0;
@@ -99,6 +108,7 @@ Rigidbody::Rigidbody() {
 
 Rigidbody::Rigidbody(int _x, int _y)
 {
+	rleak_flg++;
 	collider = NULL;
 	velocity = Phy_Vector();
 	x = _x;
@@ -265,6 +275,10 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 }
 
 
+Rigidbody::~Rigidbody() {
+	rleak_flg--;
+	delete collider;
+}
 
 int min(int a, int b) {
 	if (a < b) {

@@ -62,6 +62,8 @@ int main(void)
     while (!game_loop->objects.empty()) {
         game_loop->objects.pop_back();
     }
+
+
     /*while (true) {
 
         game_loop->start();
@@ -89,11 +91,9 @@ int main(void)
 
 
 
-
 void makeFigures(GameLoop* game_loop)
 {
     game_loop->console_.setTmpBufScreen();
-
 
     // 그릴 도형의 행렬 초기화
     Matrix mat_circle = game_loop->getConsole().makeCircle(10);
