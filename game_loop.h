@@ -26,7 +26,7 @@ private:
     double fps_;
     boolean is_pause_;
     boolean is_gameover_;
-    Console console_;
+   
     KeyListener key_listener_;
     std::thread* temp_;
     clock_t start_, end_, remaining_time_;
@@ -35,6 +35,7 @@ private:
     void vPrintInfo();
 
 public:
+    Console console_;
     vector<Object*> objects;
     GameLoop();
     
@@ -43,7 +44,7 @@ public:
     void initialize();
     void setFPS(double frames);
 
-    void start(vector<Object*>& objects);
+    void start();
     void update();
     void pause();
     void resume();

@@ -25,9 +25,10 @@ void Object::makeRigidbody()
 	rigidbody = Rigidbody(x, y);
 }
 
-void Object::makeImage(Matrix _image)
+void Object::makeImage(Matrix& _image)
 {
 	image = Matrix(_image);
+	
 }
 
 void Object::move(vector<Object*>& objects)
@@ -112,7 +113,7 @@ char* Object::getName()
 
 Matrix Object::getImage()
 {
-	return image;
+	return  Matrix(image);
 }
 
 Object* Object::findByName(vector<Object*>& objects, const char* name)
@@ -149,4 +150,8 @@ int sign(int x) {
 	else {
 		return 0;
 	}
+}
+
+Object::~Object() {
+	delete(this->name);
 }

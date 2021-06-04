@@ -15,7 +15,7 @@ private:
 	Phy_Vector velocity;
 	int x;
 	int y;
-
+	
 	class Collider
 	{
 		friend Rigidbody;
@@ -25,7 +25,6 @@ private:
 
 	public:
 		Collider();
-
 		virtual void move(int delta_x, int delta_y);
 		// move according to velocity
 		virtual void print();
@@ -62,8 +61,7 @@ private:
 
 	public:
 		MatrixCollider();
-		MatrixCollider(Matrix _matrix, int _x, int _y);
-
+		MatrixCollider(Matrix& _matrix, int _x, int _y);
 		virtual void move(int delta_x, int delta_y);
 		// move according to velocity
 	};
@@ -74,11 +72,14 @@ public:
 	Collider* collider;
 	
 	Rigidbody();
+	~Rigidbody(){
+		delete collider;
+	}
 	Rigidbody(int _x, int _y);
 
 	void makeBoxCollider(int x1, int y1, int x2, int y2);
 	void makeBoxCollider(int width, int height);
-	void makeMatrixCollider(Matrix matrix);
+	void makeMatrixCollider(Matrix& matrix);
 	void setVelocity(int x, int y);
 	void move();
 	void move(int delta_x, int delta_y);

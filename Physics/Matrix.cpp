@@ -28,6 +28,7 @@ Matrix::Matrix(const Matrix& _matrix)
 			color[i * width + j] = _matrix.color[i * width + j];
 		}
 	}
+
 }
 
 Matrix::Matrix(short _width, short _height)
@@ -52,5 +53,12 @@ void Matrix::fillElement(int** ary,char* c_arr)
 			color[i * width + j] = c_arr[i * width + j];
 		}
 	}
+}
+
+Matrix::~Matrix() {
+	for (int i = 0; i < height; i++) {
+		delete element[i];
+	}
+	delete color;
 }
 

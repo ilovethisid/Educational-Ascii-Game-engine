@@ -65,6 +65,7 @@ protected:
 	SMALL_RECT window_rect;
 	CHAR_INFO* screen_buffer; //화면 저장
 	CHAR_INFO* tmp_screen_buffer;// 임시저장
+	char tmp;//RVO 용
 
 public:
 	Console(); //생성자 함수
@@ -75,11 +76,11 @@ public:
 	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);// 삼각형 그리기
 
 	void drawRect(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
-	void drawObject(Object obj); // 배열 그리기
-	void drawMatrix(int x,int y,Matrix image);
+	void drawObject(Object& obj); // 배열 그리기
+	void drawMatrix(int x,int y,Matrix& image);
 
 	void drawTmp(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE);//임시로 그리기
-	void drawTmpObject(Object obj); //임시로 그리기
+	void drawTmpObject(Object& obj); //임시로 그리기
 	void drawTmpObjects(vector<Object*> objects ); //임시로 그리기
 	void clearTmpBufScreen(); //bufScreen 초기화
 
@@ -90,7 +91,7 @@ public:
 	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = PIXEL_SOLID);
 	Matrix makeFile2Matrix(const char* filename);
 
-
+	void print(string str, int line, int start); //문자열 출력용함수
 	void update(); //tmp_bufScreen 출력
 	void setTmpBufScreen();
 	int getScreenWidth();

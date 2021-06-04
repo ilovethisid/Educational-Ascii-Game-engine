@@ -79,44 +79,6 @@ Console GameLoop::getConsole()
 // 임시 함수, 나중에 제거 예정
 void GameLoop::initialize()
 {
-    int x = 0;
-    int y = 0;
-    int x1 = 100;
-    int y1 = 100;
-    Object* obj1 = new Object(20, 60);
-    Object* obj2 = new Object(30, 40);
-
-    Matrix background = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\background");//파일 경로
-    //Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
-    
-    // 동진
-    //Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//파일 경로
-
-
-    console_.drawMatrix(0, 0, background);
-
-    Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\plane");
-    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
-
-    // 동진 
-    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
-    
-
-    Matrix matrix2 = console_.makeCircle(5);
-    
-    console_.drawMatrix(0, 0, background);
-
-    
-
-    obj1->makeRigidbody();
-
-    obj1->makeImage(matrix1);
-
-    obj1->setName("player");
-
-    obj1->rigidbody.makeMatrixCollider(matrix1);
-
-    objects.push_back(obj1);
 }
 
 /* Set frame per second. Default FPS is 30. */
@@ -125,11 +87,10 @@ void GameLoop::setFPS(double _frames)
     fps_ = _frames;
 }
 
-void GameLoop::start(vector<Object*>& objects)
+void GameLoop::start()
 {
     clock_t start, end, interval, remaining_time;
     bool gameover = 0;
-    objects = objects;
     initialize();
 
     while (!is_gameover_) {
@@ -184,7 +145,6 @@ void GameLoop::exitLoop()
 void GameLoop::checkKey(vector<Object*>& objects)
 {
     Object* player = objects[0]->findByName(objects, "player");
-
     checkMove(*player);
     checkShoot(objects, *player);
 }

@@ -60,7 +60,7 @@ Rigidbody::MatrixCollider::MatrixCollider()
 	height = 0;
 }
 
-Rigidbody::MatrixCollider::MatrixCollider(Matrix _matrix, int _x, int _y)
+Rigidbody::MatrixCollider::MatrixCollider(Matrix& _matrix, int _x, int _y)
 {
 	type = "MatrixCollider";
 	matrix = Matrix(_matrix);
@@ -136,7 +136,7 @@ void Rigidbody::makeBoxCollider(int width, int height)
 	makeBoxCollider(x, y, x + width, y + height);
 }
 
-void Rigidbody::makeMatrixCollider(Matrix matrix)
+void Rigidbody::makeMatrixCollider(Matrix& matrix)
 {
 	collider = new MatrixCollider(matrix, x, y);
 }
@@ -160,6 +160,7 @@ void Rigidbody::move(int delta_x, int delta_y)
 
 int Rigidbody::checkCollision(Object& obj)
 {
+
 	if (this->collider->type == "BoxCollider" && obj.rigidbody.collider->type == "BoxCollider") {
 		return checkAABBCollision(obj);
 	}
@@ -211,7 +212,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 	MatrixCollider* collider1 = (MatrixCollider*)collider;
 	MatrixCollider* collider2 = (MatrixCollider*)obj.rigidbody.collider;
 
-	Matrix overlapping_matrix;
+	Matrix overlapping_matrix; //현재 미사용
 
 	Point topLeft1 = Point(collider1->x, collider1->y);
 	Point botRight1 = Point(collider1->x + collider1->width - 1, collider1->y + collider1->height - 1);
@@ -230,7 +231,7 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 		int height = overlap_botRight_y - overlap_topLeft_y + 1;
 
 
-		overlapping_matrix = Matrix(width, height);
+		//overlapping_matrix = Matrix(width, height); 
 
 		int** element = new int* [height];
 		for (int i = 0; i < height; i++) {
@@ -249,13 +250,16 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (element[i][j] != 0) {
+					for (int k = 0; k < height; k++)
+						delete element[k];
 					return 2;
 				}
 			}
 		}
 		// if element[i][j] = 1 (collision is true)
 		// return 2
-
+		for (int k = 0; k < height; k++)
+			delete element[k];
 		return 0;
 	}
 }
@@ -279,7 +283,6 @@ int max(int a, int b) {
 		return b;
 	}
 }
-
 
 
 

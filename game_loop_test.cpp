@@ -14,6 +14,7 @@ void checkMove(GameLoop* game_loop);
 */
 
 void checkShot(GameLoop* game_loop);
+void testFigures(GameLoop* game_loop);
 
 int main(void)
 {
@@ -21,16 +22,13 @@ int main(void)
     game_loop->setFPS(12);
     game_loop->BuildScreen(160, 100, 8, 8);
 
-    // 최초 그림 그려지는 점 초기화
+    //// 최초 그림 그려지는 점 초기화
     target_point = Point(20, 20);
-
-    makeFigures(game_loop);
 
     Sound my_sound = Sound();
     my_sound.playSound("hello.wav");
-
-    vector<Object*> objects;
-    game_loop->start(objects);
+    makeFigures(game_loop);
+    game_loop->start();
 
     /*while (true) {
 
@@ -58,18 +56,28 @@ int main(void)
 }
 
 
+
+
+
 void makeFigures(GameLoop* game_loop)
 {
+    game_loop->console_.setTmpBufScreen();
+
+
     // 그릴 도형의 행렬 초기화
     Matrix mat_circle = game_loop->getConsole().makeCircle(10);
     Matrix mat_box = game_loop->getConsole().makeBox(game_loop->getConsole().getScreenWidth(), game_loop->getConsole().getScreenHeight());
+    Matrix mat_rect = game_loop->getConsole().makeRect(10, 4);
 
     //도형 초기화
-    circle1 = Object(target_point.getX(), target_point.getY());
-    circle1.makeImage(mat_circle);
-    circle1.makeRigidbody();
-    circle1.rigidbody.setVelocity(0, 0);
-    circle1.rigidbody.makeMatrixCollider(mat_circle);
+
+    Object* circle1 =new Object(target_point.getX(), target_point.getY()); //Object로 선언하면 지역변수라 제거됨.
+    circle1->makeImage(mat_circle);
+    circle1->makeRigidbody();
+    circle1->rigidbody.makeMatrixCollider(mat_circle);
+    circle1->rigidbody.setVelocity(1, 1);
+ //   circle1->rigidbody.makeMatrixCollider(mat_circle);
+
 
     Object* boundary = new Object(0, 0);
     boundary->makeImage(mat_box);
@@ -79,7 +87,29 @@ void makeFigures(GameLoop* game_loop)
 
     // 도형들을 vector에 append
     game_loop->objects.push_back(boundary);
-    game_loop->objects.push_back(&circle1);
+    game_loop->objects.push_back(circle1);
+
+
+
+    //배경 그리기
+    Matrix background = game_loop->console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\background");//파일 경로
+    //Matrix background = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
+    // 동진
+    //Matrix background = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//파일 경로
+    game_loop->console_.drawMatrix(0, 0, background);
+
+    //player object
+    Object* player = new Object(30, 60);
+    Matrix plane1 = game_loop->console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\깃헙 소공\\Educational-Ascii-Game-engine\\plane");
+    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
+    // 동진 
+    //Matrix matrix1 = console_.makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
+    player->makeRigidbody();
+    player->makeImage(plane1);
+    player->rigidbody.makeMatrixCollider(plane1);
+    player->setName("player");
+    game_loop->objects.push_back(player);
+
 }
 
 /*
@@ -101,6 +131,7 @@ void checkMove(GameLoop* game_loop)
 }
 */
 
+/*
 void checkShot(GameLoop* game_loop)
 {
     Point shot_point;
@@ -113,3 +144,4 @@ void checkShot(GameLoop* game_loop)
     game_loop->GotoXY(shot_point);
     game_loop->GotoXY(target_point);
 }
+*/

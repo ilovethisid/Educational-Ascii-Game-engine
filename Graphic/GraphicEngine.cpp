@@ -167,14 +167,14 @@ void Console::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short
 	drawLine(x3, y3, x1, y1, c, col);
 }
 
-void Console::drawObject(Object obj) {
+void Console::drawObject(Object& obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
 			if (tmp.element[i][j]) draw(obj.getX() + j, obj.getY() + i, tmp.element[i][j], tmp.color[i*tmp.width+j]);
 }// 배열 그리기
 
-void Console::drawMatrix(int x, int y, Matrix image) {
+void Console::drawMatrix(int x, int y, Matrix& image) {
 
 	for (int i = 0; i < image.height; i++)
 		for (int j = 0; j < image.width; j++)
@@ -183,7 +183,7 @@ void Console::drawMatrix(int x, int y, Matrix image) {
 
 
 
-void Console::drawTmpObject(Object obj) {
+void Console::drawTmpObject(Object& obj) {
 	Matrix tmp = obj.getImage();
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
@@ -203,57 +203,57 @@ void Console::clearTmpBufScreen() {
 }//bufScreen 초기화
 
 Matrix Console::makeCircle(int r, short c, short col) {
-	Matrix image =Matrix(2*r+1,2*r+1);
-	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
+	Matrix tmp =Matrix(2*r+1,2*r+1);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
 	int x = 0;
 	int y = r;
 	while (y >= x) {
-		image.element[r - y][r - x] = c;
-		image.element[r - x][r - y] = c;
-		image.element[r - x][r + y] = c;
-		image.element[r - y][r + x] = c;
-		image.element[r + y][r - x] = c;
-		image.element[r +x][r - y] = c;
-		image.element[r +y][r +x] = c;
-		image.element[r +x][r +y] = c;
+		tmp.element[r - y][r - x] = c;
+		tmp.element[r - x][r - y] = c;
+		tmp.element[r - x][r + y] = c;
+		tmp.element[r - y][r + x] = c;
+		tmp.element[r + y][r - x] = c;
+		tmp.element[r +x][r - y] = c;
+		tmp.element[r +y][r +x] = c;
+		tmp.element[r +x][r +y] = c;
 		x++;
 		y = (int)(std::pow(r * r - x * x, 1 / 2.) + 0.5);
 	}
-	return image;
+	return tmp;
 }
 
 Matrix Console::makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
 
-	Matrix image = Matrix(max(max(x1, x2), x3)+1, max(max(y1, y2), y3)+1);
-	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
-	drawLineInMatrix(&image.element, x1, y1, x2, y2, c);
-	drawLineInMatrix(&image.element, x2, y2, x3, y3, c);
-	drawLineInMatrix(&image.element, x3, y3, x1, y1, c);
-	return image;
+	Matrix tmp = Matrix(max(max(x1, x2), x3)+1, max(max(y1, y2), y3)+1);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
+	drawLineInMatrix(&tmp.element, x1, y1, x2, y2, c);
+	drawLineInMatrix(&tmp.element, x2, y2, x3, y3, c);
+	drawLineInMatrix(&tmp.element, x3, y3, x1, y1, c);
+	return tmp;
 }
 
 Matrix Console::makeRect(int width, int height, short c, short col){
-	Matrix image = Matrix(width, height);
-	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
+	Matrix tmp = Matrix(width, height);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
 	for(int i=0; i<height;i++)
-		std::fill_n(image.element[i], width, c);
-	return image;
+		std::fill_n(tmp.element[i], width, c);
+	return tmp;
 }
 
 Matrix Console::makeBox(int width, int height, short c, short col) {
-	Matrix image = Matrix(width, height);
-	memset(image.color, (unsigned char)col, sizeof(unsigned char) * image.width * image.height);
+	Matrix tmp = Matrix(width, height);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
 	
 	for (int i = 0; i < height; i++) {
-		image.element[i][0] = c;
-		image.element[i][width - 1] = c;
+		tmp.element[i][0] = c;
+		tmp.element[i][width - 1] = c;
 	}
 	for (int i = 0; i < width; i++) {
-		image.element[0][i] = c;
-		image.element[height - 1][i] = c;
+		tmp.element[0][i] = c;
+		tmp.element[height - 1][i] = c;
 	}
 
-	return image;
+	return tmp;
 }
 
 wstringstream readFile(const char* filename) {
@@ -339,3 +339,15 @@ int Console::getScreenHeight()
 void Console::update() { //출력하는 함수
 		WriteConsoleOutput(console_handle, tmp_screen_buffer, { (short)screen_width, (short)screen_height }, { 0,0 }, &window_rect);
 	}
+
+void Console::print(string str, int line, int start) {
+	int j = start;
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '\n') {
+			j = 0;
+			line++;
+		}
+		else
+			draw(j++, line, str[i]);
+	}
+}
