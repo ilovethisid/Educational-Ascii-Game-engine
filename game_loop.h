@@ -24,43 +24,40 @@ private:
     bool is_gameover_;
     int key_pause_;
     int key_resume_;
-   
-    KeyListener key_listener_;
-  //  std::thread* temp_;
     clock_t start_, end_, remaining_time_;
+
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
+    void vSetCwdToEnginePath();
+
     void vCheckPause();
     void vCheckResume();
-    void vSetCwdToEnginePath();
+
+    void vUpdate();
     void vPrintInfo();
 
 public:
     vector<Object*> objects;
     gameloop_t keythread;
+
     GameLoop();
     Console& getConsole();
-
-    void initialize();
     void setFPS(double frames);
-
-    void start();
-    void update();
-    void exitLoop();
-
+    void buildScreen(int width, int height, int fontw, int fonth);
     void setPauseKey(int key);
     void setResumeKey(int key);
+    KeyListener& getKeyListener();
+    char* getEnginePath();
+
+    void initialize();
+    void start();
+    void virtual updateLoop();
+    void virtual checkKey();
+    void exit();
 
     vector<Matrix> MV;//enemy 그림 벡터
     void makeEnemy(); //시간에 따라 enemy 발생
 
-    void virtual checkKey();
-
-    void BuildScreen(int width, int height, int fontw, int fonth);
-
-    KeyListener& getKeyListener();
-
     void GotoXY(Point _point);
-    char* getEnginePath();
     void MoveTargetObject(Point target_obj);
 };

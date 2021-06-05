@@ -48,6 +48,7 @@ public:
     Sound sound;
     TestGame();
     void checkKey() override;
+    void updateLoop() override;
     void checkMove(Object& obj);
     void checkShoot(vector<Object*>& objects, Object& player);
 };
@@ -61,6 +62,32 @@ void TestGame::checkKey()
     checkMove(*player);
     checkShoot(objects, *player);
 }
+void TestGame::updateLoop()
+{
+    string a = to_string(objects.size()) + "\n";
+    getConsole().print(a, 2, 2);
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->move(objects);
+    }
+    // move according to velocity
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->collision_flg) { //충돌한 적이 있으면 collision_flg
+            if (objects[i]->getName()) {
+                if (strcmp(objects[i]->getName(), "boundary") && strcmp(objects[i]->getName(), "player")) {//boundary 경계가 아니면 삭제한다.
+                    delete objects[i];
+                    objects.erase(objects.begin() + i);
+                    i--;
+                }
+            }
+            else { //null이면
+                delete objects[i];
+                objects.erase(objects.begin() + i);
+                i--;
+            }
+        }
+    }
+}
+
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
 {
@@ -85,7 +112,7 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(2, 0);
     }
     else if (getKeyListener().keycheck(eag_ctrl)) { //ctrl키 멈추기
-        exitLoop();
+        exit();
     }
     else {
         obj.rigidbody.setVelocity(0, 0);
@@ -115,7 +142,7 @@ int main(void)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     TestGame* test_game = new TestGame();
     test_game->setFPS(12);
-    test_game->BuildScreen(160, 100, 8, 8);
+    test_game->buildScreen(160, 100, 8, 8);
     // set pause and resume key to RETURN key
     test_game->setPauseKey(eag_enter);
     test_game->setResumeKey(eag_enter);

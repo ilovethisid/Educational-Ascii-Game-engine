@@ -15,7 +15,7 @@ GameLoop::GameLoop()
 }
 
 /* Build console window. */
-void GameLoop::BuildScreen(int _width, int _height, int _fontw, int _fonth)
+void GameLoop::buildScreen(int _width, int _height, int _fontw, int _fonth)
 {
     console_.makeConsole(_width, _height, _fontw, _fonth);
     vHideConsoleCursor();
@@ -67,7 +67,7 @@ void GameLoop::start()
             last_time = start;
         }
 
-        update();
+        vUpdate();
         end = clock();                // end timer
 
         interval = end - start;    // total elapsed time during a iteration
@@ -78,38 +78,19 @@ void GameLoop::start()
 }
 
 
-void GameLoop::update()
+void GameLoop::vUpdate()
 {
-    //Object* player = objects[0]->findByName(objects, "player");
-
     checkKey();
-    string a= to_string(objects.size())+"\n";
-    console_.print(a,2,2);
-    for (int i = 0; i < objects.size(); i++) {
-        objects[i]->move(objects);
-    }
-    // move according to velocity
-    for (int i = 0; i < objects.size(); i++) {
-        if (objects[i]->collision_flg) { //충돌한 적이 있으면 collision_flg
-            if (objects[i]->getName()) {
-                if (strcmp(objects[i]->getName(), "boundary")&& strcmp(objects[i]->getName(), "player")) {//boundary 경계가 아니면 삭제한다.
-                    delete objects[i];
-                    objects.erase(objects.begin() + i);
-                    i--;
-                }
-            }
-            else { //null이면
-                delete objects[i];
-                objects.erase(objects.begin() + i);
-                i--;
-            }
-        }
-    }
+    updateLoop();
+
     console_.setTmpBufScreen();
     console_.drawTmpObjects(objects);
     console_.update();
-
 }
+
+void GameLoop::checkKey() {}
+void GameLoop::updateLoop() {}
+
 
 /* If key_pause_ is pressed, pause game loop. */
 void GameLoop::vCheckPause()
@@ -139,12 +120,11 @@ void GameLoop::setResumeKey(int key)
     key_resume_ = key;
 }
 
-void GameLoop::exitLoop()
+void GameLoop::exit()
 {
     is_gameover_ = true;
 }
 
-void GameLoop::checkKey() {}
 
 /* Returns millisec unit time interval per frame. */
 DWORD GameLoop::vGetUnitTime()
@@ -186,7 +166,7 @@ void GameLoop::vSetCwdToEnginePath()
     int nResult = _chdir(getEnginePath());
     if (nResult) {
         std::cout << "Invalid EAG engine path" << std::endl;
-        exit(1);
+        std::exit(1);
     }
 }
 
