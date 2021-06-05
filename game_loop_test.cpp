@@ -126,16 +126,16 @@ void makeFigures(GameLoop* game_loop)
 
 
     //¹è°æ ±×¸®±â
-    //Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
-    Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
+    Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\EAG\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
+    //Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
     // µ¿Áø
     //Matrix background = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//ÆÄÀÏ °æ·Î
     game_loop->getConsole().drawMatrix(0, 0, background);
 
     //player object
     Object* player = new Object(30, 60);
-    //Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\±êÇé ¼Ò°ø\\Educational-Ascii-Game-engine\\plane");
-    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
+    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\Á¤ÈÆ¼®\\Desktop\\EAG\\Educational-Ascii-Game-engine\\plane");
+    //Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
     // µ¿Áø 
     //Matrix matrix1 = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
     player->makeRigidbody();

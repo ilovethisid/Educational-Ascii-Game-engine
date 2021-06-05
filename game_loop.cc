@@ -34,6 +34,13 @@ Console GameLoop::getConsole()
 // 임시 함수, 나중에 제거 예정
 void GameLoop::initialize()
 {
+    //경로 알아서 지정
+    Matrix M1 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy1");
+    Matrix M2 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy2");
+    Matrix M3 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy3");
+    MV.push_back(M1);
+    MV.push_back(M2);
+    MV.push_back(M3);
 }
 
 /* Set frame per second. Default FPS is 30. */
@@ -48,9 +55,17 @@ void GameLoop::start()
     bool gameover = 0;
     initialize();
 
+    int last_time = clock();
+
     while (!is_gameover_) {
         vCheckPause();
         start = clock();                 // start timer
+
+        if ((start - last_time) > 1000) {//when passed make enemy
+            makeEnemy();
+            last_time = start;
+        }
+
         update();
         end = clock();                // end timer
 
@@ -205,3 +220,16 @@ void GameLoop::vHideConsoleCursor()
     info.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
+
+void GameLoop::makeEnemy() { //적발생
+
+    int rand_num = rand();
+    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
+    enemy->makeImage(MV[rand_num % 3]); //모양 3개
+    enemy->makeRigidbody();
+    enemy->rigidbody.makeMatrixCollider(MV[rand_num % 3]);
+    enemy->setName("enemy");
+    enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
+    objects.push_back(enemy);
+}
+
