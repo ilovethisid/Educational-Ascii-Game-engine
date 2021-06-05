@@ -119,20 +119,39 @@ void TestGame::Move_Collision_Check() {
         if (life_ <= 0) exit();
         player0->collision_flg = 0;
     }
-    for (int j = 0; j < bullets.size(); j++) {
+
+    //if (bullets.empty() == false) {
+    //    for (int i = bullets.size() - 1; i >= 0; i--) {
+    //        if (bullets.at(i)->collision_flg) {
+    //            delete bullets.at(i);
+    //            bullets.erase(bullets.begin() + i);
+    //        }
+    //    }
+    //}
+    //if (enemys.empty() == false) {
+    //    for (int i = enemys.size() - 1; i >= 0; i--) {
+    //        if (enemys.at(i)->collision_flg) {
+    //            delete enemys.at(i);
+    //            enemys.erase(enemys.begin() + i);
+    //        }
+    //    }
+    //}
+    for (int j = 0; j < bullets.size(); ) {
         if (bullets[j]->collision_flg) {
-            delete bullets[j];
+            Object* tmp = bullets[j];
             bullets.erase(bullets.begin() + j);
-            j--;
+            delete tmp;
         }
+        else j++;
     }
-    for (int j = 0; j < enemys.size(); j++) {
+    for (int j = 0; j < enemys.size();) {
         if (enemys[j]->collision_flg) {
-            delete enemys[j];
+            Object* tmp = enemys[j];
             enemys.erase(enemys.begin() + j);
+            delete tmp;
             addscore(10);
-            j--;
         }
+        else j++;
     }
 
  
@@ -195,7 +214,7 @@ void TestGame::makeEnemy()
 { 
     int rand_num = rand();
     Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
-    enemy->makeImage(MV_[rand_num % 3]); //모양 3개
+    enemy->makeImage(MV_.at(rand_num % 3)); //모양 3개
     enemy->makeRigidbody();
     enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
     enemy->setName("enemy");
