@@ -12,8 +12,6 @@ GameLoop::GameLoop()
     console_ = Console();
     key_thread_.start();
     vSetCwdToEnginePath();
-    life = 5;
-    score = 0;
 }
 
 /* Build console window. */
@@ -149,84 +147,4 @@ void GameLoop::vSetCwdToEnginePath()
         std::cout << "Invalid EAG engine path" << std::endl;
         std::exit(1);
     }
-}
-void GameLoop::drawlife()
-{
-    Matrix life_image;
-    life_image.width = 10;
-    life_image.height = 1;
-    life_image.color = new unsigned char[1 * 10];
-    for (int i = 0; i < 10; i++)
-    {
-        life_image.color[i] = FG_RED;
-    }
-    life_image.element = new short* [1];
-    for (int i = 0; i < 1; i++)
-    {
-        life_image.element[i] = new short[10];
-    }
-    for (int i = 0; i < 5; i++)
-    {
-        life_image.element[0][2 * i] = L'¢¾';
-        life_image.element[0][2 * i + 1] = L' ';
-    }
-    console_.drawMatrix(5, 2, life_image);
-}
-
-void GameLoop::minuslife()
-{
-    Matrix null_image;
-    null_image.width = 1;
-    null_image.height = 1;
-    null_image.color = new unsigned char[1];
-    null_image.color[0] = FG_BLACK;
-    null_image.element = new short* [1];
-    null_image.element[0] = new short[1];
-    null_image.element[0][0] = L' ';
-    if (life > 0)
-    {
-        console_.drawMatrix(3 + life * 2, 2, null_image);
-        life--;
-    }
-    else
-    {
-        exitLoop();
-    }
-}
-void GameLoop::addlife()
-{
-    Matrix null_image;
-    null_image.width = 1;
-    null_image.height = 1;
-    null_image.color = new unsigned char[1];
-    null_image.color[0] = FG_RED;
-    null_image.element = new short* [1];
-    null_image.element[0] = new short[1];
-    null_image.element[0][0] = L'¢¾';
-    if (life < 5)
-    {
-        console_.drawMatrix(5 + life * 2, 2, null_image);
-        life++;
-    }
-}
-void GameLoop::addscore(int _score)
-{
-    this->score = this->score + _score;
-    int temp = this->score;
-    Matrix score_image;
-    score_image.width = 20;
-    score_image.height = 1;
-    score_image.color = new unsigned char[20];
-    for (int i = 0; i < 20; i++)
-    {
-        score_image.color[i] = FG_WHITE;
-    }
-    score_image.element = new short* [1];
-    score_image.element[0] = new short[20];
-    for (int i = 0; i < 20; i++)
-    {
-        score_image.element[0][19 - i] = L'0' + temp % 10;
-        temp = temp / 10;
-    }
-    console_.drawMatrix(40, 2, score_image);
 }

@@ -38,6 +38,8 @@ private:
     vector<Matrix> MV_;  // enemy ±×¸² º¤ÅÍ
     Sound sound_;
     clock_t last_time_;
+    int life_;
+    int score_;
 
     void initialize() override;
     void updateLoop() override;
@@ -47,6 +49,10 @@ private:
     void checkShoot(vector<Object*>& objects, Object& player);
 
     void makeEnemy();
+    void drawlife();
+    void minuslife();
+    void addlife();
+    void addscore(int _score);
 
 public:
     TestGame();
@@ -55,6 +61,8 @@ public:
 TestGame::TestGame()
 {
     sound_ = Sound();
+    life_ = 5;
+    score_ = 0;
 }
 void TestGame::initialize()
 {
@@ -107,6 +115,10 @@ void TestGame::updateLoop()
             }
         }
     }
+}
+Sound TestGame::getSound()
+{
+    return sound_;
 }
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
@@ -166,9 +178,84 @@ void TestGame::makeEnemy()
     enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
     objects.push_back(enemy);
 }
-Sound TestGame::getSound()
+void TestGame::drawlife()
 {
-    return sound_;
+    Matrix life_image;
+    life_image.width = 10;
+    life_image.height = 1;
+    life_image.color = new unsigned char[1 * 10];
+    for (int i = 0; i < 10; i++)
+    {
+        life_image.color[i] = FG_RED;
+    }
+    life_image.element = new short* [1];
+    for (int i = 0; i < 1; i++)
+    {
+        life_image.element[i] = new short[10];
+    }
+    for (int i = 0; i < 5; i++)
+    {
+        life_image.element[0][2 * i] = L'¢¾';
+        life_image.element[0][2 * i + 1] = L' ';
+    }
+    getConsole().drawMatrix(5, 2, life_image);
+}
+void TestGame::minuslife()
+{
+    Matrix null_image;
+    null_image.width = 1;
+    null_image.height = 1;
+    null_image.color = new unsigned char[1];
+    null_image.color[0] = FG_BLACK;
+    null_image.element = new short* [1];
+    null_image.element[0] = new short[1];
+    null_image.element[0][0] = L' ';
+    if (life_ > 0)
+    {
+        getConsole().drawMatrix(3 + life_ * 2, 2, null_image);
+        life_--;
+    }
+    else
+    {
+        exit();
+    }
+}
+void TestGame::addlife()
+{
+    Matrix null_image;
+    null_image.width = 1;
+    null_image.height = 1;
+    null_image.color = new unsigned char[1];
+    null_image.color[0] = FG_RED;
+    null_image.element = new short* [1];
+    null_image.element[0] = new short[1];
+    null_image.element[0][0] = L'¢¾';
+    if (life_ < 5)
+    {
+        getConsole().drawMatrix(5 + life_ * 2, 2, null_image);
+        life_++;
+    }
+}
+void TestGame::addscore(int _score)
+{
+    this->score_ = this->score_ + _score;
+    int temp = this->score_;
+    Matrix score_image;
+    score_image.width = 20;
+    score_image.height = 1;
+    score_image.color = new unsigned char[20];
+    for (int i = 0; i < 20; i++)
+    {
+        score_image.color[i] = FG_WHITE;
+    }
+    score_image.element = new short* [1];
+    score_image.element[0] = new short[20];
+    for (int i = 0; i < 20; i++)
+    {
+        score_image.element[0][19 - i] = L'0' + temp % 10;
+        temp = temp / 10;
+    }
+    getConsole().drawMatrix(40, 2, score_image);
 }
 
 Point g_target_point;
