@@ -65,9 +65,9 @@ void GameLoop::vUpdate()
 
     start = clock();                 // start timer
     checkKey();
-    updateLoop();
 
     console_.setTmpBufScreen();
+    updateLoop(); //updateLoop À§Ä¡¹Ù²Þ;
     console_.drawTmpObjects(objects);
     console_.update();
     end = clock();                // end timer
