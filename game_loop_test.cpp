@@ -59,7 +59,7 @@ int main(void)
     target_point = Point(20, 20);
 
     Sound my_sound = Sound();
-    my_sound.playSound("hello.wav");
+    my_sound.playSound("./usrlib/laser-gun.wav");
     makeFigures(game_loop);
     game_loop->start();
     while (!game_loop->objects.empty()) {
@@ -86,6 +86,8 @@ int main(void)
         
         game_loop->GotoXY(target_point);
     }*/
+
+
     return 0;
 }
 
@@ -126,18 +128,12 @@ void makeFigures(GameLoop* game_loop)
 
 
     //배경 그리기
-    Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\background");//파일 경로
-    //Matrix background = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\background");
-    // 동진
-    //Matrix background = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\background");//파일 경로
+    Matrix background = game_loop->getConsole().makeFile2Matrix("./usrlib/background");
     game_loop->getConsole().drawMatrix(0, 0, background);
 
     //player object
     Object* player = new Object(30, 60);
-    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\plane");
-    //Matrix plane1 = game_loop->getConsole().makeFile2Matrix("C:\\Users\\andre\\Desktop\\fps\\Educational-Ascii-Game-engine\\plane");
-    // 동진 
-    //Matrix matrix1 = getConsole().makeFile2Matrix("C:\\Users\\ilove\\source\\repos\\Educational-Ascii-Game-engine\\plane");
+    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("./usrlib/plane");
     player->makeRigidbody();
     player->makeImage(plane1);
     player->rigidbody.makeMatrixCollider(plane1);

@@ -7,6 +7,7 @@
 #include <ctime>
 #include <conio.h>
 #include <Windows.h>
+#include <direct.h>
 #include "./Physics/CoordinateSystem.h"
 #include "./Physics/Object.h"
 #include "./Graphic/GraphicEngine.h"
@@ -31,6 +32,7 @@ private:
     DWORD vGetUnitTime();
     void vCheckPause();
     void vCheckResume();
+    void vSetCwdToEnginePath();
     void vPrintInfo();
 
 public:
@@ -61,5 +63,6 @@ public:
     KeyListener getKeyListener();
 
     void GotoXY(Point _point);
+    char* getEnginePath();
     void MoveTargetObject(Point target_obj);
 };

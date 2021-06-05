@@ -11,6 +11,7 @@ GameLoop::GameLoop()
     key_resume_ = EOF;
     console_ = Console();
     keythread.start();
+    vSetCwdToEnginePath();
 }
 
 /* Build console window. */
@@ -35,9 +36,9 @@ Console GameLoop::getConsole()
 void GameLoop::initialize()
 {
     //경로 알아서 지정
-    Matrix M1 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy1");
-    Matrix M2 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy2");
-    Matrix M3 = console_.makeFile2Matrix("C:\\Users\\정훈석\\Desktop\\EAG\\Educational-Ascii-Game-engine\\enemy3");
+    Matrix M1 = console_.makeFile2Matrix("./usrlib/enemy1");
+    Matrix M2 = console_.makeFile2Matrix("./usrlib/enemy2");
+    Matrix M3 = console_.makeFile2Matrix("./usrlib/enemy3");
     MV.push_back(M1);
     MV.push_back(M2);
     MV.push_back(M3);
@@ -219,6 +220,27 @@ void GameLoop::vHideConsoleCursor()
     info.dwSize = 1;
     info.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
+
+/* Get EAG engine absolute path */
+char* GameLoop::getEnginePath()
+{
+    char origin[] = __FILE__;
+    char dest[100];
+
+    const char* source_file = strrchr(origin, '\\');
+    strncpy_s(dest, origin, source_file - origin);
+    return dest;
+}
+
+/* Change current working directory to EAG engine path */
+void GameLoop::vSetCwdToEnginePath()
+{
+    int nResult = _chdir(getEnginePath());
+    if (nResult) {
+        std::cout << "Invalid EAG engine path" << std::endl;
+        exit(1);
+    }
 }
 
 void GameLoop::makeEnemy() { //적발생
