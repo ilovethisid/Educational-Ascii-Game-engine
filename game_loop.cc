@@ -27,7 +27,7 @@ KeyListener& GameLoop::getKeyListener()
 }
 
 /* Returns user built console object */
-Console GameLoop::getConsole()
+Console& GameLoop::getConsole()
 {
     return console_; 
 }

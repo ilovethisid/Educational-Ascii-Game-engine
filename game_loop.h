@@ -39,7 +39,7 @@ public:
     vector<Object*> objects;
     gameloop_t keythread;
     GameLoop();
-    Console getConsole();
+    Console& getConsole();
 
     void initialize();
     void setFPS(double frames);

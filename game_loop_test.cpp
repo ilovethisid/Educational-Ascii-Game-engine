@@ -21,7 +21,6 @@ const Point kUnitY = Point(0, 1);
 
 Point target_point;
 
-void makeFigures(GameLoop* game_loop);
 
 void checkShot(GameLoop* game_loop);
 
@@ -109,6 +108,8 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
     }
 }
 
+void makeFigures(TestGame* test_game);
+
 int main(void)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -157,15 +158,15 @@ int main(void)
 
 
 
-void makeFigures(GameLoop* game_loop)
+void makeFigures(TestGame* test_game)
 {
-    game_loop->getConsole().setTmpBufScreen();
+    test_game->getConsole().setTmpBufScreen();
 
 
     // 그릴 도형의 행렬 초기화
-    Matrix mat_circle = game_loop->getConsole().makeCircle(10);
-    Matrix mat_box = game_loop->getConsole().makeBox(game_loop->getConsole().getScreenWidth(), game_loop->getConsole().getScreenHeight());
-    Matrix mat_rect = game_loop->getConsole().makeRect(10, 4);
+    Matrix mat_circle = test_game->getConsole().makeCircle(10);
+    Matrix mat_box = test_game->getConsole().makeBox(test_game->getConsole().getScreenWidth(), test_game->getConsole().getScreenHeight());
+    Matrix mat_rect = test_game->getConsole().makeRect(10, 4);
 
     //도형 초기화
 
@@ -184,23 +185,23 @@ void makeFigures(GameLoop* game_loop)
     boundary->setName("boundary");
 
     // 도형들을 vector에 append
-    game_loop->objects.push_back(boundary);
-    game_loop->objects.push_back(circle1);
+    test_game->objects.push_back(boundary);
+    test_game->objects.push_back(circle1);
 
 
 
     //배경 그리기
-    Matrix background = game_loop->getConsole().makeFile2Matrix("./usrlib/background");
-    game_loop->getConsole().drawMatrix(0, 0, background);
+    Matrix background = test_game->getConsole().makeFile2Matrix("./usrlib/background");
+    test_game->getConsole().drawMatrix(0, 0, background);
 
     //player object
     Object* player = new Object(30, 60);
-    Matrix plane1 = game_loop->getConsole().makeFile2Matrix("./usrlib/plane");
+    Matrix plane1 = test_game->getConsole().makeFile2Matrix("./usrlib/plane");
     player->makeRigidbody();
     player->makeImage(plane1);
     player->rigidbody.makeMatrixCollider(plane1);
     player->setName("player");
-    game_loop->objects.push_back(player);
+    test_game->objects.push_back(player);
 
 }
 
