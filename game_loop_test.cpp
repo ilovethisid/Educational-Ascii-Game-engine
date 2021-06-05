@@ -43,27 +43,89 @@ void checkShot(GameLoop* game_loop);
 //    return 0;
 //}
 
+class TestGame : public GameLoop {
 
+public:
+    Sound sound;
+    TestGame();
+    void checkKey() override;
+    void checkMove(Object& obj);
+    void checkShoot(vector<Object*>& objects, Object& player);
+};
+TestGame::TestGame()
+{
+    sound = Sound();
+}
+void TestGame::checkKey()
+{
+    Object* player = objects[0]->findByName(objects, "player");
+    checkMove(*player);
+    checkShoot(objects, *player);
+}
+// Implementation of KeyListener
+void TestGame::checkMove(Object& obj)
+{
+    if (getKeyListener().keycheck(eag_Top)) {
+        obj.rigidbody.setVelocity(0, -2);
+        if (getKeyListener().keycheck(eag_Left))
+            obj.rigidbody.setVelocity(-2, -2);
+        else if (getKeyListener().keycheck(eag_Right))
+            obj.rigidbody.setVelocity(2, -2);
+    }
+    else if (getKeyListener().keycheck(eag_Bottom)) {
+        obj.rigidbody.setVelocity(0, 2);
+        if (getKeyListener().keycheck(eag_Left))
+            obj.rigidbody.setVelocity(-2, 2);
+        else if (getKeyListener().keycheck(eag_Right))
+            obj.rigidbody.setVelocity(2, 2);
+    }
+    else if (getKeyListener().keycheck(eag_Left)) {
+        obj.rigidbody.setVelocity(-2, 0);
+    }
+    else if (getKeyListener().keycheck(eag_Right)) {
+        obj.rigidbody.setVelocity(2, 0);
+    }
+    else if (getKeyListener().keycheck(eag_ctrl)) { //ctrl키 멈추기
+        exitLoop();
+    }
+    else {
+        obj.rigidbody.setVelocity(0, 0);
+    }
+}
+void TestGame::checkShoot(vector<Object*>& objects, Object& player)
+{
+    if (getKeyListener().keycheck(eag_space)) {
+        Object* bullet;
+        bullet = new Object(player.getX() + player.getImage().width / 2, player.getY() - 2);
+        Matrix image = Matrix(1, 1);
+        image.element[0][0] = '|';
+        bullet->makeImage(image);
+        bullet->makeRigidbody();
+        bullet->rigidbody.makeMatrixCollider(image);
+        bullet->setName("bullet");
+        bullet->rigidbody.setVelocity(0, -3);
+        objects.push_back(bullet);
+        sound.playSound("./usrlib/laser-gun.wav");
+    }
+}
 
 int main(void)
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    GameLoop* game_loop = new GameLoop();
-    game_loop->setFPS(12);
-    game_loop->BuildScreen(160, 100, 8, 8);
+    TestGame* test_game = new TestGame();
+    test_game->setFPS(12);
+    test_game->BuildScreen(160, 100, 8, 8);
     // set pause and resume key to RETURN key
-    game_loop->setPauseKey(eag_enter);
-    game_loop->setResumeKey(eag_enter);
+    test_game->setPauseKey(eag_enter);
+    test_game->setResumeKey(eag_enter);
 
     //// 최초 그림 그려지는 점 초기화
     target_point = Point(20, 20);
 
-    Sound my_sound = Sound();
-    my_sound.playSound("./usrlib/laser-gun.wav");
-    makeFigures(game_loop);
-    game_loop->start();
-    while (!game_loop->objects.empty()) {
-        game_loop->objects.pop_back();
+    makeFigures(test_game);
+    test_game->start();
+    while (!test_game->objects.empty()) {
+        test_game->objects.pop_back();
     }
     /*while (true) {
 
@@ -146,16 +208,16 @@ void makeFigures(GameLoop* game_loop)
 // Implementation of KeyListener
 void checkMove(GameLoop* game_loop)
 {
-    if (game_loop->getKeyListener().keycheck(eag_Top)) {
+    if (game_loop->klc().keycheck(eag_Top)) {
         circle1.rigidbody.setVelocity(0, -1);
     }
-    else if (game_loop->getKeyListener().keycheck(eag_Bottom)) {
+    else if (game_loop->klc().keycheck(eag_Bottom)) {
         circle1.rigidbody.setVelocity(0, 1);
     }
-    else if (game_loop->getKeyListener().keycheck(eag_Left)) {
+    else if (game_loop->klc().keycheck(eag_Left)) {
         circle1.rigidbody.setVelocity(-1, 0);
     }
-    else if (game_loop->getKeyListener().keycheck(eag_Right)) {
+    else if (game_loop->klc().keycheck(eag_Right)) {
         circle1.rigidbody.setVelocity(1, 0);
     }
 }
@@ -166,7 +228,7 @@ void checkShot(GameLoop* game_loop)
 {
     Point shot_point;
 
-    if (game_loop->getKeyListener().keycheck(eag_space)) {
+    if (game_loop->klc().keycheck(eag_space)) {
         shot_point = target_point;
     }
 

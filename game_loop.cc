@@ -21,7 +21,7 @@ void GameLoop::BuildScreen(int _width, int _height, int _fontw, int _fonth)
     vHideConsoleCursor();
 }
 
-KeyListener GameLoop::getKeyListener()
+KeyListener& GameLoop::getKeyListener()
 {
     return klc;
 }
@@ -82,7 +82,7 @@ void GameLoop::update()
 {
     //Object* player = objects[0]->findByName(objects, "player");
 
-    checkKey(objects);
+    checkKey();
     string a= to_string(objects.size())+"\n";
     console_.print(a,2,2);
     for (int i = 0; i < objects.size(); i++) {
@@ -144,60 +144,7 @@ void GameLoop::exitLoop()
     is_gameover_ = true;
 }
 
-void GameLoop::checkKey(vector<Object*>& objects)
-{
-    Object* player = objects[0]->findByName(objects, "player");
-    checkMove(*player);
-    checkShoot(objects, *player);
-}
-
-// Implementation of KeyListener
-void GameLoop::checkMove(Object& obj)
-{
-    if (klc.keycheck(eag_Top)) {
-        obj.rigidbody.setVelocity(0, -2);
-        if (klc.keycheck(eag_Left))
-            obj.rigidbody.setVelocity(-2, -2);
-        else if (klc.keycheck(eag_Right))
-            obj.rigidbody.setVelocity(2, -2);
-    }
-    else if (klc.keycheck(eag_Bottom)) {
-        obj.rigidbody.setVelocity(0, 2);
-        if (klc.keycheck(eag_Left))
-            obj.rigidbody.setVelocity(-2, 2);
-        else if (klc.keycheck(eag_Right))
-            obj.rigidbody.setVelocity(2, 2);
-    }
-    else if (klc.keycheck(eag_Left)) {
-        obj.rigidbody.setVelocity(-2, 0);
-    }
-    else if (klc.keycheck(eag_Right)) {
-        obj.rigidbody.setVelocity(2, 0);
-    }
-    else if (klc.keycheck(eag_ctrl)) { //ctrl≈∞ ∏ÿ√ﬂ±‚
-        exitLoop();
-    }
-    else {
-        obj.rigidbody.setVelocity(0, 0);
-    }
-
-}
-
-void GameLoop::checkShoot(vector<Object*>& objects, Object& player)
-{
-    if (klc.keycheck(eag_space)) {
-        Object* bullet;
-        bullet = new Object(player.getX() + player.getImage().width / 2, player.getY() - 2);
-        Matrix image = Matrix(1, 1);
-        image.element[0][0] = '|';
-        bullet->makeImage(image);
-        bullet->makeRigidbody();
-        bullet->rigidbody.makeMatrixCollider(image);
-        bullet->setName("bullet");
-        bullet->rigidbody.setVelocity(0, -3);
-        objects.push_back(bullet);
-    }
-}
+void GameLoop::checkKey() {}
 
 /* Returns millisec unit time interval per frame. */
 DWORD GameLoop::vGetUnitTime()

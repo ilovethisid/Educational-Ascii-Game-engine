@@ -50,17 +50,15 @@ public:
 
     void setPauseKey(int key);
     void setResumeKey(int key);
-    void checkMove(Object& obj);
 
     vector<Matrix> MV;//enemy 그림 벡터
     void makeEnemy(); //시간에 따라 enemy 발생
 
-    void checkKey(vector<Object*>& objects);
-    void checkShoot(vector<Object*>& objects, Object& player);
+    void virtual checkKey();
 
     void BuildScreen(int width, int height, int fontw, int fonth);
 
-    KeyListener getKeyListener();
+    KeyListener& getKeyListener();
 
     void GotoXY(Point _point);
     char* getEnginePath();
