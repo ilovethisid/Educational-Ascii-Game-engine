@@ -123,6 +123,7 @@ void TestGame::Move_Collision_Check() {
         if (bullets[j]->collision_flg) {
             delete bullets[j];
             bullets.erase(bullets.begin() + j);
+            j--;
         }
     }
     for (int j = 0; j < enemys.size(); j++) {
@@ -130,6 +131,7 @@ void TestGame::Move_Collision_Check() {
             delete enemys[j];
             enemys.erase(enemys.begin() + j);
             addscore(10);
+            j--;
         }
     }
 
