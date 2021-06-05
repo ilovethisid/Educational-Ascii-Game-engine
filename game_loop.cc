@@ -1,6 +1,6 @@
 #include "game_loop.h"
 
-extern KeyListener klc;
+extern KeyListener g_klc;
 
 GameLoop::GameLoop()
 {
@@ -23,7 +23,7 @@ void GameLoop::buildScreen(int _width, int _height, int _fontw, int _fonth)
 
 KeyListener& GameLoop::getKeyListener()
 {
-    return klc;
+    return g_klc;
 }
 
 /* Returns user built console object */
@@ -95,7 +95,7 @@ void GameLoop::updateLoop() {}
 /* If key_pause_ is pressed, pause game loop. */
 void GameLoop::vCheckPause()
 {
-    if (GetAsyncKeyState(klc.eagKeyToVK(key_pause_)))
+    if (GetAsyncKeyState(g_klc.eagKeyToVK(key_pause_)))
         vCheckResume();
 }
 
@@ -103,8 +103,8 @@ void GameLoop::vCheckResume()
 {
     Sleep(100);
     while (true) {
-        if (GetAsyncKeyState(klc.eagKeyToVK(key_resume_)) & 0x8000) {
-            klc.reset();
+        if (GetAsyncKeyState(g_klc.eagKeyToVK(key_resume_)) & 0x8000) {
+            g_klc.reset();
             return;
         }
     }

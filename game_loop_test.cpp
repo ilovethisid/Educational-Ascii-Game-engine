@@ -14,15 +14,8 @@
 
 #include "game_loop.h"
 
-Object circle1, square1;
+Point g_target_point;
 
-const Point kUnitX = Point(1, 0);
-const Point kUnitY = Point(0, 1);
-
-Point target_point;
-
-
-void checkShot(GameLoop* game_loop);
 
 //int main(void) {//메모리릭 테스트용
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -87,7 +80,6 @@ void TestGame::updateLoop()
         }
     }
 }
-
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
 {
@@ -148,42 +140,16 @@ int main(void)
     test_game->setResumeKey(eag_enter);
 
     //// 최초 그림 그려지는 점 초기화
-    target_point = Point(20, 20);
+    g_target_point = Point(20, 20);
 
     makeFigures(test_game);
     test_game->start();
     while (!test_game->objects.empty()) {
         test_game->objects.pop_back();
     }
-    /*while (true) {
-
-        game_loop->start();
-
-
-
-        game_loop->getConsole().setTmpBufScreen();
-        game_loop->getConsole().drawTmpObject(circle1);
-        game_loop->getConsole().drawTmpObject(square1);
-
-        circle1.move(game_loop->objects);
-        square1.move(game_loop->objects);
-
-
-        checkMove(game_loop);
-        checkShot(game_loop);
-
-        game_loop->FinishFrameUpdate(true);
-        
-        game_loop->GotoXY(target_point);
-    }*/
-
 
     return 0;
 }
-
-
-
-
 
 void makeFigures(TestGame* test_game)
 {
@@ -197,7 +163,7 @@ void makeFigures(TestGame* test_game)
 
     //도형 초기화
 
-    Object* circle1 =new Object(target_point.getX(), target_point.getY()); //Object로 선언하면 지역변수라 제거됨.
+    Object* circle1 =new Object(g_target_point.getX(), g_target_point.getY()); //Object로 선언하면 지역변수라 제거됨.
     circle1->makeImage(mat_circle);
     circle1->makeRigidbody();
     circle1->rigidbody.makeMatrixCollider(mat_circle);
@@ -231,37 +197,3 @@ void makeFigures(TestGame* test_game)
     test_game->objects.push_back(player);
 
 }
-
-/*
-// Implementation of KeyListener
-void checkMove(GameLoop* game_loop)
-{
-    if (game_loop->klc().keycheck(eag_Top)) {
-        circle1.rigidbody.setVelocity(0, -1);
-    }
-    else if (game_loop->klc().keycheck(eag_Bottom)) {
-        circle1.rigidbody.setVelocity(0, 1);
-    }
-    else if (game_loop->klc().keycheck(eag_Left)) {
-        circle1.rigidbody.setVelocity(-1, 0);
-    }
-    else if (game_loop->klc().keycheck(eag_Right)) {
-        circle1.rigidbody.setVelocity(1, 0);
-    }
-}
-*/
-
-/*
-void checkShot(GameLoop* game_loop)
-{
-    Point shot_point;
-
-    if (game_loop->klc().keycheck(eag_space)) {
-        shot_point = target_point;
-    }
-
-    shot_point = shot_point - kUnitY;
-    game_loop->GotoXY(shot_point);
-    game_loop->GotoXY(target_point);
-}
-*/
