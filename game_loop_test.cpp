@@ -66,7 +66,6 @@ TestGame::TestGame()
 }
 void TestGame::initialize()
 {
-
     last_time_ = clock();
 
     Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
@@ -166,7 +165,7 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
         sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
- //시간에 따라 enemy 발생
+ // 시간에 따라 enemy 발생
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();

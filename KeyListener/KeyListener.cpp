@@ -19,7 +19,7 @@ void KeyListener::keyinput(int key)
 void KeyListener::reset()//사용자 텍스트를 받는다던가 게임 시작 시점이라던가 이전 입력을 무시해야하는 상황에서 사용
 {
 	Rf = 1;
-	Sleep(500);
+	Sleep(RESET_DELAY);
 	for (int i = 0; i < EAG_VKEY_SIZE; i++)
 	{
 		flag[i] = false;
@@ -97,7 +97,7 @@ void KeyListenerThread()
 	{
 		if (klc.ReturnRf())
 		{
-			Sleep(1000);
+			Sleep(100);
 		}
 		for (i = 0x41; i < 0x5B; i++)  // A~Z
 		{

@@ -53,8 +53,10 @@ void GameLoop::initialize() {}
 /* If key_pause_ is pressed, pause game loop. */
 void GameLoop::vCheckPause()
 {
-    if (GetAsyncKeyState(klc.eagKeyToVK(key_pause_)))
+    if (klc.keycheck(key_pause_)) {
+        klc.reset();
         vCheckResume();
+    }
 }
 
 void GameLoop::vUpdate()
@@ -81,9 +83,9 @@ void GameLoop::updateLoop() {}
 
 void GameLoop::vCheckResume()
 {
-    Sleep(100);
+    Sleep(RESET_DELAY);
     while (true) {
-        if (GetAsyncKeyState(klc.eagKeyToVK(key_resume_)) & 0x8000) {
+        if (klc.keycheck(key_resume_)) {
             klc.reset();
             return;
         }

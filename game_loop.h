@@ -54,7 +54,6 @@ public:
     void virtual checkKey();
     void exit();
 
-
     void GotoXY(Point _point);
     void MoveTargetObject(Point target_obj);
 };

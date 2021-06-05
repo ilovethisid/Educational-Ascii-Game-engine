@@ -1,4 +1,5 @@
 #pragma once
+#define RESET_DELAY 500//time delay before reset() does its job
 #include <thread>
 #include <iostream>
 #include <windows.h>
