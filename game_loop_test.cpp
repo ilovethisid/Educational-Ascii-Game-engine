@@ -97,7 +97,6 @@ void TestGame::updateLoop()
         makeEnemy();
         last_time_ = start;
     }
-
 //충돌체크와 판정
     Move_Collision_Check();
     getConsole().drawTmpObjects(enemys);
@@ -109,7 +108,7 @@ void TestGame::updateLoop()
 
 void TestGame::Move_Collision_Check() {
 
-
+    player0->collision_flg = 0;
     for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(bullets); 
     for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //여기 플레이어도 포함
     
@@ -204,6 +203,7 @@ void TestGame::makeEnemy()
 
 void TestGame::drawLife()
 {
+    getConsole().print(to_string(life_),1,1);
     for (int i = 0; i < life_; i++) {
         getConsole().drawTmp(2*i + 2, 2, L'♥', FG_RED);
         getConsole().drawTmp(2*i + 3, 2, L' ', FG_RED);
@@ -294,7 +294,7 @@ void TestGame::addscore(int _score)
 
 Point g_target_point;
 
-void makeFigures(TestGame* test_game);
+
 
 int main(void)
 {
@@ -312,6 +312,4 @@ int main(void)
     return 0;
 }
 
-void makeFigures(TestGame* test_game)
-{
-}
+
