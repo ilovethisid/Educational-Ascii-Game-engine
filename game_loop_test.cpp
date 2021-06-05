@@ -14,9 +14,6 @@
 
 #include "game_loop.h"
 
-Point g_target_point;
-
-
 //int main(void) {//메모리릭 테스트용
 //    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 //    const wchar_t* a = L"디버그창";
@@ -37,17 +34,39 @@ Point g_target_point;
 
 class TestGame : public GameLoop {
 
-public:
-    Sound sound;
-    TestGame();
-    void checkKey() override;
+private:
+    vector<Matrix> MV_;  // enemy 그림 벡터
+    Sound sound_;
+    clock_t last_time_;
+
+    void initialize() override;
     void updateLoop() override;
+
+    void checkKey() override;
     void checkMove(Object& obj);
     void checkShoot(vector<Object*>& objects, Object& player);
+
+    void makeEnemy();
+
+public:
+    TestGame();
+    Sound getSound();
 };
 TestGame::TestGame()
 {
-    sound = Sound();
+    sound_ = Sound();
+}
+void TestGame::initialize()
+{
+
+    last_time_ = clock();
+
+    Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
+    Matrix M2 = getConsole().makeFile2Matrix("./usrlib/enemy2");
+    Matrix M3 = getConsole().makeFile2Matrix("./usrlib/enemy3");
+    MV_.push_back(M1);
+    MV_.push_back(M2);
+    MV_.push_back(M3);
 }
 void TestGame::checkKey()
 {
@@ -57,6 +76,15 @@ void TestGame::checkKey()
 }
 void TestGame::updateLoop()
 {
+    clock_t start;
+
+    start = clock();                 // start timer
+
+    if ((start - last_time_) > 1000) {//when passed make enemy
+        makeEnemy();
+        last_time_ = start;
+    }
+
     string a = to_string(objects.size()) + "\n";
     getConsole().print(a, 2, 2);
     for (int i = 0; i < objects.size(); i++) {
@@ -123,9 +151,27 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
         bullet->setName("bullet");
         bullet->rigidbody.setVelocity(0, -3);
         objects.push_back(bullet);
-        sound.playSound("./usrlib/laser-gun.wav");
+        sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
+ //시간에 따라 enemy 발생
+void TestGame::makeEnemy()
+{ 
+    int rand_num = rand();
+    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
+    enemy->makeImage(MV_[rand_num % 3]); //모양 3개
+    enemy->makeRigidbody();
+    enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
+    enemy->setName("enemy");
+    enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
+    objects.push_back(enemy);
+}
+Sound TestGame::getSound()
+{
+    return sound_;
+}
+
+Point g_target_point;
 
 void makeFigures(TestGame* test_game);
 

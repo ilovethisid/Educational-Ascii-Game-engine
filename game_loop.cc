@@ -1,6 +1,6 @@
 #include "game_loop.h"
 
-extern KeyListener g_klc;
+extern KeyListener klc;
 
 GameLoop::GameLoop()
 {
@@ -10,7 +10,7 @@ GameLoop::GameLoop()
     key_pause_ = EOF;
     key_resume_ = EOF;
     console_ = Console();
-    keythread.start();
+    key_thread_.start();
     vSetCwdToEnginePath();
 }
 
@@ -23,25 +23,13 @@ void GameLoop::buildScreen(int _width, int _height, int _fontw, int _fonth)
 
 KeyListener& GameLoop::getKeyListener()
 {
-    return g_klc;
+    return klc;
 }
 
 /* Returns user built console object */
 Console& GameLoop::getConsole()
 {
     return console_; 
-}
-
-// 임시 함수, 나중에 제거 예정
-void GameLoop::initialize()
-{
-    //경로 알아서 지정
-    Matrix M1 = console_.makeFile2Matrix("./usrlib/enemy1");
-    Matrix M2 = console_.makeFile2Matrix("./usrlib/enemy2");
-    Matrix M3 = console_.makeFile2Matrix("./usrlib/enemy3");
-    MV.push_back(M1);
-    MV.push_back(M2);
-    MV.push_back(M3);
 }
 
 /* Set frame per second. Default FPS is 30. */
@@ -52,59 +40,51 @@ void GameLoop::setFPS(double _frames)
 
 void GameLoop::start()
 {
-    clock_t start, end, interval, remaining_time;
-    bool gameover = 0;
     initialize();
-
-    int last_time = clock();
 
     while (!is_gameover_) {
         vCheckPause();
-        start = clock();                 // start timer
-
-        if ((start - last_time) > 1000) {//when passed make enemy
-            makeEnemy();
-            last_time = start;
-        }
-
         vUpdate();
-        end = clock();                // end timer
-
-        interval = end - start;    // total elapsed time during a iteration
-        remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
-
-        Sleep(remaining_time);
     }
 }
 
+void GameLoop::initialize() {}
+
+/* If key_pause_ is pressed, pause game loop. */
+void GameLoop::vCheckPause()
+{
+    if (GetAsyncKeyState(klc.eagKeyToVK(key_pause_)))
+        vCheckResume();
+}
 
 void GameLoop::vUpdate()
 {
+    clock_t start, end, interval, remaining_time;
+
+    start = clock();                 // start timer
     checkKey();
     updateLoop();
 
     console_.setTmpBufScreen();
     console_.drawTmpObjects(objects);
     console_.update();
+    end = clock();                // end timer
+
+    interval = end - start;    // total elapsed time during a iteration
+    remaining_time = vGetUnitTime() - interval;             // remaining time to sleep
+
+    Sleep(remaining_time);
 }
 
 void GameLoop::checkKey() {}
 void GameLoop::updateLoop() {}
 
-
-/* If key_pause_ is pressed, pause game loop. */
-void GameLoop::vCheckPause()
-{
-    if (GetAsyncKeyState(g_klc.eagKeyToVK(key_pause_)))
-        vCheckResume();
-}
-
 void GameLoop::vCheckResume()
 {
     Sleep(100);
     while (true) {
-        if (GetAsyncKeyState(g_klc.eagKeyToVK(key_resume_)) & 0x8000) {
-            g_klc.reset();
+        if (GetAsyncKeyState(klc.eagKeyToVK(key_resume_)) & 0x8000) {
+            klc.reset();
             return;
         }
     }
@@ -124,7 +104,6 @@ void GameLoop::exit()
 {
     is_gameover_ = true;
 }
-
 
 /* Returns millisec unit time interval per frame. */
 DWORD GameLoop::vGetUnitTime()
@@ -168,17 +147,5 @@ void GameLoop::vSetCwdToEnginePath()
         std::cout << "Invalid EAG engine path" << std::endl;
         std::exit(1);
     }
-}
-
-void GameLoop::makeEnemy() { //적발생
-
-    int rand_num = rand();
-    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
-    enemy->makeImage(MV[rand_num % 3]); //모양 3개
-    enemy->makeRigidbody();
-    enemy->rigidbody.makeMatrixCollider(MV[rand_num % 3]);
-    enemy->setName("enemy");
-    enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
-    objects.push_back(enemy);
 }
 
