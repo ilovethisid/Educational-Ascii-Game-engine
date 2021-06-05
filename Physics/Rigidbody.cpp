@@ -251,7 +251,8 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 			for (int j = 0; j < width; j++) {
 				if (element[i][j] != 0) {
 					for (int k = 0; k < height; k++)
-						delete element[k];
+						delete[] element[k];
+					delete[] element;
 					return 2;
 				}
 			}
@@ -259,7 +260,8 @@ int Rigidbody::checkMatrixCollision(Object& obj)
 		// if element[i][j] = 1 (collision is true)
 		// return 2
 		for (int k = 0; k < height; k++)
-			delete element[k];
+			delete[] element[k];
+		delete[] element;
 		return 0;
 	}
 }
