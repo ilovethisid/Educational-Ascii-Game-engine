@@ -14,6 +14,7 @@ private:
 	bool keydownflag[SIZE] = { false };
 	bool doubleclickflag[SIZE] = { false };
 	bool klf = 1;//프로그램 종료시
+	bool Rf = 0;//리셋하는 동안 스레드를 멈춤
 public:
 	//public 변수
 	clock_t keydown_t[SIZE] = { NULL };//각각 키다운과 더블 클릭의 시간을 측정하기 위해 기록하는것
@@ -29,6 +30,7 @@ public:
 	//그외의함수
 	void reset();
 	bool ReturnF();
+	bool ReturnRf();
 	int eagKeyToVK(int key);
 	void exit();
 };
