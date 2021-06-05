@@ -69,10 +69,29 @@ protected:
 
 public:
 	Console(); //생성자 함수
-	//~Console() {
-	//	delete screen_buffer;
-	//	delete tmp_screen_buffer;
-	//}
+	~Console() {
+		delete[] screen_buffer;
+		delete[] tmp_screen_buffer;
+	}
+	Console& operator=(const Console& fellow) {
+		this->screen_width = fellow.screen_width;
+		this->screen_height = fellow.screen_height;
+		this->console_handle = fellow.console_handle;
+		this->window_rect = fellow.window_rect;
+		if (this->screen_buffer != NULL)
+			delete[] screen_buffer;
+		if (this->tmp_screen_buffer != NULL)
+			delete[] tmp_screen_buffer;
+		if (fellow.screen_buffer != NULL) {
+			this->screen_buffer = new CHAR_INFO[fellow.screen_width * fellow.screen_height];
+			memcpy(this->screen_buffer, fellow.screen_buffer, fellow.screen_width * fellow.screen_height * sizeof(CHAR_INFO));
+		}
+		if (fellow.tmp_screen_buffer != NULL) {
+			tmp_screen_buffer = new CHAR_INFO[fellow.screen_width * fellow.screen_height];
+			memcpy(this->tmp_screen_buffer, fellow.tmp_screen_buffer, fellow.screen_width * fellow.screen_height * sizeof(CHAR_INFO));
+		}
+		return *this;
+	}
 	int makeConsole(int width, int height, int fontw, int fonth);
 	void draw(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE); //c= 채우는 문자 col= 색상
 	void drawCircle(int x, int y, int r, short c = PIXEL_SOLID, short col = FG_WHITE);
