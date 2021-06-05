@@ -3,9 +3,6 @@
 */
 #pragma once
 
-#include <iostream>
-#include <ctime>
-#include <conio.h>
 #include <Windows.h>
 #include <direct.h>
 #include "./Physics/CoordinateSystem.h"

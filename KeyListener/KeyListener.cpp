@@ -1,5 +1,4 @@
 #include "KeyListener.hpp"
-#include "KeyMacro.hpp"
 #define KDT 2000//키다운 시간
 #define DCT 300//더블 클릭 여유 시간
 KeyListener klc;
@@ -21,7 +20,7 @@ void KeyListener::reset()//사용자 텍스트를 받는다던가 게임 시작 시점이라던가 이�
 {
 	Rf = 1;
 	Sleep(500);
-	for (int i = 0; i < SIZE; i++)
+	for (int i = 0; i < EAG_VKEY_SIZE; i++)
 	{
 		flag[i] = false;
 		keydownflag[i] = false;
@@ -64,21 +63,21 @@ bool KeyListener::doubleclickcheck(int key)
 }
 int KeyListener::eagKeyToVK(int key)
 {
-	if (key >= eag_A && key <= eag_Z)
+	if (key >= EAG_VKEY_A && key <= EAG_VKEY_Z)
 		key += 0x41;
-	else if (key >= eag_0 && key <= eag_9)
-		key += (0x30 - eag_0);
-	else if (key == eag_shift)
+	else if (key >= EAG_VKEY_0 && key <= EAG_VKEY_9)
+		key += (0x30 - EAG_VKEY_0);
+	else if (key == EAG_VKEY_SHIFT)
 		key = VK_LSHIFT;
-	else if (key == eag_ctrl)
+	else if (key == EAG_VKEY_CTRL)
 		key = VK_LCONTROL;
-	else if (key == eag_alt)
+	else if (key == EAG_VKEY_ALT)
 		key = VK_LMENU;
-	else if (key == eag_enter)
+	else if (key == EAG_VKEY_RETURN)
 		key = VK_RETURN;
-	else if (key >= eag_Left && key <= eag_Bottom)
-		key += (VK_LEFT - eag_Left);
-	else if (key == eag_space)
+	else if (key >= EAG_VKEY_LEFT && key <= EAG_VKEY_DOWN)
+		key += (VK_LEFT - EAG_VKEY_LEFT);
+	else if (key == EAG_VKEY_SPACE)
 		key = VK_SPACE;
 	return key;
 }
@@ -100,42 +99,42 @@ void KeyListenerThread()
 		{
 			Sleep(1000);
 		}
-		for (i = 0x41; i < 0x5B; i++)//A~Z
+		for (i = 0x41; i < 0x5B; i++)  // A~Z
 		{
 			if (GetAsyncKeyState(i))
 			{
 				klc.keyinput(i - 0x41);
 			}
 		}
-		for (i = 0x30; i < 0x3A; i++)//0~9
+		for (i = 0x30; i < 0x3A; i++)  // 0~9
 		{
 			if (GetAsyncKeyState(i))
 			{
-				klc.keyinput(i - 0x30 + eag_0);
+				klc.keyinput(i - 0x30 + EAG_VKEY_0);
 			}
 		}
-		if (GetAsyncKeyState(VK_LSHIFT) || GetAsyncKeyState(VK_RSHIFT))//shift
+		if (GetAsyncKeyState(VK_LSHIFT) || GetAsyncKeyState(VK_RSHIFT))  // SHIFT
 		{
-			klc.keyinput(eag_shift);
+			klc.keyinput(EAG_VKEY_SHIFT);
 		}
-		if (GetAsyncKeyState(VK_LCONTROL) || GetAsyncKeyState(VK_RCONTROL))//ctrl
+		if (GetAsyncKeyState(VK_LCONTROL) || GetAsyncKeyState(VK_RCONTROL))  // CTRL
 		{
-			klc.keyinput(eag_ctrl);
+			klc.keyinput(EAG_VKEY_CTRL);
 		}
-		if (GetAsyncKeyState(VK_LMENU) || GetAsyncKeyState(VK_RMENU))//Alt
+		if (GetAsyncKeyState(VK_LMENU) || GetAsyncKeyState(VK_RMENU))  // ALT
 		{
-			klc.keyinput(eag_alt);
+			klc.keyinput(EAG_VKEY_ALT);
 		}
-		if (GetAsyncKeyState(VK_RETURN))//enter
+		if (GetAsyncKeyState(VK_RETURN))  // ENTER
 		{
-			klc.keyinput(eag_enter);
+			klc.keyinput(EAG_VKEY_RETURN);
 		}
 		for (i = VK_LEFT; i < VK_SELECT; i++)//좌상우하//키다운이나 더블클릭을 사용할만한 화살표에 대해서만 만들어봤습니다. 원한다면 숫자를 바꿔서 사용 가능하고 어기저기 사용할꺼라면 차라리 함수를 만들어서 모듈화하겠습니다
 		{
 			if (GetAsyncKeyState(i))
 			{
 				clock_t temp = clock();
-				klc.keyinput(i - VK_LEFT + eag_Left);
+				klc.keyinput(i - VK_LEFT + EAG_VKEY_LEFT);
 				if (klc.keydown_t[i] != NULL)//키다운
 				{
 					if (temp - klc.keydown_t[i] >= KDT)
@@ -169,7 +168,11 @@ void KeyListenerThread()
 		}
 		if (GetAsyncKeyState(VK_SPACE))//스페이스바
 		{
-			klc.keyinput(eag_space);
+			klc.keyinput(EAG_VKEY_SPACE);
+		}
+		if (GetAsyncKeyState(VK_ESCAPE))//스페이스바
+		{
+			klc.keyinput(EAG_VKEY_ESC);
 		}
 
 	}

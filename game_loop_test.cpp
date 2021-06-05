@@ -111,27 +111,27 @@ void TestGame::updateLoop()
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
 {
-    if (getKeyListener().keycheck(eag_Top)) {
+    if (getKeyListener().keycheck(EAG_VKEY_UP)) {
         obj.rigidbody.setVelocity(0, -2);
-        if (getKeyListener().keycheck(eag_Left))
+        if (getKeyListener().keycheck(EAG_VKEY_LEFT))
             obj.rigidbody.setVelocity(-2, -2);
-        else if (getKeyListener().keycheck(eag_Right))
+        else if (getKeyListener().keycheck(EAG_VKEY_RIGHT))
             obj.rigidbody.setVelocity(2, -2);
     }
-    else if (getKeyListener().keycheck(eag_Bottom)) {
+    else if (getKeyListener().keycheck(EAG_VKEY_DOWN)) {
         obj.rigidbody.setVelocity(0, 2);
-        if (getKeyListener().keycheck(eag_Left))
+        if (getKeyListener().keycheck(EAG_VKEY_LEFT))
             obj.rigidbody.setVelocity(-2, 2);
-        else if (getKeyListener().keycheck(eag_Right))
+        else if (getKeyListener().keycheck(EAG_VKEY_RIGHT))
             obj.rigidbody.setVelocity(2, 2);
     }
-    else if (getKeyListener().keycheck(eag_Left)) {
+    else if (getKeyListener().keycheck(EAG_VKEY_LEFT)) {
         obj.rigidbody.setVelocity(-2, 0);
     }
-    else if (getKeyListener().keycheck(eag_Right)) {
+    else if (getKeyListener().keycheck(EAG_VKEY_RIGHT)) {
         obj.rigidbody.setVelocity(2, 0);
     }
-    else if (getKeyListener().keycheck(eag_ctrl)) { //ctrl키 멈추기
+    else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
         exit();
     }
     else {
@@ -140,7 +140,7 @@ void TestGame::checkMove(Object& obj)
 }
 void TestGame::checkShoot(vector<Object*>& objects, Object& player)
 {
-    if (getKeyListener().keycheck(eag_space)) {
+    if (getKeyListener().keycheck(EAG_VKEY_SPACE)) {
         Object* bullet;
         bullet = new Object(player.getX() + player.getImage().width / 2, player.getY() - 2);
         Matrix image = Matrix(1, 1);
@@ -182,8 +182,8 @@ int main(void)
     test_game->setFPS(12);
     test_game->buildScreen(160, 100, 8, 8);
     // set pause and resume key to RETURN key
-    test_game->setPauseKey(eag_enter);
-    test_game->setResumeKey(eag_enter);
+    test_game->setPauseKey(EAG_VKEY_RETURN);
+    test_game->setResumeKey(EAG_VKEY_RETURN);
 
     //// 최초 그림 그려지는 점 초기화
     g_target_point = Point(20, 20);
