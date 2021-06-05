@@ -23,6 +23,8 @@ private:
     bool is_gameover_;
     int key_pause_;
     int key_resume_;
+    int life;
+    int score;
 
     void vHideConsoleCursor();
     DWORD vGetUnitTime();
@@ -57,4 +59,9 @@ public:
 
     void GotoXY(Point _point);
     void MoveTargetObject(Point target_obj);
+
+    void drawlife();
+    void minuslife();
+    void addlife();
+    void addscore(int _score);
 };
