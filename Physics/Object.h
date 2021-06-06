@@ -19,7 +19,7 @@ public:
 	Rigidbody rigidbody;
 	char collision_flg=0;
 	Object();
-	~Object();
+	virtual ~Object();
 	Object(int _x, int _y);
 
 	void makeRigidbody();
@@ -29,7 +29,6 @@ public:
 	// get vector of all objects to check collision
 	bool checkObjectsCollision(vector<Object*>& objects);
 	void setName(const char* name);
-
 	int getX();
 	int getY();
 	char* getName();

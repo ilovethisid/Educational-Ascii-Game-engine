@@ -4,15 +4,60 @@
 
 #include "game_loop.h"
 
+
+
+
+
+class Enemy :public Object {
+public:
+    char life = 1;
+    boolean shoot_flg = false;
+    char bullet_frame_num = 0;// 몇 프레임마다 발사 음수이면
+
+    Enemy();
+        
+    Enemy(int x, int y, int v_x, int v_y, int type, Matrix image) :Object(x, y) {
+        makeImage(image);
+        makeRigidbody();
+        rigidbody.makeMatrixCollider(image);
+        rigidbody.setVelocity(v_x, v_y);
+        if(type==0)shoot_flg = true;
+    }
+
+    void shoot(vector<Object*>& enemy_bullets) {
+  
+        if (bullet_frame_num>12) {
+            Object* ebullet;
+            ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
+            Matrix image = Matrix(2, 1);
+            image.element[0][0] = L'◈';
+            image.element[0][1] = ' ';
+            ebullet->makeImage(image);
+            ebullet->getImage().setColor(FG_RED);
+            ebullet->makeRigidbody();
+            ebullet->rigidbody.makeMatrixCollider(image);
+            ebullet->setName("bullet");
+            ebullet->rigidbody.setVelocity(0, 3);
+            enemy_bullets.push_back(ebullet);
+//          sound_.playSound("./usrlib/laser-gun.wav");
+            bullet_frame_num = 0;
+        }
+        else
+           bullet_frame_num++;
+    }
+};
+
+
+
 class TestGame : public GameLoop {
 
 private:
-    vector<Matrix> MV_;  // enemy 그림 벡터
+    vector<Matrix> enemy_images;  // enemy 그림 벡터
     Sound sound_;
     clock_t last_time_;
-    
     vector <Object*> enemys;
     vector <Object*> bullets;
+    vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
 
@@ -45,6 +90,10 @@ TestGame::TestGame()
 }
 void TestGame::initialize()
 {
+    //enemy_images matrix
+    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy1"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy2"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy3"));
 
     // 그릴 도형의 행렬 초기화
     Matrix mat_box = makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
@@ -80,22 +129,20 @@ void TestGame::initialize()
     //bullets.push_back(player0);
     objects.push_back(player0);
 
-    //enemy 그림 벡터
-    Matrix M1 = makeFile2Matrix("./usrlib/enemy1");
-    Matrix M2 = makeFile2Matrix("./usrlib/enemy2");
-    Matrix M3 = makeFile2Matrix("./usrlib/enemy3");
-    MV_.push_back(M1);
-    MV_.push_back(M2);
-    MV_.push_back(M3);
-
     last_time_ = clock();//last_time_ 시간체크용
 }
+
+
+
+
 void TestGame::checkKey()
 {
    // Object* player = objects[0]->findByName(objects, "player");
     checkMove(*player0);
     checkShoot(bullets, *player0);
 }
+
+
 void TestGame::updateLoop()
 {
     clock_t start;
@@ -129,6 +176,7 @@ void TestGame::updateLoop()
     collisionEvent();
     getConsole().drawTmpObjects(enemys);
     getConsole().drawTmpObjects(bullets);
+    getConsole().drawTmpObjects(enemy_bullets);
     getConsole().drawTmpObject(*player0);
     drawLife();
 
@@ -139,11 +187,22 @@ void TestGame::updateLoop()
 void TestGame::collisionEvent() {
 
     player0->collision_flg = 0;
-    for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(objects); 
-    for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //여기 플레이어도 포함
-    player0->move(objects);
-    
+
+    for (int i = 0; i < enemys.size(); i++) { //enemys-> 벽&플레이어
+        enemys[i]->move(objects);
+        Enemy* tmp = (Enemy*)enemys[i];
+        if (tmp->shoot_flg) tmp->shoot(enemy_bullets);
+    }
+    for (int i = 0; i < enemy_bullets.size(); i++)  enemy_bullets[i]->move(objects);
+
+    for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //총알->enemys
+
+
+    player0->move(objects); //플레이어와 벽
     boundary0->collision_flg = 0;
+
+
+
 
     //if (player0->collision_flg==1) {
     //    for (int i = 0; i < enemys.size(); i++) {
@@ -153,7 +212,6 @@ void TestGame::collisionEvent() {
     //        }
     //    }
     //}
-
 
     /* 동진 - collision에서 colliding하는 object 반환(getCollidingObjects) */
     // collision with enemy
@@ -172,6 +230,27 @@ void TestGame::collisionEvent() {
     }
     // free memory
 
+    //collision with enemy bullets
+    vector<Object*> player_colliding_objects0 = player0->getCollidingObjects(enemy_bullets);
+
+    if (player_colliding_objects0.size() >= 1) {
+        getConsole().print(to_string(player_colliding_objects0.size()), 1, 1);
+        for (int i = 0; i < player_colliding_objects0.size(); i++) {
+            if (life_ > 0)  life_--; //체력 감소
+            if (life_ <= 0) exit();
+        }
+    }
+
+    for (int i = 0; i < player_colliding_objects0.size(); i++) {
+        player_colliding_objects0.pop_back();
+    }
+
+
+
+
+
+
+
 
     for (int i = 0; i < bullets.size(); i++) {
         if (bullets[i]->getCollidingObjects(enemys).size() >= 1) {
@@ -179,25 +258,7 @@ void TestGame::collisionEvent() {
         }
     }
 
-
     player0->collision_flg = 0;
-
-    //if (bullets.empty() == false) {
-    //    for (int i = bullets.size() - 1; i >= 0; i--) {
-    //        if (bullets.at(i)->collision_flg) {
-    //            delete bullets.at(i);
-    //            bullets.erase(bullets.begin() + i);
-    //        }
-    //    }
-    //}
-    //if (enemys.empty() == false) {
-    //    for (int i = enemys.size() - 1; i >= 0; i--) {
-    //        if (enemys.at(i)->collision_flg) {
-    //            delete enemys.at(i);
-    //            enemys.erase(enemys.begin() + i);
-    //        }
-    //    }
-    //}
 
     for (int j = 0; j < bullets.size(); ) {
         if (bullets[j]->collision_flg) {
@@ -217,6 +278,14 @@ void TestGame::collisionEvent() {
         else j++;
     }
 
+    for (int j = 0; j < enemy_bullets.size();) {
+        if (enemy_bullets[j]->collision_flg) {
+            delete enemy_bullets[j];
+            enemy_bullets.erase(enemy_bullets.begin() + j);
+            //addscore(10);
+        }
+        else j++;
+    }
  
 }
 
@@ -273,44 +342,15 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
         sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
+
  // 시간에 따라 enemy 발생
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();
-    Object* enemy = new Object(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2);
-    enemy->makeImage(MV_.at(rand_num % 3)); //모양 3개
-    enemy->makeRigidbody();
-    enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
-    enemy->setName("enemy");
-    enemy->rigidbody.setVelocity((rand_num % 3 - 1), rand_num % 2 + 2);
+    int type = rand_num % 3;
+    Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type]);
     enemys.push_back(enemy);
 }
-
-class Enemy:Object {
-public:
-    int life;
-    int bullet_time;
-    static Matrix enemy_images[3];
-    
-    Enemy(int x,int y,int type,Matrix image):Object(x,y){
-        makeImage(image);
-        makeRigidbody();
-        rigidbody.makeMatrixCollider(image);
- //       rigidbody.setVelocity();
-
-
-    }
-    void event(){
-
-    }
-
-    void shoot() {
-
-    }
-
-};
-
-
 
 
 void TestGame::drawLife()
