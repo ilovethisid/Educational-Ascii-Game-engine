@@ -5,6 +5,7 @@ extern KeyListener klc;
 GameLoop::GameLoop()
 {
     fps_ = 30;
+    game_seconds = 0;
     is_pause_ = false;
     is_gameover_ = false;
     key_pause_ = EOF;

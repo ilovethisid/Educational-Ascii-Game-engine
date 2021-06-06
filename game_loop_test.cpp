@@ -1,3 +1,7 @@
+
+#define SCREEN_WIDTH 120
+#define SCREEN_HEIGHT 70
+
 #include "game_loop.h"
 
 class TestGame : public GameLoop {
@@ -27,6 +31,7 @@ private:
     //void minuslife();
     //void addlife();
     void addscore(int _score);
+    void showscore(int _score);
 
 public:
     TestGame();
@@ -62,6 +67,9 @@ void TestGame::initialize()
     Matrix background = makeFile2Matrix("./usrlib/background");
     getConsole().drawMatrix(0, 0, background);
 
+    // show score
+    showscore(score_);
+
     //player object
     player0 = new Object(30, 60);
     Matrix plane1 =makeFile2Matrix("./usrlib/plane");
@@ -91,19 +99,40 @@ void TestGame::checkKey()
 void TestGame::updateLoop()
 {
     clock_t start;
+    static int spawn_interval = (int)fps_;
+    // spawn interval in frames
+    // spawn interval is 1 sec at start
+    static int count_frames = 0;
 
     start = clock();                 // start timer
 
-    if ((start - last_time_) > 1000) {//when passed make enemy
+    //if ((start - last_time_) > spawn_interval) { //when passed make enemy
+    //    makeEnemy();
+    //    last_time_ = start;
+    //}
+
+    if (count_frames % spawn_interval == 0) {
         makeEnemy();
-        last_time_ = start;
     }
+
+    if (count_frames % (int)fps_ == 0) {
+        game_seconds++;
+    }
+
+    if (count_frames % ((int)fps_ * 3) == 0) {
+        if (spawn_interval > (int)fps_ / 2) {
+            spawn_interval--;
+        }
+    }
+
 //충돌체크와 판정
     collisionEvent();
     getConsole().drawTmpObjects(enemys);
     getConsole().drawTmpObjects(bullets);
     getConsole().drawTmpObject(*player0);
     drawLife();
+
+    count_frames++;
 }
 
 
@@ -248,12 +277,12 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();
-    Object* enemy = new Object(140 / (rand_num % 4 + 1), 3);
+    Object* enemy = new Object(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2);
     enemy->makeImage(MV_.at(rand_num % 3)); //모양 3개
     enemy->makeRigidbody();
     enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
     enemy->setName("enemy");
-    enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
+    enemy->rigidbody.setVelocity((rand_num % 3 - 1), rand_num % 2 + 2);
     enemys.push_back(enemy);
 }
 
@@ -356,25 +385,43 @@ void TestGame::drawLife()
 void TestGame::addscore(int _score)
 {
     this->score_ = this->score_ + _score;
+    showscore(this->score_);
+}
+
+void TestGame::showscore(int _score)
+{
     int temp = this->score_;
+
     Matrix score_image;
-    int width = 15;
+    int width = 18;
     score_image.width = width;
     score_image.height = 1;
     score_image.color = new unsigned char[width];
-    for (int i = 0; i < width; i++)
+
+    for (int i = 6; i < width; i++)
     {
         score_image.color[i] = FG_WHITE;
     }
+
     score_image.element = new short* [1];
     score_image.element[0] = new short[width];
-    for (int i = 0; i < width; i++)
+
+    score_image.element[0][0] = 's';
+    score_image.element[0][1] = 'c';
+    score_image.element[0][2] = 'o';
+    score_image.element[0][3] = 'r';
+    score_image.element[0][4] = 'e';
+    score_image.element[0][5] = ' ';
+
+    for (int i = 0; i < width - 6; i++)
     {
         score_image.element[0][width - 1 - i] = L'0' + temp % 10;
         temp = temp / 10;
     }
-    getConsole().drawMatrix(width+1, 3, score_image);
+    getConsole().drawMatrix(width + 5, 3, score_image);
 }
+
+
 
 Point g_target_point;
 
@@ -385,7 +432,7 @@ int main(void)
 
     TestGame* test_game = new TestGame();
     test_game->setFPS(12);
-    test_game->buildScreen(160, 100, 8, 8);
+    test_game->buildScreen(SCREEN_WIDTH, SCREEN_HEIGHT, 11, 11);
     // set pause and resume key to RETURN key
     test_game->setPauseKey(EAG_VKEY_RETURN);
     test_game->setResumeKey(EAG_VKEY_RETURN);

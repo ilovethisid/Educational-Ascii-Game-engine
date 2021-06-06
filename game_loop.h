@@ -15,7 +15,6 @@
 class GameLoop {
 
 private:
-    double fps_;
     Console console_;
     clock_t start_, end_, remaining_time_;
     gameloop_t key_thread_;
@@ -35,6 +34,9 @@ private:
     void vPrintInfo();
 
 protected:
+    double fps_;
+    int game_seconds;
+
     void virtual initialize();
 
 public:
