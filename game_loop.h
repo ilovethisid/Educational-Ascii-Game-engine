@@ -35,7 +35,6 @@ private:
 
 protected:
     double fps_;
-    int game_seconds;
 
     void virtual initialize();
 

@@ -162,10 +162,6 @@ void TestGame::updateLoop()
         makeEnemy();
     }
 
-    if (count_frames % (int)fps_ == 0) {
-        game_seconds++;
-    }
-
     if (count_frames % ((int)fps_ * 3) == 0) {
         if (spawn_interval > (int)fps_ / 2) {
             spawn_interval--;
