@@ -19,7 +19,7 @@ public:
 	Rigidbody rigidbody;
 	char collision_flg=0;
 	Object();
-	~Object();
+	virtual ~Object();
 	Object(int _x, int _y);
 
 	void makeRigidbody();
