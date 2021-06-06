@@ -10,7 +10,7 @@ void Sound::playSound(std::string file)
     const char* c = file.c_str();
     wchar_t wstr[100] = {'\0', };
     CharToWChar(c, wstr);
-    PlaySound(wstr, NULL, SND_FILENAME | SND_ASYNC); //老馆 犁积
+    //PlaySound(wstr, NULL, SND_FILENAME | SND_ASYNC); //老馆 犁积
 }
                                                                                                                                                                                                                                                         
 // char to LPCWSTR
