@@ -21,7 +21,7 @@ private:
     void checkKey() override;
     void checkMove(Object& obj);
     void checkShoot(vector<Object*>& objects, Object& player);
-    void Move_Collision_Check();
+    void collisionEvent();
     void makeEnemy();
     void drawLife();
     //void minuslife();
@@ -69,6 +69,7 @@ void TestGame::initialize()
     player0->rigidbody.makeMatrixCollider(plane1);
     player0->setName("player");
     bullets.push_back(player0);
+    objects.push_back(player0);
 
     //enemy 그림 벡터
     Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
@@ -97,7 +98,7 @@ void TestGame::updateLoop()
         last_time_ = start;
     }
 //충돌체크와 판정
-    Move_Collision_Check();
+    collisionEvent();
     getConsole().drawTmpObjects(enemys);
     getConsole().drawTmpObjects(bullets);
     getConsole().drawTmpObject(*player0);
@@ -105,7 +106,7 @@ void TestGame::updateLoop()
 }
 
 
-void TestGame::Move_Collision_Check() {
+void TestGame::collisionEvent() {
 
     player0->collision_flg = 0;
     for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(bullets); 
@@ -114,10 +115,36 @@ void TestGame::Move_Collision_Check() {
     boundary0->collision_flg = 0;
 
     if (player0->collision_flg==1) {
-        if (life_ > 0)  life_--; //체력 감소
-        if (life_ <= 0) exit();
-        player0->collision_flg = 0;
+        for (int i = 0; i < enemys.size(); i++) {
+            if (enemys[i]->collision_flg == 1) {
+                if (life_ > 0)  life_--; //체력 감소
+                if (life_ <= 0) exit();
+            }
+        }
     }
+
+
+    /* 동진 - collision에서 colliding하는 object 반환하게 하고 싶었는데 잘 안되네요; */
+    //vector<Object*> player_colliding_objects = player0->getCollidingObjects(objects);
+
+    //if (player_colliding_objects.size() >= 1) {
+    //    getConsole().print(to_string(player0->getCollidingObjects(objects).size()),1,1);
+    //    for (int i = 0; i < player_colliding_objects.size(); i++) {
+    //        if (!strcmp(player_colliding_objects[i]->getName(), "enemy")) {
+    //            if (life_ > 0)  life_--; //체력 감소
+    //            if (life_ <= 0) exit();
+    //        }
+    //    }
+    //}
+
+    //for (int i = 0; i < player_colliding_objects.size(); i++) {
+    //    player_colliding_objects.pop_back();
+    //}
+    // free memory
+
+
+
+    player0->collision_flg = 0;
 
     //if (bullets.empty() == false) {
     //    for (int i = bullets.size() - 1; i >= 0; i--) {
@@ -199,6 +226,7 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
         Matrix image = Matrix(1, 1);
         image.element[0][0] = '|';
         bullet->makeImage(image);
+        bullet->getImage().setColor(FG_YELLOW);
         bullet->makeRigidbody();
         bullet->rigidbody.makeMatrixCollider(image);
         bullet->setName("bullet");
@@ -222,7 +250,7 @@ void TestGame::makeEnemy()
 
 void TestGame::drawLife()
 {
-    getConsole().print(to_string(life_),1,1);
+    //getConsole().print(to_string(life_),1,1);
     for (int i = 0; i < life_; i++) {
         getConsole().drawTmp(2*i + 2, 2, L'♥', FG_RED);
         getConsole().drawTmp(2*i + 3, 2, L' ', FG_RED);
@@ -294,21 +322,22 @@ void TestGame::addscore(int _score)
     this->score_ = this->score_ + _score;
     int temp = this->score_;
     Matrix score_image;
-    score_image.width = 20;
+    int width = 15;
+    score_image.width = width;
     score_image.height = 1;
-    score_image.color = new unsigned char[20];
-    for (int i = 0; i < 20; i++)
+    score_image.color = new unsigned char[width];
+    for (int i = 0; i < width; i++)
     {
         score_image.color[i] = FG_WHITE;
     }
     score_image.element = new short* [1];
-    score_image.element[0] = new short[20];
-    for (int i = 0; i < 20; i++)
+    score_image.element[0] = new short[width];
+    for (int i = 0; i < width; i++)
     {
-        score_image.element[0][19 - i] = L'0' + temp % 10;
+        score_image.element[0][width - 1 - i] = L'0' + temp % 10;
         temp = temp / 10;
     }
-    getConsole().drawMatrix(40, 2, score_image);
+    getConsole().drawMatrix(width, 2, score_image);
 }
 
 Point g_target_point;

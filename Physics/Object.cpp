@@ -3,7 +3,6 @@
 
 #include "Object.h"
 
-bool checkObjectsCollision(Object* current_obj, vector<Object*>& objects);
 int sign(int x);
 
 Object::Object()
@@ -36,14 +35,14 @@ void Object::move(vector<Object*>& objects)
 	int xVelocity = rigidbody.velocity.getX();
 	int yVelocity = rigidbody.velocity.getY();
 
-	if (checkObjectsCollision(this, objects)) {
+	if (checkObjectsCollision(objects)) {
 		return;
 	}
 
 	while (abs(xVelocity) > 0) {
 		rigidbody.collider->move(sign(xVelocity), 0);
 
-		if (checkObjectsCollision(this, objects)) {
+		if (checkObjectsCollision(objects)) {
 			rigidbody.collider->move(-sign(xVelocity), 0);
 		}
 		else {
@@ -58,7 +57,7 @@ void Object::move(vector<Object*>& objects)
 		if (abs(yVelocity) > 0) {
 			rigidbody.collider->move(0, sign(yVelocity));
 
-			if (checkObjectsCollision(this, objects)) {
+			if (checkObjectsCollision(objects)) {
 				rigidbody.collider->move(0, -sign(yVelocity));
 			}
 			else {
@@ -76,7 +75,7 @@ void Object::move(vector<Object*>& objects)
 	while (abs(yVelocity) > 0) {
 		rigidbody.collider->move(0, sign(yVelocity));
 
-		if (checkObjectsCollision(this, objects)) {
+		if (checkObjectsCollision(objects)) {
 			rigidbody.collider->move(0, -sign(yVelocity));
 		}
 		else {
@@ -111,9 +110,14 @@ char* Object::getName()
 	return name;
 }
 
-Matrix Object::getImage()
+Matrix& Object::getImage()
 {
-	return  Matrix(image);
+	return image;
+}
+
+vector<Object*>& Object::getCollidingObjects(vector<Object*>& objects)
+{
+	return colliding_objects;
 }
 
 Object* Object::findByName(vector<Object*>& objects, const char* name)
@@ -129,17 +133,25 @@ Object* Object::findByName(vector<Object*>& objects, const char* name)
 	return nullptr;
 }
 
-bool checkObjectsCollision(Object* current_obj, vector<Object*>& objects) {
+bool Object::checkObjectsCollision(vector<Object*>& objects) {
+	bool is_colliding = false;
+
+	for (int i = 0; i < colliding_objects.size(); i++) {
+		colliding_objects.pop_back();
+	}
+
 	for (int i = 0; i < objects.size(); i++) {
-		if ((objects[i] != current_obj) && (current_obj->rigidbody.checkCollision(*objects[i]) == 2)) {
+		if ((objects[i] != this) && (this->rigidbody.checkCollision(*objects[i]) == 2)) {
 			// by moving collider, complete collision occurs
-			current_obj->collision_flg = 1;
+			this->collision_flg = 1;
 			objects[i]->collision_flg = 1;
-			return true;
+			colliding_objects.push_back(objects[i]);
+			
+			is_colliding = true;
 		}
 	}
 
-	return false;
+	return is_colliding;
 }
 
 int sign(int x) {

@@ -97,32 +97,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="db\objectDB_test main.cpp" />
-    <ClCompile Include="game_loop.cc" />
-    <ClCompile Include="game_loop_test.cpp" />
-    <ClCompile Include="graphic\GraphicEngine.cpp" />
-    <ClCompile Include="graphic\test.cpp" />
-    <ClCompile Include="keylistener\KeyListener.cpp" />
-    <ClCompile Include="physics\CoordinateSystem.cpp" />
-    <ClCompile Include="physics\Matrix.cpp" />
-    <ClCompile Include="physics\Object.cpp" />
-    <ClCompile Include="physics\Rigidbody.cpp" />
-    <ClCompile Include="physics\Test Main.cpp" />
-    <ClCompile Include="sound\sound.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="db\objectDB.h" />
-    <ClInclude Include="game_loop.h" />
-    <ClInclude Include="graphic\GraphicEngine.h" />
-    <ClInclude Include="keylistener\KeyListener.hpp" />
-    <ClInclude Include="keylistener\KeyMacro.hpp" />
-    <ClInclude Include="physics\CoordinateSystem.h" />
-    <ClInclude Include="physics\Matrix.h" />
-    <ClInclude Include="physics\Object.h" />
-    <ClInclude Include="physics\Rigidbody.h" />
-    <ClInclude Include="sound\sound.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

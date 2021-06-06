@@ -45,5 +45,6 @@ public:
 
 
 	void fillElement(int** ary, char* color);
+	void setColor(int color);
 };
 

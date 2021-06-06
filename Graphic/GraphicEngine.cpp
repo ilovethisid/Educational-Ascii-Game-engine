@@ -170,7 +170,7 @@ void Console::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short
 }
 
 void Console::drawObject(Object& obj) {
-	Matrix tmp = obj.getImage();
+	Matrix tmp = Matrix(obj.getImage());
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
 			if (tmp.element[i][j]) draw(obj.getX() + j, obj.getY() + i, tmp.element[i][j], tmp.color[i*tmp.width+j]);
@@ -186,7 +186,7 @@ void Console::drawMatrix(int x, int y, Matrix& image) {
 
 
 void Console::drawTmpObject(Object& obj) {
-	Matrix tmp = obj.getImage();
+	Matrix tmp = Matrix(obj.getImage());
 	for (int i = 0; i < tmp.height; i++)
 		for (int j = 0; j < tmp.width; j++)
 			if (tmp.element[i][j]) drawTmp(obj.getX() + j, obj.getY() + i, tmp.element[i][j], tmp.color[i * tmp.width + j]);
