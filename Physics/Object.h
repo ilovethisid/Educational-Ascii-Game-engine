@@ -29,7 +29,6 @@ public:
 	// get vector of all objects to check collision
 	bool checkObjectsCollision(vector<Object*>& objects);
 	void setName(const char* name);
-
 	int getX();
 	int getY();
 	char* getName();
