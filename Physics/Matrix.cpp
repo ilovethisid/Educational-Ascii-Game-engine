@@ -60,9 +60,9 @@ void Matrix::fillElement(int** ary,char* c_arr)
 
 Matrix::~Matrix() {
 	for (int i = 0; i < height; i++) {
-		delete element[i];
+		delete[] element[i];
 	}
-	delete element;
-	delete color;
+	delete[] element;
+	delete[] color;
 }
 

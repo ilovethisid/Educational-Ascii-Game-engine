@@ -1,36 +1,4 @@
-
-
-#include <cstdlib>  // system()을 위한 헤더 파일
-
-
-
-#define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>//메모리 누수
-
-#ifdef _DEBUG
-#define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#endif
-
 #include "game_loop.h"
-
-//int main(void) {//메모리릭 테스트용
-//    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-//    const wchar_t* a = L"디버그창";
-//    OutputDebugString(a);
-//    Sleep(5000);
-//    GameLoop* game_loop = new GameLoop();
-//    game_loop->setFPS(12);
-//    game_loop->BuildScreen(160, 100, 8, 8);
-//    Matrix mat_circle = game_loop->getConsole().makeCircle(10);
-//    Object* circle1 = new Object(10, 20); //Object로 선언하면 지역변수라 제거됨.
-//    circle1->makeImage(mat_circle);
-//    circle1->makeRigidbody();
-//    circle1->rigidbody.makeMatrixCollider(mat_circle);
-//    circle1->rigidbody.setVelocity(1, 1);
-//    delete circle1;
-//    return 0;
-//}
 
 class TestGame : public GameLoop {
 
@@ -38,6 +6,12 @@ private:
     vector<Matrix> MV_;  // enemy 그림 벡터
     Sound sound_;
     clock_t last_time_;
+    
+    vector <Object*> enemys;
+    vector <Object*> bullets;
+    Object* player0;
+    Object* boundary0;
+
     int life_;
     int score_;
 
@@ -47,11 +21,11 @@ private:
     void checkKey() override;
     void checkMove(Object& obj);
     void checkShoot(vector<Object*>& objects, Object& player);
-
+    void Move_Collision_Check();
     void makeEnemy();
-    void drawlife();
-    void minuslife();
-    void addlife();
+    void drawLife();
+    //void minuslife();
+    //void addlife();
     void addscore(int _score);
 
 public:
@@ -66,22 +40,51 @@ TestGame::TestGame()
 }
 void TestGame::initialize()
 {
-    last_time_ = clock();
 
-    sound_.playSound("./usrlib/laser-gun.wav");
+    // 그릴 도형의 행렬 초기화
+    Matrix mat_box = getConsole().makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight());
+    Matrix mat_rect = getConsole().makeRect(10, 4);
 
+    //도형 초기화
+
+    boundary0 = new Object(0, 0);
+    boundary0->makeImage(mat_box);
+    boundary0->makeRigidbody();
+    boundary0->rigidbody.makeMatrixCollider(mat_box);
+    boundary0->setName("boundary");
+
+    // 도형들을 vector에 append
+    enemys.push_back(boundary0);//enemy에서 관리
+    bullets.push_back(boundary0);
+
+    //배경 그리기
+    Matrix background = getConsole().makeFile2Matrix("./usrlib/background");
+    getConsole().drawMatrix(0, 0, background);
+
+    //player object
+    player0 = new Object(30, 60);
+    Matrix plane1 = getConsole().makeFile2Matrix("./usrlib/plane");
+    player0->makeRigidbody();
+    player0->makeImage(plane1);
+    player0->rigidbody.makeMatrixCollider(plane1);
+    player0->setName("player");
+    bullets.push_back(player0);
+
+    //enemy 그림 벡터
     Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
     Matrix M2 = getConsole().makeFile2Matrix("./usrlib/enemy2");
     Matrix M3 = getConsole().makeFile2Matrix("./usrlib/enemy3");
     MV_.push_back(M1);
     MV_.push_back(M2);
     MV_.push_back(M3);
+
+    last_time_ = clock();//last_time_ 시간체크용
 }
 void TestGame::checkKey()
 {
-    Object* player = objects[0]->findByName(objects, "player");
-    checkMove(*player);
-    checkShoot(objects, *player);
+   // Object* player = objects[0]->findByName(objects, "player");
+    checkMove(*player0);
+    checkShoot(bullets, *player0);
 }
 void TestGame::updateLoop()
 {
@@ -93,30 +96,67 @@ void TestGame::updateLoop()
         makeEnemy();
         last_time_ = start;
     }
-
-    string a = to_string(objects.size()) + "\n";
-    getConsole().print(a, 2, 2);
-    for (int i = 0; i < objects.size(); i++) {
-        objects[i]->move(objects);
-    }
-    // move according to velocity
-    for (int i = 0; i < objects.size(); i++) {
-        if (objects[i]->collision_flg) { //충돌한 적이 있으면 collision_flg
-            if (objects[i]->getName()) {
-                if (strcmp(objects[i]->getName(), "boundary") && strcmp(objects[i]->getName(), "player")) {//boundary 경계가 아니면 삭제한다.
-                    delete objects[i];
-                    objects.erase(objects.begin() + i);
-                    i--;
-                }
-            }
-            else { //null이면
-                delete objects[i];
-                objects.erase(objects.begin() + i);
-                i--;
-            }
-        }
-    }
+//충돌체크와 판정
+    Move_Collision_Check();
+    getConsole().drawTmpObjects(enemys);
+    getConsole().drawTmpObjects(bullets);
+    getConsole().drawTmpObject(*player0);
+    drawLife();
 }
+
+
+void TestGame::Move_Collision_Check() {
+
+    player0->collision_flg = 0;
+    for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(bullets); 
+    for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //여기 플레이어도 포함
+    
+    boundary0->collision_flg = 0;
+
+    if (player0->collision_flg==1) {
+        if (life_ > 0)  life_--; //체력 감소
+        if (life_ <= 0) exit();
+        player0->collision_flg = 0;
+    }
+
+    //if (bullets.empty() == false) {
+    //    for (int i = bullets.size() - 1; i >= 0; i--) {
+    //        if (bullets.at(i)->collision_flg) {
+    //            delete bullets.at(i);
+    //            bullets.erase(bullets.begin() + i);
+    //        }
+    //    }
+    //}
+    //if (enemys.empty() == false) {
+    //    for (int i = enemys.size() - 1; i >= 0; i--) {
+    //        if (enemys.at(i)->collision_flg) {
+    //            delete enemys.at(i);
+    //            enemys.erase(enemys.begin() + i);
+    //        }
+    //    }
+    //}
+    for (int j = 0; j < bullets.size(); ) {
+        if (bullets[j]->collision_flg) {
+            delete bullets[j];
+            bullets.erase(bullets.begin() + j);
+
+        }
+        else j++;
+    }
+    for (int j = 0; j < enemys.size();) {
+        if (enemys[j]->collision_flg) {
+            delete enemys[j];
+            enemys.erase(enemys.begin() + j);
+            addscore(10);
+        }
+        else j++;
+    }
+
+ 
+}
+
+
+
 Sound TestGame::getSound()
 {
     return sound_;
@@ -171,72 +211,84 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();
-    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
-    enemy->makeImage(MV_[rand_num % 3]); //모양 3개
+    Object* enemy = new Object(140 / (rand_num % 4 + 1), 3);
+    enemy->makeImage(MV_.at(rand_num % 3)); //모양 3개
     enemy->makeRigidbody();
     enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
     enemy->setName("enemy");
     enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
-    objects.push_back(enemy);
+    enemys.push_back(enemy);
 }
-void TestGame::drawlife()
+
+void TestGame::drawLife()
 {
-    Matrix life_image;
-    life_image.width = 10;
-    life_image.height = 1;
-    life_image.color = new unsigned char[1 * 10];
-    for (int i = 0; i < 10; i++)
-    {
-        life_image.color[i] = FG_RED;
+    getConsole().print(to_string(life_),1,1);
+    for (int i = 0; i < life_; i++) {
+        getConsole().drawTmp(2*i + 2, 2, L'♥', FG_RED);
+        getConsole().drawTmp(2*i + 3, 2, L' ', FG_RED);
     }
-    life_image.element = new short* [1];
-    for (int i = 0; i < 1; i++)
-    {
-        life_image.element[i] = new short[10];
-    }
-    for (int i = 0; i < 5; i++)
-    {
-        life_image.element[0][2 * i] = L'♥';
-        life_image.element[0][2 * i + 1] = L' ';
-    }
-    getConsole().drawMatrix(5, 2, life_image);
+    //Matrix life_image;
+    //life_image.width = 10;
+    //life_image.height = 1;
+    //life_image.color = new unsigned char[1 * 10];
+    //for (int i = 0; i < 10; i++)
+    //{
+    //    life_image.color[i] = FG_RED;
+    //}
+    //life_image.element = new short* [1];
+    //for (int i = 0; i < 1; i++)
+    //{
+    //    life_image.element[i] = new short[10];
+    //}
+    //for (int i = 0; i < 5; i++)
+    //{
+    //    life_image.element[0][2 * i] = L'♥';
+    //    life_image.element[0][2 * i + 1] = L' ';
+    //}
+    //getConsole().drawMatrix(5, 2, life_image);
 }
-void TestGame::minuslife()
-{
-    Matrix null_image;
-    null_image.width = 1;
-    null_image.height = 1;
-    null_image.color = new unsigned char[1];
-    null_image.color[0] = FG_BLACK;
-    null_image.element = new short* [1];
-    null_image.element[0] = new short[1];
-    null_image.element[0][0] = L' ';
-    if (life_ > 0)
-    {
-        getConsole().drawMatrix(3 + life_ * 2, 2, null_image);
-        life_--;
-    }
-    else
-    {
-        exit();
-    }
-}
-void TestGame::addlife()
-{
-    Matrix null_image;
-    null_image.width = 1;
-    null_image.height = 1;
-    null_image.color = new unsigned char[1];
-    null_image.color[0] = FG_RED;
-    null_image.element = new short* [1];
-    null_image.element[0] = new short[1];
-    null_image.element[0][0] = L'♥';
-    if (life_ < 5)
-    {
-        getConsole().drawMatrix(5 + life_ * 2, 2, null_image);
-        life_++;
-    }
-}
+//
+//void TestGame::minuslife()
+//{
+//    Matrix null_image;
+//    null_image.width = 1;
+//    null_image.height = 1;
+//    null_image.color = new unsigned char[1];
+//    null_image.color[0] = FG_BLACK;
+//    null_image.element = new short* [1];
+//    null_image.element[0] = new short[1];
+//    null_image.element[0][0] = L'♥';
+//    if (life_ > 0)
+//    {
+//        getConsole().drawMatrix(3 + life_ * 2, 2, null_image);
+//        life_--;
+//    }
+//    else
+//    {
+//        exit();
+//    }
+//}
+
+//void TestGame::addlife()
+//{
+//    for (int i = 0; i < life_; i++) {
+//        getConsole().drawTmp(i + 2, 2, L'♥', FG_RED);
+//    }
+    //Matrix null_image;
+    //null_image.width = 1;
+    //null_image.height = 1;
+    //null_image.color = new unsigned char[1];
+    //null_image.color[0] = FG_RED;
+    //null_image.element = new short* [1];
+    //null_image.element[0] = new short[1];
+    //null_image.element[0][0] = L'♥';
+    //if (life_ < 5)
+    //{
+    //    getConsole().drawMatrix(5 + life_ * 2, 2, null_image);
+    //    life_++;
+    //}
+//}
+
 void TestGame::addscore(int _score)
 {
     this->score_ = this->score_ + _score;
@@ -261,11 +313,11 @@ void TestGame::addscore(int _score)
 
 Point g_target_point;
 
-void makeFigures(TestGame* test_game);
+
 
 int main(void)
 {
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
     TestGame* test_game = new TestGame();
     test_game->setFPS(12);
     test_game->buildScreen(160, 100, 8, 8);
@@ -274,60 +326,9 @@ int main(void)
     test_game->setResumeKey(EAG_VKEY_RETURN);
 
     //// 최초 그림 그려지는 점 초기화
-    g_target_point = Point(20, 20);
 
-    makeFigures(test_game);
     test_game->start();
-    while (!test_game->objects.empty()) {
-        test_game->objects.pop_back();
-    }
-
     return 0;
 }
 
-void makeFigures(TestGame* test_game)
-{
-    test_game->getConsole().setTmpBufScreen();
 
-
-    // 그릴 도형의 행렬 초기화
-    Matrix mat_circle = test_game->getConsole().makeCircle(10);
-    Matrix mat_box = test_game->getConsole().makeBox(test_game->getConsole().getScreenWidth(), test_game->getConsole().getScreenHeight());
-    Matrix mat_rect = test_game->getConsole().makeRect(10, 4);
-
-    //도형 초기화
-
-    Object* circle1 =new Object(g_target_point.getX(), g_target_point.getY()); //Object로 선언하면 지역변수라 제거됨.
-    circle1->makeImage(mat_circle);
-    circle1->makeRigidbody();
-    circle1->rigidbody.makeMatrixCollider(mat_circle);
-    circle1->rigidbody.setVelocity(1, 1);
- //   circle1->rigidbody.makeMatrixCollider(mat_circle);
-
-
-    Object* boundary = new Object(0, 0);
-    boundary->makeImage(mat_box);
-    boundary->makeRigidbody();
-    boundary->rigidbody.makeMatrixCollider(mat_box);
-    boundary->setName("boundary");
-
-    // 도형들을 vector에 append
-    test_game->objects.push_back(boundary);
-    test_game->objects.push_back(circle1);
-
-
-
-    //배경 그리기
-    Matrix background = test_game->getConsole().makeFile2Matrix("./usrlib/background");
-    test_game->getConsole().drawMatrix(0, 0, background);
-
-    //player object
-    Object* player = new Object(30, 60);
-    Matrix plane1 = test_game->getConsole().makeFile2Matrix("./usrlib/plane");
-    player->makeRigidbody();
-    player->makeImage(plane1);
-    player->rigidbody.makeMatrixCollider(plane1);
-    player->setName("player");
-    test_game->objects.push_back(player);
-
-}

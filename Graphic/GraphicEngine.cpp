@@ -6,6 +6,8 @@ Console::Console() {
 	screen_width = 160;
 	screen_height = 100;
 	console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	screen_buffer = NULL;
+	tmp_screen_buffer = NULL;
 }
 
 int Console::makeConsole(int width, int height, int fontw, int fonth) {

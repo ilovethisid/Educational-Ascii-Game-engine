@@ -155,5 +155,5 @@ int sign(int x) {
 }
 
 Object::~Object() {
-	delete(this->name);
+	delete[] name;
 }
