@@ -42,8 +42,8 @@ void TestGame::initialize()
 {
 
     // 그릴 도형의 행렬 초기화
-    Matrix mat_box = getConsole().makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
-    Matrix mat_rect = getConsole().makeRect(10, 4);
+    Matrix mat_box = makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
+    Matrix mat_rect = makeRect(10, 4);
 
     //도형 초기화
 
@@ -59,12 +59,12 @@ void TestGame::initialize()
     //bullets.push_back(boundary0);
 
     //배경 그리기
-    Matrix background = getConsole().makeFile2Matrix("./usrlib/background");
+    Matrix background = makeFile2Matrix("./usrlib/background");
     getConsole().drawMatrix(0, 0, background);
 
     //player object
     player0 = new Object(30, 60);
-    Matrix plane1 = getConsole().makeFile2Matrix("./usrlib/plane");
+    Matrix plane1 =makeFile2Matrix("./usrlib/plane");
     player0->makeRigidbody();
     player0->makeImage(plane1);
     player0->rigidbody.makeMatrixCollider(plane1);
@@ -73,9 +73,9 @@ void TestGame::initialize()
     objects.push_back(player0);
 
     //enemy 그림 벡터
-    Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
-    Matrix M2 = getConsole().makeFile2Matrix("./usrlib/enemy2");
-    Matrix M3 = getConsole().makeFile2Matrix("./usrlib/enemy3");
+    Matrix M1 = makeFile2Matrix("./usrlib/enemy1");
+    Matrix M2 = makeFile2Matrix("./usrlib/enemy2");
+    Matrix M3 = makeFile2Matrix("./usrlib/enemy3");
     MV_.push_back(M1);
     MV_.push_back(M2);
     MV_.push_back(M3);
@@ -256,6 +256,33 @@ void TestGame::makeEnemy()
     enemy->rigidbody.setVelocity((rand_num % 4 - 2), rand_num % 3 + 1);
     enemys.push_back(enemy);
 }
+
+class Enemy:Object {
+public:
+    int life;
+    int bullet_time;
+    static Matrix enemy_images[3];
+    
+    Enemy(int x,int y,int type,Matrix image):Object(x,y){
+        makeImage(image);
+        makeRigidbody();
+        rigidbody.makeMatrixCollider(image);
+ //       rigidbody.setVelocity();
+
+
+    }
+    void event(){
+
+    }
+
+    void shoot() {
+
+    }
+
+};
+
+
+
 
 void TestGame::drawLife()
 {

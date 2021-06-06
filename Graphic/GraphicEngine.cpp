@@ -93,40 +93,6 @@ void Console::drawRect(int x, int y, int width, int height, short c, short col) 
 			draw(x + i, y + j, c, col);
 }
 
-void Console::drawLineInMatrix(short*** pnt,int x1, int y1, int x2, int y2, short c) {
-	short** element = *pnt;
-	int addx = ((x2 - x1) > 0 ? 1 : -1);
-	int addy = ((y2 - y1) > 0 ? 1 : -1);
-
-	if (x1 == x2) {
-		for (int i = y1; i != y2 + addy; i += addy)
-			element[i][x1] = c;
-		return;
-	}
-
-	int j = y1;
-	float slope = float(y2 - y1) / (x2 - x1);
-
-	if (y1 <= y2) {
-		for (int i = x1; i != x2; i = i + addx) {
-			element[j][i] = c;
-			for (j; j <= (slope * (0.5 * addx + i - x1) + y1); j += addy)
-				element[j][i] = c;
-		}
-		for (j; j <= y2; j += addy)
-			element[j][x2] = c;
-	}
-
-	if (y1 > y2) {
-		for (int i = x1; i != x2; i = i + addx) {
-			element[j][i] = c;
-			for (j; j >= (slope * (0.5 * addx + i - x1) + y1); j += addy)
-				element[j][i] = c;
-		}
-		for (j; j >= y2; j += addy)
-			element[j][x2] = c;
-	}
-}
 void Console::drawLine(int x1, int y1, int x2, int y2, short c, short col) {
 
 	int addx = ((x2 - x1) > 0 ? 1 : -1);
@@ -204,65 +170,6 @@ void Console::clearTmpBufScreen() {
 	memset(screen_buffer, 0, sizeof(CHAR_INFO) * screen_width * screen_height);
 }//bufScreen ÃÊ±âÈ­
 
-Matrix Console::makeCircle(int r, short c, short col) {
-	Matrix tmp =Matrix(2*r+1,2*r+1);
-	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
-	int x = 0;
-	int y = r;
-	while (y >= x) {
-		tmp.element[r - y][r - x] = c;
-		tmp.element[r - x][r - y] = c;
-		tmp.element[r - x][r + y] = c;
-		tmp.element[r - y][r + x] = c;
-		tmp.element[r + y][r - x] = c;
-		tmp.element[r +x][r - y] = c;
-		tmp.element[r +y][r +x] = c;
-		tmp.element[r +x][r +y] = c;
-		x++;
-		y = (int)(std::pow(r * r - x * x, 1 / 2.) + 0.5);
-	}
-	return tmp;
-}
-
-Matrix Console::makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
-
-	Matrix tmp = Matrix(max(max(x1, x2), x3)+1, max(max(y1, y2), y3)+1);
-	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
-	drawLineInMatrix(&tmp.element, x1, y1, x2, y2, c);
-	drawLineInMatrix(&tmp.element, x2, y2, x3, y3, c);
-	drawLineInMatrix(&tmp.element, x3, y3, x1, y1, c);
-	return tmp;
-}
-
-Matrix Console::makeRect(int width, int height, short c, short col){
-	Matrix tmp = Matrix(width, height);
-	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
-	for(int i=0; i<height;i++)
-		std::fill_n(tmp.element[i], width, c);
-	return tmp;
-}
-
-Matrix Console::makeBox(int width, int height, short thickness, short c, short col) {
-	Matrix tmp = Matrix(width, height);
-	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
-	
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < thickness; j++)
-		{
-			tmp.element[i][j] = c;
-			tmp.element[i][width - 1 - j] = c;
-		}
-	}
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < thickness; j++)
-		{
-			tmp.element[j][i] = c;
-			tmp.element[height - 1 - j][i] = c;
-		}
-	}
-
-	return tmp;
-}
 
 wstringstream readFile(const char* filename) {
 	wifstream wif(filename);
@@ -273,7 +180,7 @@ wstringstream readFile(const char* filename) {
 	return wss;
 }
 
-Matrix Console::makeFile2Matrix(const char* filename){
+Matrix makeFile2Matrix(const char* filename){
 	wstringstream wss = readFile(filename);
 
 	wstring temp;
@@ -357,5 +264,101 @@ void Console::print(string str, int line, int start) {
 		}
 		else
 			draw(j++, line, str[i]);
+	}
+}
+
+
+Matrix makeCircle(int r, short c, short col) {
+	Matrix tmp = Matrix(2 * r + 1, 2 * r + 1);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
+	int x = 0;
+	int y = r;
+	while (y >= x) {
+		tmp.element[r - y][r - x] = c;
+		tmp.element[r - x][r - y] = c;
+		tmp.element[r - x][r + y] = c;
+		tmp.element[r - y][r + x] = c;
+		tmp.element[r + y][r - x] = c;
+		tmp.element[r + x][r - y] = c;
+		tmp.element[r + y][r + x] = c;
+		tmp.element[r + x][r + y] = c;
+		x++;
+		y = (int)(std::pow(r * r - x * x, 1 / 2.) + 0.5);
+	}
+	return tmp;
+}
+
+Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col) {
+
+	Matrix tmp = Matrix(max(max(x1, x2), x3) + 1, max(max(y1, y2), y3) + 1);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
+	drawLineInMatrix(&tmp.element, x1, y1, x2, y2, c);
+	drawLineInMatrix(&tmp.element, x2, y2, x3, y3, c);
+	drawLineInMatrix(&tmp.element, x3, y3, x1, y1, c);
+	return tmp;
+}
+
+Matrix makeRect(int width, int height, short c, short col) {
+	Matrix tmp = Matrix(width, height);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
+	for (int i = 0; i < height; i++)
+		std::fill_n(tmp.element[i], width, c);
+	return tmp;
+}
+
+Matrix makeBox(int width, int height, short thickness, short c, short col) {
+	Matrix tmp = Matrix(width, height);
+	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < thickness; j++)
+		{
+			tmp.element[i][j] = c;
+			tmp.element[i][width - 1 - j] = c;
+		}
+	}
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < thickness; j++)
+		{
+			tmp.element[j][i] = c;
+			tmp.element[height - 1 - j][i] = c;
+		}
+	}
+
+	return tmp;
+}
+
+void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c) {
+	short** element = *pnt;
+	int addx = ((x2 - x1) > 0 ? 1 : -1);
+	int addy = ((y2 - y1) > 0 ? 1 : -1);
+
+	if (x1 == x2) {
+		for (int i = y1; i != y2 + addy; i += addy)
+			element[i][x1] = c;
+		return;
+	}
+
+	int j = y1;
+	float slope = float(y2 - y1) / (x2 - x1);
+
+	if (y1 <= y2) {
+		for (int i = x1; i != x2; i = i + addx) {
+			element[j][i] = c;
+			for (j; j <= (slope * (0.5 * addx + i - x1) + y1); j += addy)
+				element[j][i] = c;
+		}
+		for (j; j <= y2; j += addy)
+			element[j][x2] = c;
+	}
+
+	if (y1 > y2) {
+		for (int i = x1; i != x2; i = i + addx) {
+			element[j][i] = c;
+			for (j; j >= (slope * (0.5 * addx + i - x1) + y1); j += addy)
+				element[j][i] = c;
+		}
+		for (j; j >= y2; j += addy)
+			element[j][x2] = c;
 	}
 }
