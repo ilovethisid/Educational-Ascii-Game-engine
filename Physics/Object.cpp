@@ -117,6 +117,35 @@ Matrix& Object::getImage()
 
 vector<Object*>& Object::getCollidingObjects(vector<Object*>& objects)
 {
+	for (int i = 0; i < colliding_objects.size(); i++) {
+		colliding_objects.pop_back();
+	}
+
+	for (int i = 0; i < objects.size(); i++) {
+		/* there is object right next to current object (they are bordered) */
+		for (int j = -1; j <= 1; j += 2) {
+			rigidbody.collider->move(j, 0);
+			if ((objects[i] != this) && (this->rigidbody.checkCollision(*objects[i]) == 2)) {
+				// by moving collider, complete collision occurs
+				this->collision_flg = 1;
+				objects[i]->collision_flg = 1;
+				colliding_objects.push_back(objects[i]);
+				break;
+			}
+			rigidbody.collider->move(-j, 0);
+
+			rigidbody.collider->move(0, j);
+			if ((objects[i] != this) && (this->rigidbody.checkCollision(*objects[i]) == 2)) {
+				// by moving collider, complete collision occurs
+				this->collision_flg = 1;
+				objects[i]->collision_flg = 1;
+				colliding_objects.push_back(objects[i]);
+				break;
+			}
+			rigidbody.collider->move(0, -j);
+		}
+	}
+
 	return colliding_objects;
 }
 
@@ -136,16 +165,12 @@ Object* Object::findByName(vector<Object*>& objects, const char* name)
 bool Object::checkObjectsCollision(vector<Object*>& objects) {
 	bool is_colliding = false;
 
-	for (int i = 0; i < colliding_objects.size(); i++) {
-		colliding_objects.pop_back();
-	}
-
 	for (int i = 0; i < objects.size(); i++) {
 		if ((objects[i] != this) && (this->rigidbody.checkCollision(*objects[i]) == 2)) {
 			// by moving collider, complete collision occurs
 			this->collision_flg = 1;
 			objects[i]->collision_flg = 1;
-			colliding_objects.push_back(objects[i]);
+			//colliding_objects.push_back(objects[i]);
 			
 			is_colliding = true;
 		}

@@ -52,10 +52,11 @@ void TestGame::initialize()
     boundary0->makeRigidbody();
     boundary0->rigidbody.makeMatrixCollider(mat_box);
     boundary0->setName("boundary");
+    objects.push_back(boundary0);
 
     // 도형들을 vector에 append
-    enemys.push_back(boundary0);//enemy에서 관리
-    bullets.push_back(boundary0);
+    //enemys.push_back(boundary0);//enemy에서 관리
+    //bullets.push_back(boundary0);
 
     //배경 그리기
     Matrix background = getConsole().makeFile2Matrix("./usrlib/background");
@@ -68,7 +69,7 @@ void TestGame::initialize()
     player0->makeImage(plane1);
     player0->rigidbody.makeMatrixCollider(plane1);
     player0->setName("player");
-    bullets.push_back(player0);
+    //bullets.push_back(player0);
     objects.push_back(player0);
 
     //enemy 그림 벡터
@@ -109,39 +110,45 @@ void TestGame::updateLoop()
 void TestGame::collisionEvent() {
 
     player0->collision_flg = 0;
-    for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(bullets); 
+    for (int i = 0; i < enemys.size(); i++)  enemys[i]->move(objects); 
     for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //여기 플레이어도 포함
+    player0->move(objects);
     
     boundary0->collision_flg = 0;
 
-    if (player0->collision_flg==1) {
-        for (int i = 0; i < enemys.size(); i++) {
-            if (enemys[i]->collision_flg == 1) {
-                if (life_ > 0)  life_--; //체력 감소
-                if (life_ <= 0) exit();
-            }
-        }
-    }
-
-
-    /* 동진 - collision에서 colliding하는 object 반환하게 하고 싶었는데 잘 안되네요; */
-    //vector<Object*> player_colliding_objects = player0->getCollidingObjects(objects);
-
-    //if (player_colliding_objects.size() >= 1) {
-    //    getConsole().print(to_string(player0->getCollidingObjects(objects).size()),1,1);
-    //    for (int i = 0; i < player_colliding_objects.size(); i++) {
-    //        if (!strcmp(player_colliding_objects[i]->getName(), "enemy")) {
+    //if (player0->collision_flg==1) {
+    //    for (int i = 0; i < enemys.size(); i++) {
+    //        if (enemys[i]->collision_flg == 1) {
     //            if (life_ > 0)  life_--; //체력 감소
     //            if (life_ <= 0) exit();
     //        }
     //    }
     //}
 
-    //for (int i = 0; i < player_colliding_objects.size(); i++) {
-    //    player_colliding_objects.pop_back();
-    //}
+
+    /* 동진 - collision에서 colliding하는 object 반환(getCollidingObjects) */
+    // collision with enemy
+    vector<Object*> player_colliding_objects = player0->getCollidingObjects(enemys);
+
+    if (player_colliding_objects.size() >= 1) {
+        getConsole().print(to_string(player_colliding_objects.size()),1,1);
+        for (int i = 0; i < player_colliding_objects.size(); i++) {
+            if (life_ > 0)  life_--; //체력 감소
+            if (life_ <= 0) exit();
+        }
+    }
+
+    for (int i = 0; i < player_colliding_objects.size(); i++) {
+        player_colliding_objects.pop_back();
+    }
     // free memory
 
+
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i]->getCollidingObjects(enemys).size() >= 1) {
+            addscore(10);
+        }
+    }
 
 
     player0->collision_flg = 0;
@@ -162,6 +169,7 @@ void TestGame::collisionEvent() {
     //        }
     //    }
     //}
+
     for (int j = 0; j < bullets.size(); ) {
         if (bullets[j]->collision_flg) {
             delete bullets[j];
@@ -170,11 +178,12 @@ void TestGame::collisionEvent() {
         }
         else j++;
     }
+
     for (int j = 0; j < enemys.size();) {
         if (enemys[j]->collision_flg) {
             delete enemys[j];
             enemys.erase(enemys.begin() + j);
-            addscore(10);
+            //addscore(10);
         }
         else j++;
     }
@@ -218,7 +227,7 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(0, 0);
     }
 }
-void TestGame::checkShoot(vector<Object*>& objects, Object& player)
+void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
 {
     if (getKeyListener().keycheck(EAG_VKEY_SPACE)) {
         Object* bullet;
@@ -231,7 +240,7 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
         bullet->rigidbody.makeMatrixCollider(image);
         bullet->setName("bullet");
         bullet->rigidbody.setVelocity(0, -3);
-        objects.push_back(bullet);
+        bullets.push_back(bullet);
         sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
@@ -353,6 +362,8 @@ int main(void)
     // set pause and resume key to RETURN key
     test_game->setPauseKey(EAG_VKEY_RETURN);
     test_game->setResumeKey(EAG_VKEY_RETURN);
+
+    
 
     //// 최초 그림 그려지는 점 초기화
 
