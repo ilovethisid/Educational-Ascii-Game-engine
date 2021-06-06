@@ -68,6 +68,8 @@ void TestGame::initialize()
 {
     last_time_ = clock();
 
+    sound_.playSound("./usrlib/laser-gun.wav");
+
     Matrix M1 = getConsole().makeFile2Matrix("./usrlib/enemy1");
     Matrix M2 = getConsole().makeFile2Matrix("./usrlib/enemy2");
     Matrix M3 = getConsole().makeFile2Matrix("./usrlib/enemy3");
