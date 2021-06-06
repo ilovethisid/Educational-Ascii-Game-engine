@@ -130,6 +130,7 @@ vector<Object*>& Object::getCollidingObjects(vector<Object*>& objects)
 				this->collision_flg = 1;
 				objects[i]->collision_flg = 1;
 				colliding_objects.push_back(objects[i]);
+				rigidbody.collider->move(-j, 0);
 				break;
 			}
 			rigidbody.collider->move(-j, 0);
@@ -140,6 +141,7 @@ vector<Object*>& Object::getCollidingObjects(vector<Object*>& objects)
 				this->collision_flg = 1;
 				objects[i]->collision_flg = 1;
 				colliding_objects.push_back(objects[i]);
+				rigidbody.collider->move(0, -j);
 				break;
 			}
 			rigidbody.collider->move(0, -j);
