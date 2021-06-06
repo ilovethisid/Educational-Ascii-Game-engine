@@ -42,7 +42,6 @@ void TestGame::initialize()
 {
 
     // 그릴 도형의 행렬 초기화
-
     Matrix mat_box = getConsole().makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight());
     Matrix mat_rect = getConsole().makeRect(10, 4);
 
@@ -114,7 +113,7 @@ void TestGame::Move_Collision_Check() {
     
     boundary0->collision_flg = 0;
 
-    if (player0->collision_flg) {
+    if (player0->collision_flg==1) {
         if (life_ > 0)  life_--; //체력 감소
         if (life_ <= 0) exit();
         player0->collision_flg = 0;
@@ -138,17 +137,16 @@ void TestGame::Move_Collision_Check() {
     //}
     for (int j = 0; j < bullets.size(); ) {
         if (bullets[j]->collision_flg) {
-            Object* tmp = bullets[j];
+            delete bullets[j];
             bullets.erase(bullets.begin() + j);
-            delete tmp;
+
         }
         else j++;
     }
     for (int j = 0; j < enemys.size();) {
         if (enemys[j]->collision_flg) {
-            Object* tmp = enemys[j];
+            delete enemys[j];
             enemys.erase(enemys.begin() + j);
-            delete tmp;
             addscore(10);
         }
         else j++;
@@ -213,7 +211,7 @@ void TestGame::checkShoot(vector<Object*>& objects, Object& player)
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();
-    Object* enemy = new Object(140 / (rand_num % 4 + 1), 2);
+    Object* enemy = new Object(140 / (rand_num % 4 + 1), 3);
     enemy->makeImage(MV_.at(rand_num % 3)); //모양 3개
     enemy->makeRigidbody();
     enemy->rigidbody.makeMatrixCollider(MV_[rand_num % 3]);
