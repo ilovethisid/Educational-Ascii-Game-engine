@@ -242,17 +242,23 @@ Matrix Console::makeRect(int width, int height, short c, short col){
 	return tmp;
 }
 
-Matrix Console::makeBox(int width, int height, short c, short col) {
+Matrix Console::makeBox(int width, int height, short thickness, short c, short col) {
 	Matrix tmp = Matrix(width, height);
 	memset(tmp.color, (unsigned char)col, sizeof(unsigned char) * tmp.width * tmp.height);
 	
 	for (int i = 0; i < height; i++) {
-		tmp.element[i][0] = c;
-		tmp.element[i][width - 1] = c;
+		for (int j = 0; j < thickness; j++)
+		{
+			tmp.element[i][j] = c;
+			tmp.element[i][width - 1 - j] = c;
+		}
 	}
 	for (int i = 0; i < width; i++) {
-		tmp.element[0][i] = c;
-		tmp.element[height - 1][i] = c;
+		for (int j = 0; j < thickness; j++)
+		{
+			tmp.element[j][i] = c;
+			tmp.element[height - 1 - j][i] = c;
+		}
 	}
 
 	return tmp;

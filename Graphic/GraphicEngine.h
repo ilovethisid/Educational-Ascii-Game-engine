@@ -109,7 +109,7 @@ public:
 
 	Matrix makeCircle(int r, short c= PIXEL_SOLID, short col = FG_WHITE);
 	Matrix makeRect(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
-	Matrix makeBox(int width, int height, short c = PIXEL_SOLID, short col = FG_WHITE);
+	Matrix makeBox(int width, int height, short thickness = 1, short c = PIXEL_SOLID, short col = FG_WHITE);
 	Matrix makeTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);//»ï°¢Çü »ý¼º
 	void drawLineInMatrix(short*** pnt, int x1, int y1, int x2, int y2, short c = PIXEL_SOLID);
 	Matrix makeFile2Matrix(const char* filename);
