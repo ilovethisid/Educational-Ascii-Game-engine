@@ -42,7 +42,7 @@ void TestGame::initialize()
 {
 
     // 그릴 도형의 행렬 초기화
-    Matrix mat_box = getConsole().makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight());
+    Matrix mat_box = getConsole().makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
     Matrix mat_rect = getConsole().makeRect(10, 4);
 
     //도형 초기화
@@ -261,8 +261,8 @@ void TestGame::drawLife()
 {
     //getConsole().print(to_string(life_),1,1);
     for (int i = 0; i < life_; i++) {
-        getConsole().drawTmp(2*i + 2, 2, L'♥', FG_RED);
-        getConsole().drawTmp(2*i + 3, 2, L' ', FG_RED);
+        getConsole().drawTmp(2*i + 3, 3, L'♥', FG_RED);
+        getConsole().drawTmp(2*i + 4, 3, L' ', FG_RED);
     }
     //Matrix life_image;
     //life_image.width = 10;
@@ -346,7 +346,7 @@ void TestGame::addscore(int _score)
         score_image.element[0][width - 1 - i] = L'0' + temp % 10;
         temp = temp / 10;
     }
-    getConsole().drawMatrix(width, 2, score_image);
+    getConsole().drawMatrix(width+1, 3, score_image);
 }
 
 Point g_target_point;
