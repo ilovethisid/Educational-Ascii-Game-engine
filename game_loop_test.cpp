@@ -60,6 +60,9 @@ private:
     //void addlife();
     void addscore(int _score);
     void showscore(int _score);
+    void showscoreboard();
+    void loadscoreboard();
+    void savescoreboard();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
 public:
     TestGame();
@@ -207,7 +210,13 @@ void TestGame::collisionEvent() {
         getConsole().print(to_string(player_colliding_objects.size()),1,1);
         for (int i = 0; i < player_colliding_objects.size(); i++) {
             if (life_ > 0)  life_--; //체력 감소
-            if (life_ <= 0) exit();
+            if (life_ <= 0)
+            {
+                loadscoreboard();
+                savescoreboard();
+                showscoreboard();
+                exit();
+            }
         }
     }
 
@@ -223,7 +232,13 @@ void TestGame::collisionEvent() {
         getConsole().print(to_string(player_colliding_objects0.size()), 1, 1);
         for (int i = 0; i < player_colliding_objects0.size(); i++) {
             if (life_ > 0)  life_--; //체력 감소
-            if (life_ <= 0) exit();
+            if (life_ <= 0)
+            {
+                loadscoreboard();
+                savescoreboard();
+                showscoreboard();
+                exit();
+            }
         }
     }
 
@@ -311,6 +326,9 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(2, 0);
     }
     else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
+        loadscoreboard();
+        savescoreboard();
+        showscoreboard();
         exit();
     }
     else {
@@ -559,6 +577,82 @@ void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Objec
     kind_bullets.push_back(bullet);
 
 }
+void TestGame::showscoreboard()
+{
+    int board_x = 10;
+    int board_y = 10;
+    getConsole().print("score board", board_y, board_x);
+    getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
+    getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
+    getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
+    getConsole().print(/*"└"*/"*", board_y - 1 + 30, board_x - 1);
+    for (int i = 1; i < 15; i++)
+    {
+        getConsole().print(/*"─"*/"*", board_y - 1, board_x - 1 + i);
+        getConsole().print(/*"─"*/"*", board_y - 1 + 30, board_x - 1 + i);
+    }
+    for (int i = 1; i < 30; i++)
+    {
+        getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
+        getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        char score_text[20];
+        snprintf(score_text, 20, "%2d: %d", i + 1, scoreboard_[i]);
+        getConsole().print(score_text, board_y + i * 2 + 2, board_x);
+    }
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+}
+void TestGame::loadscoreboard()
+{
+    ifstream in("./usrlib/scoreboard.csv");
+    string in_line;
+    if (in.is_open())
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            getline(in, in_line, '\n');
+            scoreboard_[i] = stoi(in_line);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            scoreboard_[i] = 0;
+        }
+    }
+    in.close();
+}
+void TestGame::savescoreboard()
+{
+    ofstream out("./usrlib/scoreboard.csv");
+    string out_line;
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (score_ > scoreboard_[i])
+        {
+            int temp = scoreboard_[i];
+            scoreboard_[i] = score_;
+            i++;
+            for (i; i < 10; i++)
+            {
+                int temp2 = scoreboard_[i];
+                scoreboard_[i] = temp;
+                temp = temp2;
+            }
+        }
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        out << scoreboard_[i] << '\n';
+    }
+    out.close();
+}
+
 
 
 Point g_target_point;
