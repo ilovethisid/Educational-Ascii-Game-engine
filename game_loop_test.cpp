@@ -16,7 +16,7 @@ private:
     vector<Matrix> enemy_images;  // enemy 그림 벡터
     vector<Matrix> bullet_images;
     Sound sound_;
-    clock_t last_time_;
+    clock_t last_time_; 
     vector <Object*> enemys;
     vector <Object*> bullets;
     vector <Object*> enemy_bullets;
@@ -51,7 +51,7 @@ private:
     int boss_flg=1;
     int scoreboard_[10];
 
-
+    
     void initialize() override;
     void updateLoop() override;
 
@@ -68,8 +68,13 @@ private:
     void showscoreboard();
     void loadscoreboard();
     void savescoreboard();
+    void dieEvent();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
+  
+
 public:
+    void startMenu();
+    void endEvent();
     TestGame();
     Sound getSound();
 };
@@ -94,7 +99,6 @@ void TestGame::initialize()
     bullet_images.push_back(Matrix(1, 1, (short*)L"|", FG_YELLOW));
     bullet_images.push_back(Matrix(2, 1, (short*)L"◈ ", FG_RED));
     bullet_images.push_back(Matrix(1, 1, (short*)L"● ", FG_RED));
-
 
 
     // 그릴 도형의 행렬 초기화
@@ -190,6 +194,22 @@ void TestGame::updateLoop()
     count_frames++;
 }
 
+void TestGame::dieEvent() {
+    exit();
+}
+void TestGame::endEvent() {
+    getConsole().clearTmpBufScreen();
+    Matrix die = makeFile2Matrix("./usrlib/die_message");
+    getConsole().drawMatrix(30, 10, die);
+    getConsole().print("press esc to exit", 50, 5);
+    loadscoreboard();
+    savescoreboard();
+    showscoreboard();
+    getKeyListener().reset();
+    while (!getKeyListener().keycheck(EAG_VKEY_ESC));
+}
+
+
 
 void TestGame::collisionEvent() {
 
@@ -228,10 +248,7 @@ void TestGame::collisionEvent() {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
             {
-                loadscoreboard();
-                savescoreboard();
-                showscoreboard();
-                exit();
+                dieEvent();
             }
         }
     }
@@ -250,10 +267,7 @@ void TestGame::collisionEvent() {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
             {
-                loadscoreboard();
-                savescoreboard();
-                showscoreboard();
-                exit();
+                dieEvent();
             }
         }
     }
@@ -313,6 +327,16 @@ void TestGame::collisionEvent() {
 }
 
 
+
+
+
+
+Sound TestGame::getSound()
+{
+    return sound_;
+}
+
+
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
 {
@@ -356,6 +380,7 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
         sound_.playSound("./../usrlib/laser-gun.wav");
     }
 }
+
 
 
 
@@ -497,8 +522,6 @@ void TestGame::Boss::event(Console& console) {
     for (int i = 0; i < life; i++) {
         console.drawTmp( x+i, 2, L'■', FG_RED);
     }
-
-
 }
 
 void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Object*>& kind_bullets) {
@@ -509,7 +532,6 @@ void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Objec
     bullet->rigidbody.makeMatrixCollider(image);
     bullet->rigidbody.setVelocity(v_x, v_y);
     kind_bullets.push_back(bullet);
-
 }
 void TestGame::showscoreboard()
 {
@@ -595,7 +617,55 @@ void TestGame::savescoreboard()
     }
     out.close();
 }
+void TestGame::startMenu()
+{
+    getKeyListener().reset();
+    Matrix title = makeFile2Matrix("./usrlib/title");
+    Matrix start_button = makeFile2Matrix("./usrlib/start_button");
+    Matrix score_button = makeFile2Matrix("./usrlib/score_button");
+    int select = -1;
+    getConsole().clearTmpBufScreen();
+    getConsole().drawMatrix(10, 10, title);
+    getConsole().drawMatrix(10, 50, start_button);
+    getConsole().drawMatrix(50, 50, score_button);
+    getConsole().print("press space to select", 40, 80);
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+    start_button.setColor(FG_YELLOW);
+    score_button.setColor(FG_YELLOW);
+    getKeyListener().keycheck(EAG_VKEY_SPACE);
+    while (!getKeyListener().keycheck(EAG_VKEY_SPACE)) {
 
+        if (getKeyListener().keycheck(EAG_VKEY_LEFT)) {
+            getConsole().setTmpBufScreen(); 
+            getConsole().drawTmpMatrix(10, 50, start_button);
+            getConsole().update();
+            select=0;
+        }
+        else if (getKeyListener().keycheck(EAG_VKEY_RIGHT)) {
+            getConsole().setTmpBufScreen();
+            getConsole().drawTmpMatrix(50, 50, score_button);
+            getConsole().update();
+            select=1;
+        }
+
+    }
+
+    getConsole().clearTmpBufScreen();
+    if (select == 0) { 
+        life_ = 5;
+        start(); 
+    }
+    else if (select == 1) {
+        loadscoreboard();
+        showscoreboard();
+        while (!getKeyListener().keycheck(EAG_VKEY_SPACE));
+        Sleep(1000);
+        startMenu();
+    }
+   
+  
+}
 
 
 Point g_target_point;
@@ -615,8 +685,8 @@ int main(void)
     
 
     //// 최초 그림 그려지는 점 초기화
-
-    test_game->start();
+    test_game->startMenu();
+    test_game->endEvent();
     return 0;
 }
 

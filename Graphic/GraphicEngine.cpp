@@ -149,6 +149,13 @@ void Console::drawMatrix(int x, int y, Matrix& image) {
 			if (image.element[i][j]) draw(x + j, y + i, image.element[i][j], image.color[i * image.width + j]);
 }
 
+void Console::drawTmpMatrix(int x, int y, Matrix& image) {
+
+	for (int i = 0; i < image.height; i++)
+		for (int j = 0; j < image.width; j++)
+			if (image.element[i][j]) drawTmp(x + j, y + i, image.element[i][j], image.color[i * image.width + j]);
+}
+
 
 
 void Console::drawTmpObject(Object& obj) {
