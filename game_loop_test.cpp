@@ -477,7 +477,7 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     }
     else
         bullet_frame_num++;
-
+    
     
 }
 
