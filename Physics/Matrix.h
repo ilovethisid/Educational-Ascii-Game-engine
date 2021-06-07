@@ -16,7 +16,8 @@ public:
 	~Matrix();
 	Matrix(const Matrix& _matrix);
 	Matrix(short _width, short _height);
-
+	Matrix(short _width, short _height, short* arr, char* color);
+	Matrix(short _width, short _height, short* arr, char color);
 	Matrix& operator=(const Matrix& fellow) {
 		this->width = fellow.width;
 		this->height = fellow.height;
@@ -44,7 +45,9 @@ public:
 	}
 
 
-	void fillElement(int** ary, char* color);
+	void fillElement(short** ary, char* color);
+	void fillElement(short* ary, char* c_arr);
+	void fillElement(short* ary, char c_arr);
 	void setColor(int color);
 };
 

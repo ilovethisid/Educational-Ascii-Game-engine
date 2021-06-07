@@ -45,15 +45,42 @@ Matrix::Matrix(short _width, short _height)
 }
 
 
+Matrix::Matrix(short _width, short _height, short* arr, char* color):Matrix(_width,_height){
+	fillElement(arr, color);
+}
 
+Matrix::Matrix(short _width, short _height, short* arr, char color) : Matrix(_width, _height) {
+	fillElement(arr, color);
+}
 
-void Matrix::fillElement(int** ary,char* c_arr)
+void Matrix::fillElement(short** ary,char* c_arr)
 {
 	
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			element[i][j] = ary[i][j];
 			color[i * width + j] = c_arr[i * width + j];
+		}
+	}
+}
+
+void Matrix::fillElement(short* ary, char* c_arr)
+{
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			element[i][j] = ary[i*width+j];
+			color[i * width + j] = c_arr[i * width + j];
+		}
+	}
+}
+
+
+void Matrix::fillElement(short* ary, char clr)
+{
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			element[i][j] = ary[i * width + j];
+			color[i * width + j] = clr;
 		}
 	}
 }
