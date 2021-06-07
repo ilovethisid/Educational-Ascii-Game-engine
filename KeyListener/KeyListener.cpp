@@ -81,6 +81,7 @@ int KeyListener::eagKeyToVK(int key)
 		key = VK_SPACE;
 	return key;
 }
+
 bool KeyListener::ReturnRf()
 {
 	if (Rf)
@@ -90,6 +91,7 @@ bool KeyListener::ReturnRf()
 	}
 	return false;
 }
+
 void KeyListenerThread()
 {
 	int i;

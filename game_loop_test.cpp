@@ -1,10 +1,12 @@
+﻿
+#define _CRT_SECURE_NO_WARNINGS
 
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 70
 
+#include <thread>
+
 #include "game_loop.h"
-
-
 
 
 
@@ -20,6 +22,8 @@ private:
     vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
+
+    thread th_sound;
     
 
     class Enemy :public Object {
@@ -77,6 +81,7 @@ TestGame::TestGame()
     life_ = 5;
     score_ = 0;
 }
+
 void TestGame::initialize()
 {
     //enemy_images matrix
@@ -127,6 +132,7 @@ void TestGame::initialize()
     objects.push_back(player0);
 
     last_time_ = clock();//last_time_ 시간체크용
+
 }
 
 
@@ -168,8 +174,11 @@ void TestGame::updateLoop()
     if (count_frames % ((int)fps_ * 3) == 0) {
         if (spawn_interval > (int)fps_ / 2) {
             spawn_interval--;
+            //sound_.playSound2("./../usrlib/laser-gun.wav");
         }
     }
+
+   
 
 //충돌체크와 판정
     collisionEvent();
@@ -304,11 +313,6 @@ void TestGame::collisionEvent() {
 }
 
 
-
-Sound TestGame::getSound()
-{
-    return sound_;
-}
 // Implementation of KeyListener
 void TestGame::checkMove(Object& obj)
 {
@@ -342,23 +346,14 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(0, 0);
     }
 }
+
+
 void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
 {
     if (getKeyListener().keycheck(EAG_VKEY_SPACE)) {
         makeBullet(player.getX() + player.getImage().width / 2, player.getY() - 2,  0, -3,bullet_images[0],bullets);
-        //Object* bullet;
-        //bullet = new Object(player.getX() + player.getImage().width / 2, player.getY() - 2);
-        //Matrix image = Matrix(1, 1);
-        //image.element[0][0] = '|';
-        //bullet->makeImage(image);
-        //bullet->getImage().setColor(FG_YELLOW);
-        //bullet->makeRigidbody();
-        //bullet->rigidbody.makeMatrixCollider(image);
-        //bullet->setName("bullet");
-        //bullet->rigidbody.setVelocity(0, -3);
-        //bullets.push_back(bullet);
-        //sound_.playSound("./usrlib/laser-gun.wav");
-        sound_.playSound2("./../usrlib/laser-gun.wav");
+
+        sound_.playSound("./../usrlib/laser-gun.wav");
     }
 }
 
@@ -410,47 +405,7 @@ void TestGame::drawLife()
     //}
     //getConsole().drawMatrix(5, 2, life_image);
 }
-//
-//void TestGame::minuslife()
-//{
-//    Matrix null_image;
-//    null_image.width = 1;
-//    null_image.height = 1;
-//    null_image.color = new unsigned char[1];
-//    null_image.color[0] = FG_BLACK;
-//    null_image.element = new short* [1];
-//    null_image.element[0] = new short[1];
-//    null_image.element[0][0] = L'♥';
-//    if (life_ > 0)
-//    {
-//        getConsole().drawMatrix(3 + life_ * 2, 2, null_image);
-//        life_--;
-//    }
-//    else
-//    {
-//        exit();
-//    }
-//}
 
-//void TestGame::addlife()
-//{
-//    for (int i = 0; i < life_; i++) {
-//        getConsole().drawTmp(i + 2, 2, L'♥', FG_RED);
-//    }
-    //Matrix null_image;
-    //null_image.width = 1;
-    //null_image.height = 1;
-    //null_image.color = new unsigned char[1];
-    //null_image.color[0] = FG_RED;
-    //null_image.element = new short* [1];
-    //null_image.element[0] = new short[1];
-    //null_image.element[0][0] = L'♥';
-    //if (life_ < 5)
-    //{
-    //    getConsole().drawMatrix(5 + life_ * 2, 2, null_image);
-    //    life_++;
-    //}
-//}
 
 void TestGame::addscore(int _score)
 {
@@ -464,35 +419,6 @@ void TestGame::showscore(int _score)
     char score_text[20];
     snprintf(score_text, 20, "score: %d", _score);
     getConsole().print(score_text,3,23);
-//    int temp = this->score_;
-//
-//    Matrix score_image;
-//    int width = 18;
-//    score_image.width = width;
-//    score_image.height = 1;
-//    score_image.color = new unsigned char[width];
-//
-//    for (int i = 6; i < width; i++)
-//    {
-//        score_image.color[i] = FG_WHITE;
-//    }
-//
-//    score_image.element = new short* [1];
-//    score_image.element[0] = new short[width];
-//
-//    score_image.element[0][0] = 's';
-//    score_image.element[0][1] = 'c';
-//    score_image.element[0][2] = 'o';
-//    score_image.element[0][3] = 'r';
-//    score_image.element[0][4] = 'e';
-//    score_image.element[0][5] = ' ';
-//
-//    for (int i = 0; i < width - 6; i++)
-//    {
-//        score_image.element[0][width - 1 - i] = L'0' + temp % 10;
-//        temp = temp / 10;
-//    }
-//    getConsole().drawMatrix(width + 5, 3, score_image);
 }
 
 
@@ -610,8 +536,17 @@ void TestGame::showscoreboard()
         snprintf(score_text, 20, "%2d: %d", i + 1, scoreboard_[i]);
         getConsole().print(score_text, board_y + i * 2 + 2, board_x);
     }
+
+    getConsole().print("Type your name : ", 5, 6);
+    // get the name of player
+
     getConsole().setTmpBufScreen();
     getConsole().update();
+
+    GotoXY(Point(25, 5));
+    char name[20];
+    scanf("%s", name);
+    
 }
 void TestGame::loadscoreboard()
 {
