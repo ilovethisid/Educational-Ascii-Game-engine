@@ -64,11 +64,13 @@ private:
     void showscoreboard();
     void loadscoreboard();
     void savescoreboard();
+    void dieEvent();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
   
 
 public:
-    void start_menu();
+    void startMenu();
+    void endEvent();
     TestGame();
     Sound getSound();
 };
@@ -92,7 +94,6 @@ void TestGame::initialize()
     bullet_images.push_back(Matrix(1, 1, (short*)L"|", FG_YELLOW));
     bullet_images.push_back(Matrix(2, 1, (short*)L"◈ ", FG_RED));
     bullet_images.push_back(Matrix(1, 1, (short*)L"● ", FG_RED));
-
 
 
     // 그릴 도형의 행렬 초기화
@@ -178,6 +179,22 @@ void TestGame::updateLoop()
     count_frames++;
 }
 
+void TestGame::dieEvent() {
+    exit();
+}
+void TestGame::endEvent() {
+    getConsole().clearTmpBufScreen();
+    Matrix die = makeFile2Matrix("./usrlib/die_message");
+    getConsole().drawMatrix(30, 10, die);
+    getConsole().print("press esc to exit", 50, 5);
+    loadscoreboard();
+    savescoreboard();
+    showscoreboard();
+    getKeyListener().reset();
+    while (!getKeyListener().keycheck(EAG_VKEY_ESC));
+}
+
+
 
 void TestGame::collisionEvent() {
 
@@ -216,10 +233,7 @@ void TestGame::collisionEvent() {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
             {
-                loadscoreboard();
-                savescoreboard();
-                showscoreboard();
-                exit();
+                dieEvent();
             }
         }
     }
@@ -238,10 +252,7 @@ void TestGame::collisionEvent() {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
             {
-                loadscoreboard();
-                savescoreboard();
-                showscoreboard();
-                exit();
+                dieEvent();
             }
         }
     }
@@ -302,6 +313,8 @@ void TestGame::collisionEvent() {
 
 
 
+
+
 Sound TestGame::getSound()
 {
     return sound_;
@@ -357,6 +370,7 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
         sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
+
 
 
 
@@ -653,8 +667,9 @@ void TestGame::savescoreboard()
     }
     out.close();
 }
-void TestGame::start_menu()
+void TestGame::startMenu()
 {
+    getKeyListener().reset();
     Matrix title = makeFile2Matrix("./usrlib/title");
     Matrix start_button = makeFile2Matrix("./usrlib/start_button");
     Matrix score_button = makeFile2Matrix("./usrlib/score_button");
@@ -687,13 +702,16 @@ void TestGame::start_menu()
     }
 
     getConsole().clearTmpBufScreen();
-    if (select == 0) start();
+    if (select == 0) { 
+        life_ = 5;
+        start(); 
+    }
     else if (select == 1) {
         loadscoreboard();
         showscoreboard();
         while (!getKeyListener().keycheck(EAG_VKEY_SPACE));
         Sleep(1000);
-        start_menu();
+        startMenu();
     }
    
   
@@ -717,8 +735,8 @@ int main(void)
     
 
     //// 최초 그림 그려지는 점 초기화
-    test_game->start_menu();
-    test_game->start();
+    test_game->startMenu();
+    test_game->endEvent();
     return 0;
 }
 
