@@ -426,35 +426,38 @@ void TestGame::addscore(int _score)
 
 void TestGame::showscore(int _score)
 {
-    int temp = this->score_;
-
-    Matrix score_image;
-    int width = 18;
-    score_image.width = width;
-    score_image.height = 1;
-    score_image.color = new unsigned char[width];
-
-    for (int i = 6; i < width; i++)
-    {
-        score_image.color[i] = FG_WHITE;
-    }
-
-    score_image.element = new short* [1];
-    score_image.element[0] = new short[width];
-
-    score_image.element[0][0] = 's';
-    score_image.element[0][1] = 'c';
-    score_image.element[0][2] = 'o';
-    score_image.element[0][3] = 'r';
-    score_image.element[0][4] = 'e';
-    score_image.element[0][5] = ' ';
-
-    for (int i = 0; i < width - 6; i++)
-    {
-        score_image.element[0][width - 1 - i] = L'0' + temp % 10;
-        temp = temp / 10;
-    }
-    getConsole().drawMatrix(width + 5, 3, score_image);
+    char score_text[20];
+    snprintf(score_text, 20, "score: %d", _score);
+    getConsole().print(score_text,3,23);
+//    int temp = this->score_;
+//
+//    Matrix score_image;
+//    int width = 18;
+//    score_image.width = width;
+//    score_image.height = 1;
+//    score_image.color = new unsigned char[width];
+//
+//    for (int i = 6; i < width; i++)
+//    {
+//        score_image.color[i] = FG_WHITE;
+//    }
+//
+//    score_image.element = new short* [1];
+//    score_image.element[0] = new short[width];
+//
+//    score_image.element[0][0] = 's';
+//    score_image.element[0][1] = 'c';
+//    score_image.element[0][2] = 'o';
+//    score_image.element[0][3] = 'r';
+//    score_image.element[0][4] = 'e';
+//    score_image.element[0][5] = ' ';
+//
+//    for (int i = 0; i < width - 6; i++)
+//    {
+//        score_image.element[0][width - 1 - i] = L'0' + temp % 10;
+//        temp = temp / 10;
+//    }
+//    getConsole().drawMatrix(width + 5, 3, score_image);
 }
 
 
