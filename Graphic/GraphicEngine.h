@@ -103,6 +103,7 @@ public:
 	void drawMatrix(int x,int y,Matrix& image);
 
 	void drawTmp(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE);//임시로 그리기
+	void drawTmpMatrix(int x, int y, Matrix& image);
 	void drawTmpObject(Object& obj); //임시로 그리기
 	void drawTmpObjects(vector<Object*> objects ); //임시로 그리기
 	void clearTmpBufScreen(); //bufScreen 초기화
