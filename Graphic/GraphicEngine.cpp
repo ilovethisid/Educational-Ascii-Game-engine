@@ -226,8 +226,8 @@ Matrix makeFile2Matrix(const char* filename){
 			if ((fr+fg+fb)&&fr < 200 && fg < 200 && fb < 200) color += 8;
 			if ((br + bg + bb) && br < 200 && bg < 200 && bb < 200) color += 128;
 			unsigned short c = temp[0];
-			if(c!= 78)image.element[i][j] = c;
-			if (c == 78)image.element[i][j] = 0;
+			if(c!= 78 &&c!=L'e')image.element[i][j] = c;
+			else image.element[i][j] = 0;
 			
 			image.color[i * width + j] = color;
 		}

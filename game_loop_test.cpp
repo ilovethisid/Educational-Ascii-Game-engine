@@ -11,7 +11,7 @@
 class TestGame : public GameLoop {
 
 private:
-    vector<Matrix> enemy_images;  // enemy ±◊∏≤ ∫§≈Õ
+    vector<Matrix> enemy_images;  // enemy Í∑∏Î¶º Î≤°ÌÑ∞
     vector<Matrix> bullet_images;
     Sound sound_;
     clock_t last_time_;
@@ -20,28 +20,33 @@ private:
     vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
-
+    
 
     class Enemy :public Object {
     public:
         char life = 1;
         boolean shoot_flg = false;
         char bullet_frame_num = 0;
-        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image);
+        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
+        void virtual event(Console& console) {};
     };
 
     class Boss :public Enemy{
     public:
         char shoot_pattern;
-        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image);
+        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
         void shoot(Matrix& image, vector<Object*>& enemy_bullets);
+        void event(Console& console);
     };
 
 
 
     int life_;
     int score_;
+    int boss_flg=1;
+    int scoreboard_[10];
+
 
     void initialize() override;
     void updateLoop() override;
@@ -56,6 +61,9 @@ private:
     //void addlife();
     void addscore(int _score);
     void showscore(int _score);
+    void showscoreboard();
+    void loadscoreboard();
+    void savescoreboard();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
 public:
     TestGame();
@@ -76,18 +84,19 @@ void TestGame::initialize()
     enemy_images.push_back(makeFile2Matrix("./usrlib/enemy2"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/enemy3"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/boss"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/boss_collider"));
     //bullet_images matrix
     bullet_images.push_back(Matrix(1, 1, (short*)L"|", FG_YELLOW));
-    bullet_images.push_back(Matrix(2, 1, (short*)L"¢¬ ", FG_RED));
-    bullet_images.push_back(Matrix(1, 1, (short*)L"°‹ ", FG_RED));
+    bullet_images.push_back(Matrix(2, 1, (short*)L"‚óà ", FG_RED));
+    bullet_images.push_back(Matrix(1, 1, (short*)L"‚óè ", FG_RED));
 
 
 
-    // ±◊∏± µµ«¸¿« «‡∑ƒ √ ±‚»≠
+    // Í∑∏Î¶¥ ÎèÑÌòïÏùò ÌñâÎ†¨ Ï¥àÍ∏∞Ìôî
     Matrix mat_box = makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
     Matrix mat_rect = makeRect(10, 4);
 
-    //µµ«¸ √ ±‚»≠
+    //ÎèÑÌòï Ï¥àÍ∏∞Ìôî
 
     boundary0 = new Object(0, 0);
     boundary0->makeImage(mat_box);
@@ -96,11 +105,11 @@ void TestGame::initialize()
     boundary0->setName("boundary");
     objects.push_back(boundary0);
 
-    // µµ«¸µÈ¿ª vectorø° append
-    //enemys.push_back(boundary0);//enemyø°º≠ ∞¸∏Æ
+    // ÎèÑÌòïÎì§ÏùÑ vectorÏóê append
+    //enemys.push_back(boundary0);//enemyÏóêÏÑú Í¥ÄÎ¶¨
     //bullets.push_back(boundary0);
 
-    //πË∞Ê ±◊∏Æ±‚
+    //Î∞∞Í≤Ω Í∑∏Î¶¨Í∏∞
     Matrix background = makeFile2Matrix("./usrlib/background");
     getConsole().drawMatrix(0, 0, background);
 
@@ -117,7 +126,7 @@ void TestGame::initialize()
     //bullets.push_back(player0);
     objects.push_back(player0);
 
-    last_time_ = clock();//last_time_ Ω√∞£√º≈©øÎ
+    last_time_ = clock();//last_time_ ÏãúÍ∞ÑÏ≤¥ÌÅ¨Ïö©
 }
 
 
@@ -162,14 +171,13 @@ void TestGame::updateLoop()
         }
     }
 
-//√Êµπ√º≈©øÕ ∆«¡§
+//Ï∂©ÎèåÏ≤¥ÌÅ¨ÏôÄ ÌåêÏ†ï
     collisionEvent();
     getConsole().drawTmpObjects(enemys);
     getConsole().drawTmpObjects(bullets);
     getConsole().drawTmpObjects(enemy_bullets);
     getConsole().drawTmpObject(*player0);
     drawLife();
-
     count_frames++;
 }
 
@@ -178,17 +186,15 @@ void TestGame::collisionEvent() {
 
     player0->collision_flg = 0;
 
-    for (int i = 0; i < enemys.size(); i++) { //enemys-> ∫Æ&«√∑π¿ÃæÓ
+    for (int i = 0; i < enemys.size(); i++) { //enemys-> Î≤Ω&ÌîåÎ†àÏù¥Ïñ¥
         enemys[i]->move(objects);
-        Enemy* tmp = (Enemy*)enemys[i];
-        if (tmp->shoot_flg) tmp->shoot(bullet_images[1],enemy_bullets);
     }
     for (int i = 0; i < enemy_bullets.size(); i++)  enemy_bullets[i]->move(objects);
 
-    for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //√—æÀ->enemys
+    for (int i = 0; i < bullets.size(); i++)  bullets[i]->move(enemys); //Ï¥ùÏïå->enemys
 
 
-    player0->move(objects); //«√∑π¿ÃæÓøÕ ∫Æ
+    player0->move(objects); //ÌîåÎ†àÏù¥Ïñ¥ÏôÄ Î≤Ω
     boundary0->collision_flg = 0;
 
 
@@ -197,21 +203,27 @@ void TestGame::collisionEvent() {
     //if (player0->collision_flg==1) {
     //    for (int i = 0; i < enemys.size(); i++) {
     //        if (enemys[i]->collision_flg == 1) {
-    //            if (life_ > 0)  life_--; //√º∑¬ ∞®º“
+    //            if (life_ > 0)  life_--; //Ï≤¥Î†• Í∞êÏÜå
     //            if (life_ <= 0) exit();
     //        }
     //    }
     //}
 
-    /* µø¡¯ - collisionø°º≠ colliding«œ¥¬ object π›»Ø(getCollidingObjects) */
+    /* ÎèôÏßÑ - collisionÏóêÏÑú collidingÌïòÎäî object Î∞òÌôò(getCollidingObjects) */
     // collision with enemy
     vector<Object*> player_colliding_objects = player0->getCollidingObjects(enemys);
 
     if (player_colliding_objects.size() >= 1) {
         getConsole().print(to_string(player_colliding_objects.size()),1,1);
         for (int i = 0; i < player_colliding_objects.size(); i++) {
-            if (life_ > 0)  life_--; //√º∑¬ ∞®º“
-            if (life_ <= 0) exit();
+            if (life_ > 0)  life_--; //Ï≤¥Î†• Í∞êÏÜå
+            if (life_ <= 0)
+            {
+                loadscoreboard();
+                savescoreboard();
+                showscoreboard();
+                exit();
+            }
         }
     }
 
@@ -226,18 +238,20 @@ void TestGame::collisionEvent() {
     if (player_colliding_objects0.size() >= 1) {
         getConsole().print(to_string(player_colliding_objects0.size()), 1, 1);
         for (int i = 0; i < player_colliding_objects0.size(); i++) {
-            if (life_ > 0)  life_--; //√º∑¬ ∞®º“
-            if (life_ <= 0) exit();
+            if (life_ > 0)  life_--; //Ï≤¥Î†• Í∞êÏÜå
+            if (life_ <= 0)
+            {
+                loadscoreboard();
+                savescoreboard();
+                showscoreboard();
+                exit();
+            }
         }
     }
 
     for (int i = 0; i < player_colliding_objects0.size(); i++) {
         player_colliding_objects0.pop_back();
     }
-
-
-
-
 
 
 
@@ -260,10 +274,20 @@ void TestGame::collisionEvent() {
     }
 
     for (int j = 0; j < enemys.size();) {
-        if (enemys[j]->collision_flg) {
-            delete enemys[j];
-            enemys.erase(enemys.begin() + j);
-            //addscore(10);
+        Enemy* tmp = (Enemy*)enemys[j];
+        tmp->event(getConsole());
+
+        if (tmp->shoot_flg) tmp->shoot(bullet_images[1], enemy_bullets);
+
+        if (tmp->collision_flg) {
+            tmp->life--;
+            if ((tmp->life) <= 0) {
+                delete tmp;
+                enemys.erase(enemys.begin() + j);
+            }
+            else
+               j++;
+            tmp->collision_flg = 0;
         }
         else j++;
     }
@@ -309,6 +333,9 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(2, 0);
     }
     else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
+        loadscoreboard();
+        savescoreboard();
+        showscoreboard();
         exit();
     }
     else {
@@ -337,13 +364,22 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
 
 
 
- // Ω√∞£ø° µ˚∂Û enemy πﬂª˝
+ // ÏãúÍ∞ÑÏóê Îî∞Îùº enemy Î∞úÏÉù
 void TestGame::makeEnemy()
 { 
     int rand_num = rand();
     int type = rand_num % 3;
-    Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type]);
+    Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type], enemy_images[type]);
     enemys.push_back(enemy);
+
+    if (score_ > 30 && (boss_flg == 1)) {
+        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[3]);
+        enemys.push_back(enemy);
+        boss_flg = 0;
+    }
+
+
+
 }
 
 
@@ -351,7 +387,7 @@ void TestGame::drawLife()
 {
     //getConsole().print(to_string(life_),1,1);
     for (int i = 0; i < life_; i++) {
-        getConsole().drawTmp(2*i + 3, 3, L'¢æ', FG_RED);
+        getConsole().drawTmp(2*i + 3, 3, L'‚ô•', FG_RED);
         getConsole().drawTmp(2*i + 4, 3, L' ', FG_RED);
     }
     //Matrix life_image;
@@ -369,7 +405,7 @@ void TestGame::drawLife()
     //}
     //for (int i = 0; i < 5; i++)
     //{
-    //    life_image.element[0][2 * i] = L'¢æ';
+    //    life_image.element[0][2 * i] = L'‚ô•';
     //    life_image.element[0][2 * i + 1] = L' ';
     //}
     //getConsole().drawMatrix(5, 2, life_image);
@@ -384,7 +420,7 @@ void TestGame::drawLife()
 //    null_image.color[0] = FG_BLACK;
 //    null_image.element = new short* [1];
 //    null_image.element[0] = new short[1];
-//    null_image.element[0][0] = L'¢æ';
+//    null_image.element[0][0] = L'‚ô•';
 //    if (life_ > 0)
 //    {
 //        getConsole().drawMatrix(3 + life_ * 2, 2, null_image);
@@ -399,7 +435,7 @@ void TestGame::drawLife()
 //void TestGame::addlife()
 //{
 //    for (int i = 0; i < life_; i++) {
-//        getConsole().drawTmp(i + 2, 2, L'¢æ', FG_RED);
+//        getConsole().drawTmp(i + 2, 2, L'‚ô•', FG_RED);
 //    }
     //Matrix null_image;
     //null_image.width = 1;
@@ -408,7 +444,7 @@ void TestGame::drawLife()
     //null_image.color[0] = FG_RED;
     //null_image.element = new short* [1];
     //null_image.element[0] = new short[1];
-    //null_image.element[0][0] = L'¢æ';
+    //null_image.element[0][0] = L'‚ô•';
     //if (life_ < 5)
     //{
     //    getConsole().drawMatrix(5 + life_ * 2, 2, null_image);
@@ -420,10 +456,7 @@ void TestGame::addscore(int _score)
 {
     this->score_ = this->score_ + _score;
     showscore(this->score_);
-    if (_score > 100) {
-        Boss* Object= new Boss(30, 5, 0, 0, 3, enemy_images[3]);
-        enemys.push_back(Object);
-    }
+
 }
 
 void TestGame::showscore(int _score)
@@ -463,12 +496,12 @@ void TestGame::showscore(int _score)
 }
 
 
-TestGame::Enemy::Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image) :Object(x, y) {
+TestGame::Enemy::Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider) :Object(x, y) {
     makeImage(image);
     makeRigidbody();
-    rigidbody.makeMatrixCollider(image);
+    rigidbody.makeMatrixCollider(collider);
     rigidbody.setVelocity(v_x, v_y);
-    if (type == 0)shoot_flg = true;
+    if (type == 0) shoot_flg = true;
 }
 
 void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
@@ -479,7 +512,7 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
         //Object* ebullet;
         //ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
         //Matrix image = Matrix(2, 1);
-        //image.element[0][0] = L'¢¬';
+        //image.element[0][0] = L'‚óà';
         //image.element[0][1] = ' ';
         //ebullet->makeImage(image);
         //ebullet->getImage().setColor(FG_RED);
@@ -497,24 +530,27 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     
 }
 
-TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image) :Enemy( x,  y,  v_x,  v_y,  type, image) {
+TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
     shoot_flg = true;
     shoot_pattern = 0;
+    life = 50;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
-    
     if (bullet_frame_num > 12) {
-        if (shoot_flg == 0) {
-            makeBullet(getX() + getImage().width / 2, getY() + getImage().height + 1, 0, 3, image, enemy_bullets);
-            makeBullet(getX() + 5, getY() +3, 0, 3, image, enemy_bullets);
-            makeBullet(getX() +15, getY() +3, 0, 3, image, enemy_bullets);
+        if (shoot_pattern == 0) {
+            int x = getX();
+            int y = getY();
+            makeBullet(x + 2, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 9, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 19, 14, 0, 5, image, enemy_bullets);
+            makeBullet(x + 31, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 38, 7, 0, 3, image, enemy_bullets);
             bullet_frame_num = 0;
         }
-
         //Object* ebullet;
         //ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
         //Matrix image = Matrix(2, 1);
-        //image.element[0][0] = L'¢¬';
+        //image.element[0][0] = L'‚óà';
         //image.element[0][1] = ' ';
         //ebullet->makeImage(image);
         //ebullet->getImage().setColor(FG_RED);
@@ -528,6 +564,13 @@ void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     }
     else
         bullet_frame_num++;
+}
+
+void TestGame::Boss::event(Console& console) {
+    int x = getX();
+    for (int i = 0; i < life; i++) {
+        console.drawTmp( x+i, 2, L'‚ñ†', FG_RED);
+    }
 
 
 }
@@ -542,6 +585,82 @@ void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Objec
     kind_bullets.push_back(bullet);
 
 }
+void TestGame::showscoreboard()
+{
+    int board_x = 10;
+    int board_y = 10;
+    getConsole().print("score board", board_y, board_x);
+    getConsole().print(/*"‚îå"*/"*", board_y - 1, board_x - 1);
+    getConsole().print(/*"‚îê"*/"*", board_y - 1, board_x - 1 + 15);
+    getConsole().print(/*"‚îò"*/"*", board_y - 1 + 30, board_x - 1 + 15);
+    getConsole().print(/*"‚îî"*/"*", board_y - 1 + 30, board_x - 1);
+    for (int i = 1; i < 15; i++)
+    {
+        getConsole().print(/*"‚îÄ"*/"*", board_y - 1, board_x - 1 + i);
+        getConsole().print(/*"‚îÄ"*/"*", board_y - 1 + 30, board_x - 1 + i);
+    }
+    for (int i = 1; i < 30; i++)
+    {
+        getConsole().print(/*"‚îÇ"*/"*", board_y - 1 + i, board_x - 1);
+        getConsole().print(/*"‚îÇ"*/"*", board_y - 1 + i, board_x - 1 + 15);
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        char score_text[20];
+        snprintf(score_text, 20, "%2d: %d", i + 1, scoreboard_[i]);
+        getConsole().print(score_text, board_y + i * 2 + 2, board_x);
+    }
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+}
+void TestGame::loadscoreboard()
+{
+    ifstream in("./usrlib/scoreboard.csv");
+    string in_line;
+    if (in.is_open())
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            getline(in, in_line, '\n');
+            scoreboard_[i] = stoi(in_line);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            scoreboard_[i] = 0;
+        }
+    }
+    in.close();
+}
+void TestGame::savescoreboard()
+{
+    ofstream out("./usrlib/scoreboard.csv");
+    string out_line;
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (score_ > scoreboard_[i])
+        {
+            int temp = scoreboard_[i];
+            scoreboard_[i] = score_;
+            i++;
+            for (i; i < 10; i++)
+            {
+                int temp2 = scoreboard_[i];
+                scoreboard_[i] = temp;
+                temp = temp2;
+            }
+        }
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        out << scoreboard_[i] << '\n';
+    }
+    out.close();
+}
+
 
 
 Point g_target_point;
@@ -560,7 +679,7 @@ int main(void)
 
     
 
-    //// √÷√  ±◊∏≤ ±◊∑¡¡ˆ¥¬ ¡° √ ±‚»≠
+    //// ÏµúÏ¥à Í∑∏Î¶º Í∑∏Î†§ÏßÄÎäî Ï†ê Ï¥àÍ∏∞Ìôî
 
     test_game->start();
     return 0;
