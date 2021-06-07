@@ -20,7 +20,7 @@ private:
     vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
-
+    
 
     class Enemy :public Object {
     public:
@@ -29,6 +29,7 @@ private:
         char bullet_frame_num = 0;
         Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
+        void virtual event(Console& console) {};
     };
 
     class Boss :public Enemy{
@@ -36,6 +37,7 @@ private:
         char shoot_pattern;
         Boss(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
         void shoot(Matrix& image, vector<Object*>& enemy_bullets);
+        void event(Console& console);
     };
 
 
@@ -43,6 +45,7 @@ private:
     int life_;
     int score_;
     int boss_flg=1;
+
 
     void initialize() override;
     void updateLoop() override;
@@ -175,8 +178,6 @@ void TestGame::collisionEvent() {
 
     for (int i = 0; i < enemys.size(); i++) { //enemys-> 벽&플레이어
         enemys[i]->move(objects);
-        Enemy* tmp = (Enemy*)enemys[i];
-        if (tmp->shoot_flg) tmp->shoot(bullet_images[1],enemy_bullets);
     }
     for (int i = 0; i < enemy_bullets.size(); i++)  enemy_bullets[i]->move(objects);
 
@@ -233,10 +234,6 @@ void TestGame::collisionEvent() {
 
 
 
-
-
-
-
     for (int i = 0; i < bullets.size(); i++) {
         if (bullets[i]->getCollidingObjects(enemys).size() >= 1) {
             addscore(10);
@@ -255,10 +252,20 @@ void TestGame::collisionEvent() {
     }
 
     for (int j = 0; j < enemys.size();) {
-        if (enemys[j]->collision_flg) {
-            delete enemys[j];
-            enemys.erase(enemys.begin() + j);
-            //addscore(10);
+        Enemy* tmp = (Enemy*)enemys[j];
+        tmp->event(getConsole());
+
+        if (tmp->shoot_flg) tmp->shoot(bullet_images[1], enemy_bullets);
+
+        if (tmp->collision_flg) {
+            tmp->life--;
+            if ((tmp->life) <= 0) {
+                delete tmp;
+                enemys.erase(enemys.begin() + j);
+            }
+            else
+               j++;
+            tmp->collision_flg = 0;
         }
         else j++;
     }
@@ -340,7 +347,7 @@ void TestGame::makeEnemy()
     enemys.push_back(enemy);
 
     if (score_ > 30 && (boss_flg == 1)) {
-        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[4]);
+        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[3]);
         enemys.push_back(enemy);
         boss_flg = 0;
     }
@@ -500,20 +507,20 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
 TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
     shoot_flg = true;
     shoot_pattern = 0;
+    life = 50;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     if (bullet_frame_num > 12) {
         if (shoot_pattern == 0) {
             int x = getX();
             int y = getY();
-            makeBullet(x + 2, 2, 0, 3, image, enemy_bullets);
-            makeBullet(x + 9, 2, 0, 3, image, enemy_bullets);
-            makeBullet(x + 19, 2, 0, 3, image, enemy_bullets);
-            makeBullet(x + 31, 2, 0, 3, image, enemy_bullets);
-            makeBullet(x + 38, 2, 0, 3, image, enemy_bullets);
+            makeBullet(x + 2, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 9, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 19, 14, 0, 5, image, enemy_bullets);
+            makeBullet(x + 31, 7, 0, 3, image, enemy_bullets);
+            makeBullet(x + 38, 7, 0, 3, image, enemy_bullets);
             bullet_frame_num = 0;
         }
-
         //Object* ebullet;
         //ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
         //Matrix image = Matrix(2, 1);
@@ -531,6 +538,13 @@ void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     }
     else
         bullet_frame_num++;
+}
+
+void TestGame::Boss::event(Console& console) {
+    int x = getX();
+    for (int i = 0; i < life; i++) {
+        console.drawTmp( x+i, 2, L'■', FG_RED);
+    }
 
 
 }
