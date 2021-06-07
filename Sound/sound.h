@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <string>
 #pragma comment(lib,"winmm.lib")
+#include <mmsystem.h>
+#include <Digitalv.h>
 
 
 class Sound {
@@ -13,4 +15,5 @@ private:
 public:
     Sound();
     void playSound(std::string file);
+    void playSound2(const char* file);
 };

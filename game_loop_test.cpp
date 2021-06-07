@@ -330,7 +330,8 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
         //bullet->setName("bullet");
         //bullet->rigidbody.setVelocity(0, -3);
         //bullets.push_back(bullet);
-        sound_.playSound("./usrlib/laser-gun.wav");
+        //sound_.playSound("./usrlib/laser-gun.wav");
+        sound_.playSound2("./../usrlib/laser-gun.wav");
     }
 }
 
