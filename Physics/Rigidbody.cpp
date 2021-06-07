@@ -138,6 +138,7 @@ void Rigidbody::makeBoxCollider(int width, int height)
 
 void Rigidbody::makeMatrixCollider(Matrix& matrix)
 {
+//	delete collider;
 	collider = new MatrixCollider(matrix, x, y);
 }
 

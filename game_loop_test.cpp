@@ -11,7 +11,7 @@
 class TestGame : public GameLoop {
 
 private:
-    static vector<Matrix> enemy_images;  // enemy ±×¸² º¤ÅÍ
+    vector<Matrix> enemy_images;  // enemy ±×¸² º¤ÅÍ
     vector<Matrix> bullet_images;
     Sound sound_;
     clock_t last_time_;
@@ -27,14 +27,14 @@ private:
         char life = 1;
         boolean shoot_flg = false;
         char bullet_frame_num = 0;
-        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image);
+        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
     };
 
     class Boss :public Enemy{
     public:
         char shoot_pattern;
-        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image);
+        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
         void shoot(Matrix& image, vector<Object*>& enemy_bullets);
     };
 
@@ -77,6 +77,7 @@ void TestGame::initialize()
     enemy_images.push_back(makeFile2Matrix("./usrlib/enemy2"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/enemy3"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/boss"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/boss_collider"));
     //bullet_images matrix
     bullet_images.push_back(Matrix(1, 1, (short*)L"|", FG_YELLOW));
     bullet_images.push_back(Matrix(2, 1, (short*)L"¢Â ", FG_RED));
@@ -335,11 +336,11 @@ void TestGame::makeEnemy()
 { 
     int rand_num = rand();
     int type = rand_num % 3;
-    Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type]);
+    Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type], enemy_images[type]);
     enemys.push_back(enemy);
 
     if (score_ > 30 && (boss_flg == 1)) {
-        Object* enemy = new Boss(SCREEN_WIDTH/2, 4, 0, 0, 3, enemy_images[3]);
+        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[4]);
         enemys.push_back(enemy);
         boss_flg = 0;
     }
@@ -422,10 +423,7 @@ void TestGame::addscore(int _score)
 {
     this->score_ = this->score_ + _score;
     showscore(this->score_);
-    if (_score > 100) {
-        Object* Object= new Boss(30, 5, 0, 0, 3, enemy_images[3]);
-        enemys.push_back(Object);
-    }
+
 }
 
 void TestGame::showscore(int _score)
@@ -465,10 +463,10 @@ void TestGame::showscore(int _score)
 }
 
 
-TestGame::Enemy::Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image) :Object(x, y) {
+TestGame::Enemy::Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider) :Object(x, y) {
     makeImage(image);
     makeRigidbody();
-    rigidbody.makeMatrixCollider(image);
+    rigidbody.makeMatrixCollider(collider);
     rigidbody.setVelocity(v_x, v_y);
     if (type == 0) shoot_flg = true;
 }
@@ -499,16 +497,20 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     
 }
 
-TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image) :Enemy( x,  y,  v_x,  v_y,  type, image) {
+TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
     shoot_flg = true;
     shoot_pattern = 0;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
-    if (bullet_frame_num > 5) {
+    if (bullet_frame_num > 12) {
         if (shoot_pattern == 0) {
-            makeBullet(getX() + getImage().width / 2, getY() + getImage().height + 1, 0, 3, image, enemy_bullets);
-            makeBullet(getX() + 2, getY() +3, 0, 3, image, enemy_bullets);
-            makeBullet(getX() +14, getY() +3, 0, 3, image, enemy_bullets);
+            int x = getX();
+            int y = getY();
+            makeBullet(x + 2, 2, 0, 3, image, enemy_bullets);
+            makeBullet(x + 9, 2, 0, 3, image, enemy_bullets);
+            makeBullet(x + 19, 2, 0, 3, image, enemy_bullets);
+            makeBullet(x + 31, 2, 0, 3, image, enemy_bullets);
+            makeBullet(x + 38, 2, 0, 3, image, enemy_bullets);
             bullet_frame_num = 0;
         }
 
