@@ -121,6 +121,8 @@ void TestGame::updateLoop()
     // spawn interval is 1 sec at start
     static int count_frames = 0;
 
+    int score_interval = (int)fps_ / 4;
+
     start = clock();                 // start timer
 
     //if ((start - last_time_) > spawn_interval) { //when passed make enemy
@@ -130,6 +132,10 @@ void TestGame::updateLoop()
 
     if (count_frames % spawn_interval == 0) {
         makeEnemy();
+    }
+
+    if (count_frames % score_interval == 0) {
+        addscore(1);
     }
 
     if (count_frames % ((int)fps_ * 3) == 0) {
