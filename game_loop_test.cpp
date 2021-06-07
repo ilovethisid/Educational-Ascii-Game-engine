@@ -11,7 +11,7 @@
 class TestGame : public GameLoop {
 
 private:
-    vector<Matrix> enemy_images;  // enemy ±×¸² º¤ÅÍ
+    static vector<Matrix> enemy_images;  // enemy ±×¸² º¤ÅÍ
     vector<Matrix> bullet_images;
     Sound sound_;
     clock_t last_time_;
@@ -42,6 +42,7 @@ private:
 
     int life_;
     int score_;
+    int boss_flg=1;
 
     void initialize() override;
     void updateLoop() override;
@@ -163,7 +164,6 @@ void TestGame::updateLoop()
     getConsole().drawTmpObjects(enemy_bullets);
     getConsole().drawTmpObject(*player0);
     drawLife();
-
     count_frames++;
 }
 
@@ -337,6 +337,15 @@ void TestGame::makeEnemy()
     int type = rand_num % 3;
     Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type]);
     enemys.push_back(enemy);
+
+    if (score_ > 30 && (boss_flg == 1)) {
+        Object* enemy = new Boss(SCREEN_WIDTH/2, 4, 0, 0, 3, enemy_images[3]);
+        enemys.push_back(enemy);
+        boss_flg = 0;
+    }
+
+
+
 }
 
 
@@ -414,7 +423,7 @@ void TestGame::addscore(int _score)
     this->score_ = this->score_ + _score;
     showscore(this->score_);
     if (_score > 100) {
-        Boss* Object= new Boss(30, 5, 0, 0, 3, enemy_images[3]);
+        Object* Object= new Boss(30, 5, 0, 0, 3, enemy_images[3]);
         enemys.push_back(Object);
     }
 }
@@ -461,7 +470,7 @@ TestGame::Enemy::Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image) 
     makeRigidbody();
     rigidbody.makeMatrixCollider(image);
     rigidbody.setVelocity(v_x, v_y);
-    if (type == 0)shoot_flg = true;
+    if (type == 0) shoot_flg = true;
 }
 
 void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
@@ -495,12 +504,11 @@ TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image) :E
     shoot_pattern = 0;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
-    
-    if (bullet_frame_num > 12) {
-        if (shoot_flg == 0) {
+    if (bullet_frame_num > 5) {
+        if (shoot_pattern == 0) {
             makeBullet(getX() + getImage().width / 2, getY() + getImage().height + 1, 0, 3, image, enemy_bullets);
-            makeBullet(getX() + 5, getY() +3, 0, 3, image, enemy_bullets);
-            makeBullet(getX() +15, getY() +3, 0, 3, image, enemy_bullets);
+            makeBullet(getX() + 2, getY() +3, 0, 3, image, enemy_bullets);
+            makeBullet(getX() +14, getY() +3, 0, 3, image, enemy_bullets);
             bullet_frame_num = 0;
         }
 
