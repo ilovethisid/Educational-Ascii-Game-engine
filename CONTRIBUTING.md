@@ -31,17 +31,17 @@ int cstmr_id;                  // 중간 단어 축약
 구조체, typedef, 열거형을 포함한 모든 타입에 대해 동일한 규칙이 적용된다.  
 
 ## 구조체
-```c
+```cpp
 struct UrlTablePropertiesStruct { 
   ...
 }
 ```
 ## typedef
-```c
+```cpp
 typedef struct UrlTablePropertiesStruct * UrlTableProperties;
 ```
 ## 열거형
-```c
+```cpp
 enum { 
   ...
 } eUrlTableErrors;
@@ -65,16 +65,16 @@ int g_table_num;
 
 ### N-11. 함수 이름은 소문자로 시작하고 각 단어의 첫 글자를 대문자로 쓰며, 언더바 "_" 는 사용하지 않는다.  
 함수의 실행 중 크래시가 발생할 수 있다면 함수의 이름 뒤에 OrDie 를 붙인다.  
-```c
-addTableEntry()
-deleteUrl()
-openFileOrDie()
+```cpp
+addTableEntry();
+deleteUrl();
+openFileOrDie();
 ```
 
 # 클래스 이름
 
 클래스 이름은 대문자로 시작하고 각 단어의 첫 글자를 대문자로 쓴다.  
-```c
+```cpp
 class Object;
 class BoxCollider;
 ```
