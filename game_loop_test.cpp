@@ -31,7 +31,7 @@ private:
         char life = 1;
         boolean shoot_flg = false;
         char bullet_frame_num = 0;
-        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
+        Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
         virtual ~Enemy() {};
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
         void virtual event(Console& console) {};
