@@ -537,20 +537,21 @@ void TestGame::showscoreboard()
     int board_x = 10;
     int board_y = 10;
     getConsole().print("score board", board_y, board_x);
-    getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
-    getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
-    getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
-    getConsole().print(/*"└"*/"*", board_y - 1 + 30, board_x - 1);
-    for (int i = 1; i < 15; i++)
-    {
-        getConsole().print(/*"─"*/"*", board_y - 1, board_x - 1 + i);
-        getConsole().print(/*"─"*/"*", board_y - 1 + 30, board_x - 1 + i);
-    }
-    for (int i = 1; i < 30; i++)
-    {
-        getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
-        getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
-    }
+    getConsole().drawBox(board_x-1,board_y-1,15,30,1,'*');
+    //getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
+    //getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
+    //getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
+    //getConsole().print(/*"└"*/"*", board_y - 1 + 30, board_x - 1);
+    //for (int i = 1; i < 15; i++)
+    //{
+    //    getConsole().print(/*"─"*/"*", board_y - 1, board_x - 1 + i);
+    //    getConsole().print(/*"─"*/"*", board_y - 1 + 30, board_x - 1 + i);
+    //}
+    //for (int i = 1; i < 30; i++)
+    //{
+    //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
+    //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
+    //}
     for (int i = 0; i < 10; i++)
     {
         char score_text[30];
@@ -560,7 +561,7 @@ void TestGame::showscoreboard()
 
     getConsole().print("Type your name : ", 5, 6);
     // get the name of player
-
+    getConsole().print("press Enter", 40, 10);
     getConsole().setTmpBufScreen();
     getConsole().update();
 

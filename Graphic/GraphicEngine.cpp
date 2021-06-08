@@ -87,10 +87,28 @@ void Console::drawCircle(int rx, int ry, int r, short c, short col) {
 	}
 }
 
-void Console::drawRect(int x, int y, int width, int height, short c, short col) {
+void Console::drawFilledRect(int x, int y, int width, int height, short c, short col) {
 	for (int i = 0; i < width; i++)
 		for (int j = 0; j < height; j++)
 			draw(x + i, y + j, c, col);
+}
+
+void Console::drawBox(int x, int y, int width, int height, short thickness, short c, short col){
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < thickness; j++)
+		{
+			draw(x+j, y+i, c, col);
+			draw(x + width - 1 - j, y + i, c, col);
+		}
+	}
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < thickness; j++)
+		{
+			draw(x+i,y+j, c, col);
+			draw(x + i, y + height - 1 - j, c, col);
+		}
+	}
 }
 
 void Console::drawLine(int x1, int y1, int x2, int y2, short c, short col) {
