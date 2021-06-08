@@ -203,7 +203,21 @@ void TestGame::endEvent() {
     Matrix die = makeFile2Matrix("./usrlib/die_message");
     getConsole().drawMatrix(30, 10, die);
     getConsole().print("press esc to exit", 50, 5);
+
+    getConsole().print("Type your name : ", 5, 6);
+    // get the name of player
+    getConsole().print("press Enter", 40, 10);
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+
+    GotoXY(Point(25, 5));
+    char name[20];
+    scanf("%s", name);
+    string sname(name);
+
+    
     loadscoreboard();
+    savescoreboard(name);
     showscoreboard();
     getKeyListener().reset();
     while (!getKeyListener().keycheck(EAG_VKEY_ESC));
@@ -552,6 +566,7 @@ void TestGame::showscoreboard()
     //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
     //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
     //}
+
     for (int i = 0; i < 10; i++)
     {
         char score_text[30];
@@ -559,18 +574,8 @@ void TestGame::showscoreboard()
         getConsole().print(score_text, board_y + i * 2 + 2, board_x);
     }
 
-    getConsole().print("Type your name : ", 5, 6);
-    // get the name of player
-    getConsole().print("press Enter", 40, 10);
     getConsole().setTmpBufScreen();
     getConsole().update();
-
-    GotoXY(Point(25, 5));
-    char name[20];
-    scanf("%s", name);
-    string sname(name);
-
-    savescoreboard(sname);
 }
 
 void TestGame::loadscoreboard()
@@ -579,20 +584,43 @@ void TestGame::loadscoreboard()
     string in_line;
     if (in.is_open())
     {
-        for (int i = 0; i < 10; i++)
-        {
+        int i = 0;
+
+        while (!in.eof()) {
             getline(in, in_line, ',');
             scoreid_[i] = in_line;
-
             getline(in, in_line, ',');
+            if(in_line!="")
+            scoreboard_[i] = stoi(in_line);
+            i++;
+        }
+
+        for (int j = i; j < 10; j++) {
+            scoreid_[i] = "";
+            scoreboard_[i] = 0;
+        }
+
+        /*for (int i = 0; i < 10; i++)
+        {
+            getline(in, in_line, ',');
+
             if (in_line == "\n") {
-                scoreboard_[i] = 0;
-                continue;
+                break;
             }
-            else {
+
+            if (in_line != "\n") {
+                scoreid_[i] = in_line;
+            }
+            
+
+            getline(in, in_line, '\n');
+            if (in_line != "\n") {
                 scoreboard_[i] = stoi(in_line);
             }
-        }
+            else {
+
+            }
+        }*/
     }
     else
     {
@@ -639,6 +667,7 @@ void TestGame::savescoreboard(string user)
     }
     out.close();
 }
+
 void TestGame::startMenu()
 {
     getKeyListener().reset();
