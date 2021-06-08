@@ -3,8 +3,8 @@
 
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 70
-#define BOSS_SCORE 500
-#define BOSS_LIFE 120
+#define BOSS_SCORE 150
+#define BOSS_LIFE 80
 
 #include "game_loop.h"
 
@@ -390,7 +390,7 @@ void TestGame::checkShoot(vector<Object*>& bullets, Object& player)
     if (getKeyListener().keycheck(EAG_VKEY_SPACE)) {
         makeBullet(player.getX() + player.getImage().width / 2, player.getY() - 2,  0, -3,bullet_images[0],bullets);
 
-        sound_.playSound("./../usrlib/laser-gun.wav");
+        sound_.playSound("./usrlib/laser-gun.wav");
     }
 }
 

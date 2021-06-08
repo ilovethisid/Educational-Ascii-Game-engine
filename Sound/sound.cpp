@@ -23,33 +23,33 @@ Sound::Sound()
     
 }
 
-//void Sound::playSound(std::string file)
+void Sound::playSound(std::string file)
+{
+    const char* c = file.c_str();
+    wchar_t wstr[100] = { '\0', };
+    CharToWChar(c, wstr);
+    PlaySound(wstr, NULL, SND_FILENAME | SND_ASYNC); //일반 재생
+}
+
+//void playSound2(const char* file)
 //{
-//    const char* c = file.c_str();
-//    wchar_t wstr[100] = { '\0', };
-//    CharToWChar(c, wstr);
-//    PlaySound(wstr, NULL, SND_FILENAME | SND_ASYNC); //일반 재생
+//    mciOpen.lpstrElementName = wchar(LASER);
+//    mciOpen.lpstrDeviceType = L"WaveAudio";
+//
+//    mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+//
+//    mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mciOpen);
+//    dwID = mciOpen.wDeviceID;
+//    mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mciOpen); //음악을 한 번 재생
+//    //Sleep(1000); //효과음이 재생될 때까지 정지했다가
+//    //mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL); //음원 재생 위치를 처음으로 초기화
 //}
-
-void playSound2(const char* file)
-{
-    mciOpen.lpstrElementName = wchar(LASER);
-    mciOpen.lpstrDeviceType = L"WaveAudio";
-
-    mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
-
-    mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mciOpen);
-    dwID = mciOpen.wDeviceID;
-    mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mciOpen); //음악을 한 번 재생
-    //Sleep(1000); //효과음이 재생될 때까지 정지했다가
-    //mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL); //음원 재생 위치를 처음으로 초기화
-}
-
-void Sound::playSound(const char* file)
-{
-    sound_thread = new std::thread(playSound2, file);
-    sound_thread->detach();
-}
+//
+//void Sound::playSound(const char* file)
+//{
+//    sound_thread = new std::thread(playSound2, file);
+//    sound_thread->detach();
+//}
 
                                                                                                                                                                                                                                                         
 // char to LPCWSTR
