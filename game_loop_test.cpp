@@ -622,10 +622,6 @@ void TestGame::startMenu()
 }
 
 
-Point g_target_point;
-
-
-
 int main(void)
 {
 
@@ -636,9 +632,6 @@ int main(void)
     test_game->setPauseKey(EAG_VKEY_RETURN);
     test_game->setResumeKey(EAG_VKEY_RETURN);
 
-    
-
-    //// 최초 그림 그려지는 점 초기화
     test_game->startMenu();
     test_game->endEvent();
     return 0;
