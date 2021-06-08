@@ -50,6 +50,8 @@ private:
     int score_;
     int boss_flg=1;
     int scoreboard_[10];
+    string namelist[10];
+    string user_name_;
 
     
     void initialize() override;
@@ -66,6 +68,7 @@ private:
     void addscore(int _score);
     void showscore(int _score);
     void showscoreboard();
+    void addscoreboard();
     void loadscoreboard();
     void savescoreboard();
     void dieEvent();
@@ -201,10 +204,14 @@ void TestGame::endEvent() {
     getConsole().clearTmpBufScreen();
     Matrix die = makeFile2Matrix("./usrlib/die_message");
     getConsole().drawMatrix(30, 10, die);
-    getConsole().print("press esc to exit", 50, 5);
     loadscoreboard();
+    addscoreboard();
     savescoreboard();
     showscoreboard();
+    getConsole().print("press esc to exit", 50, 5);
+
+    getConsole().setTmpBufScreen();
+    getConsole().update();
     getKeyListener().reset();
     while (!getKeyListener().keycheck(EAG_VKEY_ESC));
 }
@@ -361,9 +368,6 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(2, 0);
     }
     else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
-        loadscoreboard();
-        savescoreboard();
-        showscoreboard();
         exit();
     }
     else {
@@ -533,12 +537,13 @@ void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Objec
     bullet->rigidbody.setVelocity(v_x, v_y);
     kind_bullets.push_back(bullet);
 }
+
 void TestGame::showscoreboard()
 {
     int board_x = 10;
     int board_y = 10;
     getConsole().print("score board", board_y, board_x);
-    getConsole().drawBox(board_x-1,board_y-1,15,30,1,'*');
+    getConsole().drawBox(board_x-1,board_y-1,23,30,1,'*');
     //getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
     //getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
     //getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
@@ -556,31 +561,25 @@ void TestGame::showscoreboard()
     for (int i = 0; i < 10; i++)
     {
         char score_text[20];
-        snprintf(score_text, 20, "%2d: %d", i + 1, scoreboard_[i]);
+        snprintf(score_text, 20, "%3d. %s: %d", i + 1, namelist[i].c_str(), scoreboard_[i]); puts(score_text);
         getConsole().print(score_text, board_y + i * 2 + 2, board_x);
     }
-
-    getConsole().print("Type your name : ", 5, 6);
-    // get the name of player
-    getConsole().print("press Enter", 40, 10);
     getConsole().setTmpBufScreen();
     getConsole().update();
-
-    GotoXY(Point(25, 5));
-    char name[20];
-    scanf("%s", name);
-    
 }
 void TestGame::loadscoreboard()
 {
     ifstream in("./usrlib/scoreboard.csv");
     string in_line;
+            getline(in, in_line, '\n');
     if (in.is_open())
     {
         for (int i = 0; i < 10; i++)
         {
-            getline(in, in_line, '\n');
+            getline(in, in_line, ',');
             scoreboard_[i] = stoi(in_line);
+            getline(in, in_line, '\n');
+            namelist[i] = in_line;
         }
     }
     else
@@ -588,33 +587,53 @@ void TestGame::loadscoreboard()
         for (int i = 0; i < 10; i++)
         {
             scoreboard_[i] = 0;
+            namelist[i] = "AAAA";
         }
     }
     in.close();
+}
+void TestGame::addscoreboard()
+{
+    getConsole().print("Type your name : ", 5, 6);
+    // get the name of player
+    getConsole().print("press Enter", 40, 10);
+    GotoXY(Point(25, 5));
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+    char temp[10]; 
+    scanf("%s", temp);
+    user_name_ = temp;
+    for (int i = 0; i < 10; i++)
+    {
+        if (score_ > scoreboard_[i])
+        {
+            int temp = scoreboard_[i];
+            string temp_name = namelist[i];
+            scoreboard_[i] = score_;
+            namelist[i] = user_name_;
+            i++;
+            for (i; i < 10; i++)
+            {
+                int temp2 = scoreboard_[i];
+                string temp2_name = namelist[i];
+                scoreboard_[i] = temp;
+                namelist[i] = temp_name;
+                temp = temp2;
+                temp_name = temp2_name;
+            }
+        }
+    }
 }
 void TestGame::savescoreboard()
 {
     ofstream out("./usrlib/scoreboard.csv");
     string out_line;
 
+    out << "temp" << '\n';
     for (int i = 0; i < 10; i++)
     {
-        if (score_ > scoreboard_[i])
-        {
-            int temp = scoreboard_[i];
-            scoreboard_[i] = score_;
-            i++;
-            for (i; i < 10; i++)
-            {
-                int temp2 = scoreboard_[i];
-                scoreboard_[i] = temp;
-                temp = temp2;
-            }
-        }
-    }
-    for (int i = 0; i < 10; i++)
-    {
-        out << scoreboard_[i] << '\n';
+        out << scoreboard_[i] << ',';
+        out << namelist[i] << '\n';
     }
     out.close();
 }
@@ -635,8 +654,12 @@ void TestGame::startMenu()
     start_button.setColor(FG_YELLOW);
     score_button.setColor(FG_YELLOW);
     getKeyListener().keycheck(EAG_VKEY_SPACE);
+    getConsole().setTmpBufScreen();
+    getConsole().drawTmpMatrix(10, 50, start_button);
+    getConsole().update();
+    select = 0;
     while (!getKeyListener().keycheck(EAG_VKEY_SPACE)) {
-
+        getKeyListener().keycheck(EAG_VKEY_RETURN);
         if (getKeyListener().keycheck(EAG_VKEY_LEFT)) {
             getConsole().setTmpBufScreen(); 
             getConsole().drawTmpMatrix(10, 50, start_button);
