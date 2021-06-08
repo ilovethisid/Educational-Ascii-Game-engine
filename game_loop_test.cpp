@@ -3,7 +3,8 @@
 
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 70
-
+#define BOSS_SCORE 500
+#define BOSS_LIFE 120
 #include <thread>
 
 #include "game_loop.h"
@@ -22,7 +23,6 @@ private:
     vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
-
     thread th_sound;
     
 
@@ -32,6 +32,7 @@ private:
         boolean shoot_flg = false;
         char bullet_frame_num = 0;
         Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
+        virtual ~Enemy() {};
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
         void virtual event(Console& console) {};
     };
@@ -39,7 +40,9 @@ private:
     class Boss :public Enemy{
     public:
         char shoot_pattern;
-        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
+        char* boss_flg;
+        Boss(int x, int y, int v_x, int v_y, int type ,char* boss_flg, Matrix& image, Matrix& collider);
+        ~Boss();
         void shoot(Matrix& image, vector<Object*>& enemy_bullets);
         void event(Console& console);
     };
@@ -48,7 +51,7 @@ private:
 
     int life_;
     int score_;
-    int boss_flg=1;
+    char boss_flg=1;
     int scoreboard_[10];
     string namelist[10];
     string user_name_;
@@ -103,7 +106,6 @@ void TestGame::initialize()
     bullet_images.push_back(Matrix(2, 1, (short*)L"◈ ", FG_RED));
     bullet_images.push_back(Matrix(1, 1, (short*)L"● ", FG_RED));
 
-
     // 그릴 도형의 행렬 초기화
     Matrix mat_box = makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
     Matrix mat_rect = makeRect(10, 4);
@@ -137,7 +139,6 @@ void TestGame::initialize()
     player0->setName("player");
     //bullets.push_back(player0);
     objects.push_back(player0);
-
     last_time_ = clock();//last_time_ 시간체크용
 
 }
@@ -202,8 +203,15 @@ void TestGame::dieEvent() {
 }
 void TestGame::endEvent() {
     getConsole().clearTmpBufScreen();
-    Matrix die = makeFile2Matrix("./usrlib/die_message");
-    getConsole().drawMatrix(30, 10, die);
+    if (boss_flg==2){
+        Matrix tmp = makeFile2Matrix("./usrlib/game_clear");
+        getConsole().drawMatrix(35, 10, tmp);
+    }
+    else  {
+        Matrix die = makeFile2Matrix("./usrlib/die_message");
+        getConsole().drawMatrix(30, 10, die);
+    }
+
     loadscoreboard();
     addscoreboard();
     savescoreboard();
@@ -330,6 +338,9 @@ void TestGame::collisionEvent() {
         }
         else j++;
     }
+    if (boss_flg == 2) {
+        exit();
+    }
  
 }
 
@@ -396,13 +407,11 @@ void TestGame::makeEnemy()
     Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type], enemy_images[type]);
     enemys.push_back(enemy);
 
-    if (score_ > 30 && (boss_flg == 1)) {
-        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[3]);
+    if (score_ > BOSS_SCORE  && (boss_flg == 1)) {
+        Object* enemy = new Boss(30, 4, 0, 0, 3,&boss_flg ,enemy_images[3], enemy_images[3]);
         enemys.push_back(enemy);
         boss_flg = 0;
     }
-
-
 
 }
 
@@ -485,10 +494,14 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     
 }
 
-TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
+TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, char* boss_pnt, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
+    boss_flg = boss_pnt;
     shoot_flg = true;
     shoot_pattern = 0;
-    life = 50;
+    life = BOSS_LIFE;
+}
+TestGame::Boss::~Boss() {
+    *boss_flg = 2;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     if (bullet_frame_num > 12) {
@@ -524,7 +537,7 @@ void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
 void TestGame::Boss::event(Console& console) {
     int x = getX();
     for (int i = 0; i < life; i++) {
-        console.drawTmp( x+i, 2, L'■', FG_RED);
+        console.drawTmp( x+i-30, 2, L'■', FG_RED);
     }
 }
 
