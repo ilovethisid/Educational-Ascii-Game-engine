@@ -17,6 +17,6 @@ private:
 public:
     Sound();
 
-    //void playSound(std::string file);
-    void playSound(const char* file);
+    void playSound(std::string file);
+    //void playSound(const char* file);
 };
