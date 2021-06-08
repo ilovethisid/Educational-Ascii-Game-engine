@@ -3,7 +3,8 @@
 
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 70
-
+#define BOSS_SCORE 500
+#define BOSS_LIFE 120
 #include <thread>
 
 #include "game_loop.h"
@@ -22,7 +23,6 @@ private:
     vector <Object*> enemy_bullets;
     Object* player0;
     Object* boundary0;
-
     thread th_sound;
     
 
@@ -32,6 +32,7 @@ private:
         boolean shoot_flg = false;
         char bullet_frame_num = 0;
         Enemy(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider);
+        virtual ~Enemy() {};
         void virtual shoot(Matrix& image, vector<Object*>& enemy_bullets);
         void virtual event(Console& console) {};
     };
@@ -39,7 +40,9 @@ private:
     class Boss :public Enemy{
     public:
         char shoot_pattern;
-        Boss(int x, int y, int v_x, int v_y, int type, Matrix& image, Matrix& collider);
+        char* boss_flg;
+        Boss(int x, int y, int v_x, int v_y, int type ,char* boss_flg, Matrix& image, Matrix& collider);
+        ~Boss();
         void shoot(Matrix& image, vector<Object*>& enemy_bullets);
         void event(Console& console);
     };
@@ -48,9 +51,10 @@ private:
 
     int life_;
     int score_;
-    int boss_flg=1;
+    char boss_flg=1;
     int scoreboard_[10];
-    string scoreid_[10];
+    string namelist[10];
+    string user_name_;
 
     
     void initialize() override;
@@ -67,8 +71,9 @@ private:
     void addscore(int _score);
     void showscore(int _score);
     void showscoreboard();
+    void addscoreboard();
     void loadscoreboard();
-    void savescoreboard(string id);
+    void savescoreboard();
     void dieEvent();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
   
@@ -100,7 +105,6 @@ void TestGame::initialize()
     bullet_images.push_back(Matrix(1, 1, (short*)L"|", FG_YELLOW));
     bullet_images.push_back(Matrix(2, 1, (short*)L"◈ ", FG_RED));
     bullet_images.push_back(Matrix(1, 1, (short*)L"● ", FG_RED));
-
 
     // 그릴 도형의 행렬 초기화
     Matrix mat_box = makeBox(getConsole().getScreenWidth(),getConsole().getScreenHeight(),2);
@@ -135,7 +139,6 @@ void TestGame::initialize()
     player0->setName("player");
     //bullets.push_back(player0);
     objects.push_back(player0);
-
     last_time_ = clock();//last_time_ 시간체크용
 
 }
@@ -200,25 +203,23 @@ void TestGame::dieEvent() {
 }
 void TestGame::endEvent() {
     getConsole().clearTmpBufScreen();
-    Matrix die = makeFile2Matrix("./usrlib/die_message");
-    getConsole().drawMatrix(30, 10, die);
+    if (boss_flg==2){
+        Matrix tmp = makeFile2Matrix("./usrlib/game_clear");
+        getConsole().drawMatrix(35, 10, tmp);
+    }
+    else  {
+        Matrix die = makeFile2Matrix("./usrlib/die_message");
+        getConsole().drawMatrix(30, 10, die);
+    }
+
+    loadscoreboard();
+    addscoreboard();
+    savescoreboard();
+    showscoreboard();
     getConsole().print("press esc to exit", 50, 5);
 
-    getConsole().print("Type your name : ", 5, 6);
-    // get the name of player
-    getConsole().print("press Enter", 40, 10);
     getConsole().setTmpBufScreen();
     getConsole().update();
-
-    GotoXY(Point(25, 5));
-    char name[20];
-    scanf("%s", name);
-    string sname(name);
-
-    
-    loadscoreboard();
-    savescoreboard(name);
-    showscoreboard();
     getKeyListener().reset();
     while (!getKeyListener().keycheck(EAG_VKEY_ESC));
 }
@@ -337,6 +338,9 @@ void TestGame::collisionEvent() {
         }
         else j++;
     }
+    if (boss_flg == 2) {
+        exit();
+    }
  
 }
 
@@ -375,8 +379,6 @@ void TestGame::checkMove(Object& obj)
         obj.rigidbody.setVelocity(2, 0);
     }
     else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
-        loadscoreboard();
-        showscoreboard();
         exit();
     }
     else {
@@ -405,13 +407,11 @@ void TestGame::makeEnemy()
     Object* enemy = new Enemy(SCREEN_WIDTH / 8 * (rand_num % 5 + 2), 2, rand_num % 4 - 2, type + 1,type,enemy_images[type], enemy_images[type]);
     enemys.push_back(enemy);
 
-    if (score_ > 30 && (boss_flg == 1)) {
-        Object* enemy = new Boss(30, 4, 0, 0, 3, enemy_images[3], enemy_images[3]);
+    if (score_ > BOSS_SCORE  && (boss_flg == 1)) {
+        Object* enemy = new Boss(30, 4, 0, 0, 3,&boss_flg ,enemy_images[3], enemy_images[3]);
         enemys.push_back(enemy);
         boss_flg = 0;
     }
-
-
 
 }
 
@@ -494,10 +494,14 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     
 }
 
-TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
+TestGame::Boss::Boss(int x, int y, int v_x, int v_y, int type, char* boss_pnt, Matrix& image,Matrix& collider) :Enemy( x,  y,  v_x,  v_y,  type, image, collider) {
+    boss_flg = boss_pnt;
     shoot_flg = true;
     shoot_pattern = 0;
-    life = 50;
+    life = BOSS_LIFE;
+}
+TestGame::Boss::~Boss() {
+    *boss_flg = 2;
 }
 void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     if (bullet_frame_num > 12) {
@@ -533,7 +537,7 @@ void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
 void TestGame::Boss::event(Console& console) {
     int x = getX();
     for (int i = 0; i < life; i++) {
-        console.drawTmp( x+i, 2, L'■', FG_RED);
+        console.drawTmp( x+i-30, 2, L'■', FG_RED);
     }
 }
 
@@ -546,12 +550,13 @@ void TestGame::makeBullet(int x,int y,int v_x,int v_y,Matrix& image,vector<Objec
     bullet->rigidbody.setVelocity(v_x, v_y);
     kind_bullets.push_back(bullet);
 }
+
 void TestGame::showscoreboard()
 {
     int board_x = 10;
     int board_y = 10;
     getConsole().print("score board", board_y, board_x);
-    getConsole().drawBox(board_x-1,board_y-1,15,30,1,'*');
+    getConsole().drawBox(board_x-1,board_y-1,23,30,1,'*');
     //getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
     //getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
     //getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
@@ -566,108 +571,85 @@ void TestGame::showscoreboard()
     //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
     //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
     //}
-
     for (int i = 0; i < 10; i++)
     {
-        char score_text[30];
-        snprintf(score_text, 30, "%2d: %s %d", i + 1, scoreid_[i].c_str(), scoreboard_[i]);
+        char score_text[20];
+        snprintf(score_text, 20, "%3d. %s: %d", i + 1, namelist[i].c_str(), scoreboard_[i]); puts(score_text);
         getConsole().print(score_text, board_y + i * 2 + 2, board_x);
     }
-
     getConsole().setTmpBufScreen();
     getConsole().update();
 }
-
 void TestGame::loadscoreboard()
 {
     ifstream in("./usrlib/scoreboard.csv");
     string in_line;
+            getline(in, in_line, '\n');
     if (in.is_open())
     {
-        int i = 0;
-
-        while (!in.eof()) {
-            getline(in, in_line, ',');
-            scoreid_[i] = in_line;
-            getline(in, in_line, ',');
-            if(in_line!="")
-            scoreboard_[i] = stoi(in_line);
-            i++;
-        }
-
-        for (int j = i; j < 10; j++) {
-            scoreid_[i] = "";
-            scoreboard_[i] = 0;
-        }
-
-        /*for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             getline(in, in_line, ',');
-
-            if (in_line == "\n") {
-                break;
-            }
-
-            if (in_line != "\n") {
-                scoreid_[i] = in_line;
-            }
-            
-
+            scoreboard_[i] = stoi(in_line);
             getline(in, in_line, '\n');
-            if (in_line != "\n") {
-                scoreboard_[i] = stoi(in_line);
-            }
-            else {
-
-            }
-        }*/
+            namelist[i] = in_line;
+        }
     }
     else
     {
         for (int i = 0; i < 10; i++)
         {
-            scoreid_[i] = "";
             scoreboard_[i] = 0;
+            namelist[i] = "AAAA";
         }
     }
     in.close();
 }
-
-void TestGame::savescoreboard(string user)
+void TestGame::addscoreboard()
 {
-    ofstream out("./usrlib/scoreboard.csv");
-    string out_line;
-
+    getConsole().print("Type your name : ", 5, 6);
+    // get the name of player
+    getConsole().print("press Enter", 40, 10);
+    GotoXY(Point(25, 5));
+    getConsole().setTmpBufScreen();
+    getConsole().update();
+    char temp[10]; 
+    scanf("%s", temp);
+    user_name_ = temp;
     for (int i = 0; i < 10; i++)
     {
         if (score_ > scoreboard_[i])
         {
-            string stemp = scoreid_[i];
-            scoreid_[i] = user;
             int temp = scoreboard_[i];
+            string temp_name = namelist[i];
             scoreboard_[i] = score_;
-            
+            namelist[i] = user_name_;
             i++;
             for (i; i < 10; i++)
             {
-                string stemp2 = scoreid_[i];
-                scoreid_[i] = stemp;
-                stemp = stemp2;
-
                 int temp2 = scoreboard_[i];
+                string temp2_name = namelist[i];
                 scoreboard_[i] = temp;
+                namelist[i] = temp_name;
                 temp = temp2;
+                temp_name = temp2_name;
             }
         }
     }
+}
+void TestGame::savescoreboard()
+{
+    ofstream out("./usrlib/scoreboard.csv");
+    string out_line;
+
+    out << "temp" << '\n';
     for (int i = 0; i < 10; i++)
     {
-        out << scoreid_[i] << ',';
-        out << scoreboard_[i] << '\n';
+        out << scoreboard_[i] << ',';
+        out << namelist[i] << '\n';
     }
     out.close();
 }
-
 void TestGame::startMenu()
 {
     getKeyListener().reset();
@@ -685,8 +667,12 @@ void TestGame::startMenu()
     start_button.setColor(FG_YELLOW);
     score_button.setColor(FG_YELLOW);
     getKeyListener().keycheck(EAG_VKEY_SPACE);
+    getConsole().setTmpBufScreen();
+    getConsole().drawTmpMatrix(10, 50, start_button);
+    getConsole().update();
+    select = 0;
     while (!getKeyListener().keycheck(EAG_VKEY_SPACE)) {
-
+        getKeyListener().keycheck(EAG_VKEY_RETURN);
         if (getKeyListener().keycheck(EAG_VKEY_LEFT)) {
             getConsole().setTmpBufScreen(); 
             getConsole().drawTmpMatrix(10, 50, start_button);
