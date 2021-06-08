@@ -5,7 +5,6 @@
 #define SCREEN_HEIGHT 70
 #define BOSS_SCORE 500
 #define BOSS_LIFE 120
-#include <thread>
 
 #include "game_loop.h"
 
@@ -97,8 +96,8 @@ void TestGame::initialize()
 {
     //enemy_images matrix
     enemy_images.push_back(makeFile2Matrix("./usrlib/enemy1"));
-    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy2"));
-    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy3"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy4"));
+    enemy_images.push_back(makeFile2Matrix("./usrlib/enemy5"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/boss"));
     enemy_images.push_back(makeFile2Matrix("./usrlib/boss_collider"));
     //bullet_images matrix
@@ -124,7 +123,7 @@ void TestGame::initialize()
     //bullets.push_back(boundary0);
 
     //배경 그리기
-    Matrix background = makeFile2Matrix("./usrlib/background");
+    Matrix background = makeFile2Matrix("./usrlib/background2");
     getConsole().drawMatrix(0, 0, background);
 
     // show score
@@ -217,6 +216,7 @@ void TestGame::endEvent() {
     savescoreboard();
     showscoreboard();
     getConsole().print("press esc to exit", 50, 5);
+    GotoXY(Point(0, SCREEN_HEIGHT - 2));
 
     getConsole().setTmpBufScreen();
     getConsole().update();
@@ -258,7 +258,6 @@ void TestGame::collisionEvent() {
     vector<Object*> player_colliding_objects = player0->getCollidingObjects(enemys);
 
     if (player_colliding_objects.size() >= 1) {
-        getConsole().print(to_string(player_colliding_objects.size()),1,1);
         for (int i = 0; i < player_colliding_objects.size(); i++) {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
@@ -277,7 +276,6 @@ void TestGame::collisionEvent() {
     vector<Object*> player_colliding_objects0 = player0->getCollidingObjects(enemy_bullets);
 
     if (player_colliding_objects0.size() >= 1) {
-        getConsole().print(to_string(player_colliding_objects0.size()), 1, 1);
         for (int i = 0; i < player_colliding_objects0.size(); i++) {
             if (life_ > 0)  life_--; //체력 감소
             if (life_ <= 0)
