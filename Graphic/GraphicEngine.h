@@ -98,10 +98,10 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, short c = PIXEL_SOLID, short col = FG_WHITE);// 선그리기
 	void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = PIXEL_SOLID, short col = FG_WHITE);// 삼각형 그리기
 
-	void drawRect(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
+	void drawFilledRect(int x, int y, int width, int height, short c = PIXEL_SOLID, short col = 0x000F);//사각형 그리기
 	void drawObject(Object& obj); // 배열 그리기
 	void drawMatrix(int x,int y,Matrix& image);
-
+	void drawBox(int x,int y,int width, int height, short thickness = 1, short c = PIXEL_SOLID, short col = FG_WHITE);
 	void drawTmp(int x, int y, short c = PIXEL_SOLID, short col = FG_WHITE);//임시로 그리기
 	void drawTmpMatrix(int x, int y, Matrix& image);
 	void drawTmpObject(Object& obj); //임시로 그리기
