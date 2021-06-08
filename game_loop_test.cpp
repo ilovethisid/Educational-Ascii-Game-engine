@@ -123,7 +123,7 @@ void TestGame::initialize()
     //bullets.push_back(boundary0);
 
     //배경 그리기
-    Matrix background = makeFile2Matrix("./usrlib/background2");
+    Matrix background = makeFile2Matrix("./usrlib/background6");
     getConsole().drawMatrix(0, 0, background);
 
     // show score
