@@ -36,7 +36,7 @@ void playSound2(const char* file)
     mciOpen.lpstrElementName = wchar(LASER);
     mciOpen.lpstrDeviceType = L"WaveAudio";
 
-    //mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+    mciSendCommand(dwID, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
 
     mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mciOpen);
     dwID = mciOpen.wDeviceID;

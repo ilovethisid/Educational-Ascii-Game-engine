@@ -50,6 +50,7 @@ private:
     int score_;
     int boss_flg=1;
     int scoreboard_[10];
+    string scoreid_[10];
 
     
     void initialize() override;
@@ -67,7 +68,7 @@ private:
     void showscore(int _score);
     void showscoreboard();
     void loadscoreboard();
-    void savescoreboard();
+    void savescoreboard(string id);
     void dieEvent();
     static void makeBullet(int x, int y, int v_x, int v_y, Matrix& image, vector<Object*>& kind_bullets);
   
@@ -203,7 +204,6 @@ void TestGame::endEvent() {
     getConsole().drawMatrix(30, 10, die);
     getConsole().print("press esc to exit", 50, 5);
     loadscoreboard();
-    savescoreboard();
     showscoreboard();
     getKeyListener().reset();
     while (!getKeyListener().keycheck(EAG_VKEY_ESC));
@@ -362,7 +362,6 @@ void TestGame::checkMove(Object& obj)
     }
     else if (getKeyListener().keycheck(EAG_VKEY_ESC)) { // press ESC key to exit loop
         loadscoreboard();
-        savescoreboard();
         showscoreboard();
         exit();
     }
@@ -554,8 +553,8 @@ void TestGame::showscoreboard()
     }
     for (int i = 0; i < 10; i++)
     {
-        char score_text[20];
-        snprintf(score_text, 20, "%2d: %d", i + 1, scoreboard_[i]);
+        char score_text[30];
+        snprintf(score_text, 30, "%2d: %s %d", i + 1, scoreid_[i].c_str(), scoreboard_[i]);
         getConsole().print(score_text, board_y + i * 2 + 2, board_x);
     }
 
@@ -568,8 +567,11 @@ void TestGame::showscoreboard()
     GotoXY(Point(25, 5));
     char name[20];
     scanf("%s", name);
-    
+    string sname(name);
+
+    savescoreboard(sname);
 }
+
 void TestGame::loadscoreboard()
 {
     ifstream in("./usrlib/scoreboard.csv");
@@ -578,20 +580,31 @@ void TestGame::loadscoreboard()
     {
         for (int i = 0; i < 10; i++)
         {
-            getline(in, in_line, '\n');
-            scoreboard_[i] = stoi(in_line);
+            getline(in, in_line, ',');
+            scoreid_[i] = in_line;
+
+            getline(in, in_line, ',');
+            if (in_line == "\n") {
+                scoreboard_[i] = 0;
+                continue;
+            }
+            else {
+                scoreboard_[i] = stoi(in_line);
+            }
         }
     }
     else
     {
         for (int i = 0; i < 10; i++)
         {
+            scoreid_[i] = "";
             scoreboard_[i] = 0;
         }
     }
     in.close();
 }
-void TestGame::savescoreboard()
+
+void TestGame::savescoreboard(string user)
 {
     ofstream out("./usrlib/scoreboard.csv");
     string out_line;
@@ -600,11 +613,18 @@ void TestGame::savescoreboard()
     {
         if (score_ > scoreboard_[i])
         {
+            string stemp = scoreid_[i];
+            scoreid_[i] = user;
             int temp = scoreboard_[i];
             scoreboard_[i] = score_;
+            
             i++;
             for (i; i < 10; i++)
             {
+                string stemp2 = scoreid_[i];
+                scoreid_[i] = stemp;
+                stemp = stemp2;
+
                 int temp2 = scoreboard_[i];
                 scoreboard_[i] = temp;
                 temp = temp2;
@@ -613,6 +633,7 @@ void TestGame::savescoreboard()
     }
     for (int i = 0; i < 10; i++)
     {
+        out << scoreid_[i] << ',';
         out << scoreboard_[i] << '\n';
     }
     out.close();
