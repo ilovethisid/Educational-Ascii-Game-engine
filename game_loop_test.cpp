@@ -118,10 +118,6 @@ void TestGame::initialize()
     boundary0->setName("boundary");
     objects.push_back(boundary0);
 
-    // 도형들을 vector에 append
-    //enemys.push_back(boundary0);//enemy에서 관리
-    //bullets.push_back(boundary0);
-
     //배경 그리기
     Matrix background = makeFile2Matrix("./usrlib/background6");
     getConsole().drawMatrix(0, 0, background);
@@ -165,10 +161,6 @@ void TestGame::updateLoop()
 
     start = clock();                 // start timer
 
-    //if ((start - last_time_) > spawn_interval) { //when passed make enemy
-    //    makeEnemy();
-    //    last_time_ = start;
-    //}
 
     if (count_frames % spawn_interval == 0) {
         makeEnemy();
@@ -243,16 +235,6 @@ void TestGame::collisionEvent() {
 
 
 
-
-    //if (player0->collision_flg==1) {
-    //    for (int i = 0; i < enemys.size(); i++) {
-    //        if (enemys[i]->collision_flg == 1) {
-    //            if (life_ > 0)  life_--; //체력 감소
-    //            if (life_ <= 0) exit();
-    //        }
-    //    }
-    //}
-
     /* 동진 - collision에서 colliding하는 object 반환(getCollidingObjects) */
     // collision with enemy
     vector<Object*> player_colliding_objects = player0->getCollidingObjects(enemys);
@@ -289,15 +271,11 @@ void TestGame::collisionEvent() {
         player_colliding_objects0.pop_back();
     }
 
-
-
-
     for (int i = 0; i < bullets.size(); i++) {
         if (bullets[i]->getCollidingObjects(enemys).size() >= 1) {
             addscore(10);
         }
     }
-
     player0->collision_flg = 0;
 
     for (int j = 0; j < bullets.size(); ) {
@@ -421,25 +399,6 @@ void TestGame::drawLife()
         getConsole().drawTmp(2*i + 3, 3, L'♥', FG_RED);
         getConsole().drawTmp(2*i + 4, 3, L' ', FG_RED);
     }
-    //Matrix life_image;
-    //life_image.width = 10;
-    //life_image.height = 1;
-    //life_image.color = new unsigned char[1 * 10];
-    //for (int i = 0; i < 10; i++)
-    //{
-    //    life_image.color[i] = FG_RED;
-    //}
-    //life_image.element = new short* [1];
-    //for (int i = 0; i < 1; i++)
-    //{
-    //    life_image.element[i] = new short[10];
-    //}
-    //for (int i = 0; i < 5; i++)
-    //{
-    //    life_image.element[0][2 * i] = L'♥';
-    //    life_image.element[0][2 * i + 1] = L' ';
-    //}
-    //getConsole().drawMatrix(5, 2, life_image);
 }
 
 
@@ -471,19 +430,6 @@ void TestGame::Enemy::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
     if (bullet_frame_num > 12) {
         makeBullet(getX() + getImage().width / 2, getY() + getImage().height + 1, 0, 3, image, enemy_bullets);
         bullet_frame_num = 0;
-        //Object* ebullet;
-        //ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
-        //Matrix image = Matrix(2, 1);
-        //image.element[0][0] = L'◈';
-        //image.element[0][1] = ' ';
-        //ebullet->makeImage(image);
-        //ebullet->getImage().setColor(FG_RED);
-        //ebullet->makeRigidbody();
-        //ebullet->rigidbody.makeMatrixCollider(image);
-        //ebullet->setName("bullet");
-        //ebullet->rigidbody.setVelocity(0, 3);
-        //enemy_bullets.push_back(ebullet);
-        //          sound_.playSound("./usrlib/laser-gun.wav");
 
     }
     else
@@ -513,20 +459,6 @@ void TestGame::Boss::shoot(Matrix& image, vector<Object*>& enemy_bullets) {
             makeBullet(x + 38, 7, 0, 3, image, enemy_bullets);
             bullet_frame_num = 0;
         }
-        //Object* ebullet;
-        //ebullet = new Object(getX() + getImage().width / 2, getY() + getImage().height + 1);
-        //Matrix image = Matrix(2, 1);
-        //image.element[0][0] = L'◈';
-        //image.element[0][1] = ' ';
-        //ebullet->makeImage(image);
-        //ebullet->getImage().setColor(FG_RED);
-        //ebullet->makeRigidbody();
-        //ebullet->rigidbody.makeMatrixCollider(image);
-        //ebullet->setName("bullet");
-        //ebullet->rigidbody.setVelocity(0, 3);
-        //enemy_bullets.push_back(ebullet);
-        //          sound_.playSound("./usrlib/laser-gun.wav");
-
     }
     else
         bullet_frame_num++;
@@ -555,20 +487,7 @@ void TestGame::showscoreboard()
     int board_y = 10;
     getConsole().print("score board", board_y, board_x);
     getConsole().drawBox(board_x-1,board_y-1,23,30,1,'*');
-    //getConsole().print(/*"┌"*/"*", board_y - 1, board_x - 1);
-    //getConsole().print(/*"┐"*/"*", board_y - 1, board_x - 1 + 15);
-    //getConsole().print(/*"┘"*/"*", board_y - 1 + 30, board_x - 1 + 15);
-    //getConsole().print(/*"└"*/"*", board_y - 1 + 30, board_x - 1);
-    //for (int i = 1; i < 15; i++)
-    //{
-    //    getConsole().print(/*"─"*/"*", board_y - 1, board_x - 1 + i);
-    //    getConsole().print(/*"─"*/"*", board_y - 1 + 30, board_x - 1 + i);
-    //}
-    //for (int i = 1; i < 30; i++)
-    //{
-    //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1);
-    //    getConsole().print(/*"│"*/"*", board_y - 1 + i, board_x - 1 + 15);
-    //}
+
     for (int i = 0; i < 10; i++)
     {
         char score_text[20];
