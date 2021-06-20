@@ -33,7 +33,7 @@ Due to the nature of the game engine, it is not focused on a single genre of gam
   The physical engine provides the ability to consider physical interactions such as rigidbody and collision for objects, as in Unity.
 For example, you can use a collision to make enemies disappear when they are hit by a bullet, and adjust velocity to make objects move.
 
-### 3. Keyboard listeners
+### 3. Keyboard listener
 
   The keyboard listener is implemented as a thread and can receive input from multiple keys simultaneously, and can be entered into various states, such as once pressed and pressed.
 
