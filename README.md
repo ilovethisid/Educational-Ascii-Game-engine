@@ -1,5 +1,8 @@
 # EAG Engine
 
+![sample](https://user-images.githubusercontent.com/1943147/122684410-32fb4500-d240-11eb-9f37-2e3dd5ea78d9.gif)
+
+
 ***This engine is available for Microsoft Windows ONLY***
 
 The EAG engine stands for Educational Ascii Game engine, which allows users to create games easily and quickly using c++. 
